@@ -1,8 +1,12 @@
 #!/bin/sh -xe
+#
+# $Id$
+#
 
 DEVEL=/var/devel
 ALT=$DEVEL/alt
 SRC=/usr/src
+JOBS=$(sysctl -n kern.smp.cpus)
 
 cd $SRC
 find . -type f -name '*.orig' -delete
@@ -23,8 +27,8 @@ find . -type f -name '*.orig' -delete
 read x
 
 rm -rf /usr/obj/*
-make -j 8 buildworld
-make -j 8 buildkernel
+make -j $JOBS buildworld
+make -j $JOBS buildkernel
 
 if [ -d $ALT ]; then
 	chflags -R noschg $ALT
