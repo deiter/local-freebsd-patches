@@ -1,3 +1,6 @@
+#
+# $Id$
+#
 cpu		I686_CPU
 ident		BLACKBOX
 options		SCHED_ULE		# ULE scheduler
