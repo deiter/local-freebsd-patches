@@ -31,7 +31,7 @@ read x
 
 rm -rf $OBJDIR/*
 make -j $JOBS buildworld
-make -j $JOBS KERNCONF=$KERNCONF buildkernel
+make -j $JOBS buildkernel KERNCONF=$KERNCONF
 
 if [ -d $ALTDIR ]; then
 	chflags -R noschg $ALTDIR
@@ -41,7 +41,7 @@ fi
 mkdir -p $ALTDIR
 
 for i in installworld distribution installkernel; do
-	make $i DESTDIR=$ALTDIR
+	make $i DESTDIR=$ALTDIR KERNCONF=$KERNCONF
 done
 
 cd $ALTDIR
