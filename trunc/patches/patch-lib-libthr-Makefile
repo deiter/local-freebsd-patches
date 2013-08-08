@@ -1,0 +1,13 @@
+--- lib/libthr/Makefile.orig	2013-08-08 05:34:42.000000000 +0000
++++ lib/libthr/Makefile	2013-08-08 05:35:10.000000000 +0000
+@@ -38,10 +38,6 @@
+ 
+ MAN=	libthr.3
+ 
+-# enable extra internal consistancy checks
+-CFLAGS+=-D_PTHREADS_INVARIANTS
+-#CFLAGS+=-g
+-
+ PRECIOUSLIB=
+ 
+ .PATH: ${.CURDIR}/arch/${MACHINE_CPUARCH}/${MACHINE_CPUARCH}
