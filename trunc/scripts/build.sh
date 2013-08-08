@@ -7,6 +7,7 @@ DEVEL=/var/devel
 ALT=$DEVEL/alt
 SRC=/usr/src
 JOBS=$(sysctl -n kern.smp.cpus)
+KERNCONF=$(hostname -s | tr [a-z] [A-Z])
 
 cd $SRC
 find . -type f -name '*.orig' -delete
@@ -28,7 +29,7 @@ read x
 
 rm -rf /usr/obj/*
 make -j $JOBS buildworld
-make -j $JOBS buildkernel
+make -j $JOBS KERNCONF=$KERNCONF buildkernel
 
 if [ -d $ALT ]; then
 	chflags -R noschg $ALT
