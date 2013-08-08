@@ -1,3 +1,6 @@
+#
+# $Id$
+#
 cpu		HAMMER
 ident		LENOVO-T520
 options		SCHED_ULE		# ULE scheduler
