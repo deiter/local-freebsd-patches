@@ -1,0 +1,4 @@
+include		LENOVO-T520
+ident		BLACKSTAR
+device		iwn		# Intel 4965/1000/5000/6000 wireless NICs.
+device		iwn1000fw	# Specific module for the 1000 only
