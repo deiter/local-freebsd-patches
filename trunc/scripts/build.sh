@@ -3,46 +3,48 @@
 # $Id$
 #
 
-DEVEL=/var/devel
-ALT=$DEVEL/alt
-SRC=/usr/src
+DEVDIR="/var/devel"
+ALTDIR="$DEVEL/alt"
+SRCDIR="/usr/src"
+OBJDIR="/usr/obj"
 JOBS=$(sysctl -n kern.smp.cpus)
 KERNCONF=$(hostname -s | tr [a-z] [A-Z])
+TARGET=$(uname -m)
 
-cd $SRC
+cd $SRCDIR
 find . -type f -name '*.orig' -delete
 svn revert -R .
 svn diff
 svn status
-read x
 svn up
 
-for i in $DEVEL/patches/patch-*; do patch -p0 <$i || exit 1; done
-LEVEL=$(ls $DEVEL/patches/patch-* | wc -l | awk '{print $NF}')
+for i in $DEVDIR/patches/patch-*; do patch -p0 <$i || exit 1; done
+LEVEL=$(ls $DEVDIR/patches/patch-* | wc -l | awk '{print $NF}')
 REVISION=$(svn info | awk '/^Revision:/{print $2}')
-export BRANCH_OVERRIDE="CURRENT-r${REVISION}-p${LEVEL}"
+VERSION=$(awk -F'"' '/^REVISION=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
+BRANCH=$(awk -F'"' '/^BRANCH=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
+export BRANCH_OVERRIDE="${BRANCH}-r${REVISION}-p${LEVEL}"
 
-read x
 find . -type f -name '*.orig'
 find . -type f -name '*.orig' -delete
 read x
 
-rm -rf /usr/obj/*
+rm -rf $OBJDIR/*
 make -j $JOBS buildworld
 make -j $JOBS KERNCONF=$KERNCONF buildkernel
 
-if [ -d $ALT ]; then
-	chflags -R noschg $ALT
-	rm -rf $ALT
+if [ -d $ALTDIR ]; then
+	chflags -R noschg $ALTDIR
+	rm -rf $ALTDIR
 fi
 
-mkdir -p $ALT
+mkdir -p $ALTDIR
 
 for i in installworld distribution installkernel; do
-	make $i DESTDIR=$ALT
+	make $i DESTDIR=$ALTDIR
 done
 
-cd $ALT
+cd $ALTDIR
 install -v -o root -g wheel -m 0644 /dev/null etc/fstab
 install -v -o root -g wheel -m 0444 usr/share/zoneinfo/Europe/Moscow etc/localtime
 install -v -o root -g wheel -m 0444 /dev/null etc/wall_cmos_clock
@@ -76,11 +78,5 @@ beastie_disable="YES"
 autoboot_delay="3"
 EOF
 
-mkdir -p dist
-cd dist
-cp -pR $DEVEL/patches .
-cp -pR /root/bin .
-cp /etc/src.conf /etc/make.conf .
-cp $SRC/sys/amd64/conf/LENOVO* $SRC/sys/amd64/conf/B* .
-
-mkisofs -b boot/cdboot -no-emul-boot -r -J -V "$BRANCH_OVERRIDE" -o ../FreeBSD-10-$BRANCH_OVERRIDE.iso .
+mkisofs -b boot/cdboot -no-emul-boot -r -J -V "$BRANCH_OVERRIDE" \
+	-o ../FreeBSD-${TARGET}-${VERSION}-${BRANCH_OVERRIDE}.iso .
