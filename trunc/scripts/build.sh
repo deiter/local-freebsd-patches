@@ -3,6 +3,7 @@
 # $Id$
 #
 
+TZ="Europe/Moscow"
 DEVDIR="/var/devel"
 ALTDIR="$DEVDIR/alt"
 SRCDIR="/usr/src"
@@ -18,8 +19,11 @@ svn diff
 svn status
 svn up
 
-for i in $DEVDIR/patches/patch-*; do patch -p0 <$i || exit 1; done
-LEVEL=$(ls $DEVDIR/patches/patch-* | wc -l | awk '{print $NF}')
+for i in ../patches/patch-*; do patch -p0 <$i || exit 1; done
+for i in make.conf src.conf; do cat ../conf/$i >/etc/$i; done
+for i in i386 amd64; do cp ../conf/$i/* $SRCDIR/sys/$i/conf/; done
+
+LEVEL=$(ls ../patches/patch-* | wc -l | awk '{print $NF}')
 REVISION=$(svn info | awk '/^Revision:/{print $2}')
 VERSION=$(awk -F'"' '/^REVISION=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
 BRANCH=$(awk -F'"' '/^BRANCH=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
@@ -46,8 +50,9 @@ done
 
 cd $ALTDIR
 install -v -o root -g wheel -m 0644 /dev/null etc/fstab
-install -v -o root -g wheel -m 0444 usr/share/zoneinfo/Europe/Moscow etc/localtime
+install -v -o root -g wheel -m 0444 usr/share/zoneinfo/$TZ etc/localtime
 install -v -o root -g wheel -m 0444 /dev/null etc/wall_cmos_clock
+echo $TZ >var/db/zoneinfo
 mv COPYRIGHT etc/COPYRIGHT
 cat /dev/null >etc/COPYRIGHT
 cat /dev/null >etc/motd
