@@ -67,16 +67,27 @@ background_fsck="NO"
 blanktime="NO"
 update_motd="NO"
 entropy_file="NO"
-root_rw_mount="NO"
-hostid_enable="NO"
-hostname="cdrom.deiter.ru"
+hostname="install.deiter.ru"
 EOF
 
 cat >>boot/loader.conf <<-EOF
-boot_cdrom="YES"
 beastie_disable="YES"
 autoboot_delay="3"
 EOF
 
-mkisofs -b boot/cdboot -no-emul-boot -r -J -V "$BRANCH_OVERRIDE" \
-	-o ../FreeBSD-${TARGET}-${VERSION}-${BRANCH_OVERRIDE}.iso .
+rm -f $DEVDIR/base.tbz
+tar pcfy $DEVDIR/base.tbz .
+
+cat >>etc/rc.conf <<-EOF
+root_rw_mount="NO"
+hostid_enable="NO"
+EOF
+
+cat >>boot/loader.conf <<-EOF
+boot_cdrom="YES"
+EOF
+
+mv $DEVDIR/base.tbz media
+mkisofs -b boot/cdboot -no-emul-boot -r -J \
+	-V "FreeBSD-${TARGET}-${VERSION}-${BRANCH_OVERRIDE}" \
+	-o $DEVDIR/FreeBSD-${TARGET}-${VERSION}-${BRANCH_OVERRIDE}.iso .
