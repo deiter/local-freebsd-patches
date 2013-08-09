@@ -4,7 +4,7 @@
 #
 
 DEVDIR="/var/devel"
-ALTDIR="$DEVEL/alt"
+ALTDIR="$DEVDIR/alt"
 SRCDIR="/usr/src"
 OBJDIR="/usr/obj"
 JOBS=$(sysctl -n kern.smp.cpus)
