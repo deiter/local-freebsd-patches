@@ -27,7 +27,7 @@ options		TMPFS			# Efficient memory file system
 options		NULLFS			# NULL filesystem
 options		FUSE			# FUSE support module
 options 	GEOM_PART_GPT		# GUID Partition Tables.
-options 	GEOM_LABEL		# Provides labelization
+# options 	GEOM_LABEL		# Provides labelization
 # options		GEOM_BSD		# BSD disklabels
 # options		GEOM_MBR		# DOS/MBR partitioning
 # options		GEOM_LINUX_LVM		# Linux LVM2 volumes
