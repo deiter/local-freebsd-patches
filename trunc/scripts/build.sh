@@ -67,6 +67,7 @@ background_fsck="NO"
 blanktime="NO"
 update_motd="NO"
 entropy_file="NO"
+dumpdev="NO"
 hostname="install.deiter.ru"
 EOF
 
@@ -80,7 +81,6 @@ tar pcfy $DEVDIR/base.tbz .
 
 cat >>etc/rc.conf <<-EOF
 root_rw_mount="NO"
-hostid_file="/var/db/hostid"
 EOF
 
 cat >>boot/loader.conf <<-EOF
