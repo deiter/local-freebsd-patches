@@ -8,6 +8,8 @@ TMPDIR="/var/tmp"
 ALTDIR="$TMPDIR/alt"
 SRCDIR="/usr/src"
 OBJDIR="/usr/obj"
+SCRIPT=$(readlink -f $0)
+WRKDIR=$(dirname $(dirname $SCRIPT))
 JOBS=$(sysctl -n kern.smp.cpus)
 KERNCONF=$(hostname -s | tr [a-z] [A-Z])
 TARGET=$(uname -m)
@@ -24,11 +26,11 @@ svn diff
 svn status
 svn up
 
-for i in ../patches/patch-*; do patch -p0 <$i || exit 1; done
-for i in make.conf src.conf; do cat ../conf/$i >/etc/$i; done
-for i in i386 amd64; do cp ../conf/$i/* $SRCDIR/sys/$i/conf/; done
+for i in $WRKDIR/patches/patch-*; do patch -p0 <$i || exit 1; done
+for i in make.conf src.conf; do cat $WRKDIR/conf/$i >/etc/$i; done
+for i in i386 amd64; do cp $WRKDIR/conf/$i/* $SRCDIR/sys/$i/conf/; done
 
-LEVEL=$(ls ../patches/patch-* | wc -l | awk '{print $NF}')
+LEVEL=$(ls $WRKDIR/patches/patch-* | wc -l | awk '{print $NF}')
 REVISION=$(svn info | awk '/^Revision:/{print $2}')
 VERSION=$(awk -F'"' '/^REVISION=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
 BRANCH=$(awk -F'"' '/^BRANCH=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
