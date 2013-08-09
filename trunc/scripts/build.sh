@@ -89,5 +89,5 @@ EOF
 
 mv $DEVDIR/base.tbz media
 mkisofs -b boot/cdboot -no-emul-boot -r -J \
-	-V "FreeBSD-${TARGET}-${VERSION}-${BRANCH_OVERRIDE}" \
+	-V "${TARGET}-${VERSION}-${BRANCH_OVERRIDE}" \
 	-o $DEVDIR/FreeBSD-${TARGET}-${VERSION}-${BRANCH_OVERRIDE}.iso .
