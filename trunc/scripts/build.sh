@@ -80,7 +80,7 @@ tar pcfy $DEVDIR/base.tbz .
 
 cat >>etc/rc.conf <<-EOF
 root_rw_mount="NO"
-hostid_enable="NO"
+hostid_file="/var/db/hostid"
 EOF
 
 cat >>boot/loader.conf <<-EOF
