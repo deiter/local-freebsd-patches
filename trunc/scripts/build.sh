@@ -4,16 +4,21 @@
 #
 
 TZ="Europe/Moscow"
-DEVDIR="/var/devel"
-ALTDIR="$DEVDIR/alt"
+TMPDIR="/var/tmp"
+ALTDIR="$TMPDIR/alt"
 SRCDIR="/usr/src"
 OBJDIR="/usr/obj"
 JOBS=$(sysctl -n kern.smp.cpus)
 KERNCONF=$(hostname -s | tr [a-z] [A-Z])
 TARGET=$(uname -m)
 
+if [ ! -d $SRCDIR/.svn ]; then
+	mkdir -p $SRCDIR
+	svn checkout http://svn.freebsd.org/base/head $SRCDIR
+fi
+
 cd $SRCDIR
-find . -type f -name '*.orig' -delete
+svn cleanup
 svn revert -R .
 svn diff
 svn status
@@ -29,10 +34,7 @@ VERSION=$(awk -F'"' '/^REVISION=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
 BRANCH=$(awk -F'"' '/^BRANCH=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
 export BRANCH_OVERRIDE="${BRANCH}-r${REVISION}-p${LEVEL}"
 
-find . -type f -name '*.orig'
-find . -type f -name '*.orig' -delete
-read x
-
+find . -type f -name '*.orig' -exec rm -fv {} ';'
 rm -rf $OBJDIR/*
 make -j $JOBS buildworld
 make -j $JOBS buildkernel KERNCONF=$KERNCONF
@@ -81,8 +83,8 @@ beastie_disable="YES"
 autoboot_delay="3"
 EOF
 
-rm -f $DEVDIR/base.tbz
-tar pcfy $DEVDIR/base.tbz .
+rm -f $TMPDIR/base.tbz
+tar pcfy $TMPDIR/base.tbz .
 
 cat >>etc/rc.conf <<-EOF
 root_rw_mount="NO"
@@ -92,7 +94,7 @@ cat >>boot/loader.conf <<-EOF
 boot_cdrom="YES"
 EOF
 
-mv $DEVDIR/base.tbz media
+mv $TMPDIR/base.tbz media
 mkisofs -b boot/cdboot -no-emul-boot -r -J \
 	-V "${TARGET}-${VERSION}-${BRANCH_OVERRIDE}" \
-	-o $DEVDIR/FreeBSD-${TARGET}-${VERSION}-${BRANCH_OVERRIDE}.iso .
+	-o $TMPDIR/FreeBSD-${TARGET}-${VERSION}-${BRANCH_OVERRIDE}.iso .
