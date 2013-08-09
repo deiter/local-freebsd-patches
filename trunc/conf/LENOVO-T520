@@ -99,8 +99,8 @@ device		iicbus		# I2C bus system
 device		iicsmb		# I2C to SMB bridge
 device		smbus		# System Management Bus
 device		smb		# SMB generic I/O device
-device		intpm		# Intel PIIX4 Power Management controller driver
-options		ENABLE_ALART	# Control alarm on Intel intpm driver
+# device		intpm		# Intel PIIX4 Power Management controller driver
+# options		ENABLE_ALART	# Control alarm on Intel intpm driver
 device		ichwd		# Intel ICH watchdog timer
 device		ichsmb
 device		vpd
@@ -116,9 +116,9 @@ device		cpuctl		# CPU control pseudo-device
 device		cpufreq		# non-ACPI CPU frequency control
 device		coretemp	# on-die sensor on Intel Core and newer CPUs
 device		acpi		# Advanced Power Management
-device		acpi_ibm
-device		acpi_video
-device		acpi_dock
+# device		acpi_ibm
+# device		acpi_video
+# device		acpi_dock
 device		pci		# generic PCI driver
 device		ahci		# AHCI-compatible SATA controllers
 device		ata		# generic ATA/ATAPI disk controller
@@ -143,7 +143,7 @@ options		X86BIOS		# x86 real mode BIOS emulator
 options		TEKEN_UTF8
 options		PSM_HOOKRESUME		# hook the system resume event, useful
 options		PSM_RESETAFTERSUSPEND	# reset the device at the resume event
-device		dpms			# DPMS suspend & resume via VESA BIOS
+# device		dpms			# DPMS suspend & resume via VESA BIOS
 device		agp		# support several AGP chipsets
 device		uart		# Generic UART driver
 device		miibus		# MII bus support
@@ -179,4 +179,4 @@ device		umass		# Disks/Mass storage - Requires scbus and da
 device		ums		# Mouse
 device		ucom		# Generic com ttys
 device		uplcom		# Prolific PL-2303 serial adapters
-device		firewire
+# device		firewire
