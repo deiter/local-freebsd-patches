@@ -10,7 +10,7 @@ SRCDIR="/usr/src"
 OBJDIR="/usr/obj"
 SCRIPT=$(realpath $0)
 WRKDIR=$(dirname $(dirname $SCRIPT))
-JOBS=$(sysctl -n kern.smp.cpus)
+JOBS=$(( $(sysctl -n kern.smp.cpus) * 2 ))
 KERNCONF=$(hostname -s | tr [a-z] [A-Z])
 TARGET=$(uname -m)
 
