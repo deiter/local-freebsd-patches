@@ -29,7 +29,6 @@ options		FUSE			# FUSE support module
 options 	GEOM_PART_GPT		# GUID Partition Tables.
 options		GEOM_LABEL		# Provides labelization
 options		GEOM_ELI		# Disk encryption.
-options		COMPAT_43		# calls compatible with 4.3BSD
 options		COMPAT_FREEBSD32
 options		COMPAT_LINUX32
 options		LINPROCFS
