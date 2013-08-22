@@ -147,7 +147,7 @@ device		ath_rate_sample	# SampleRate tx rate control for ath
 device		loop		# Network loopback
 device		random		# Entropy device
 device		padlock		# VIA cryptographic functions and RNG
-options		PADLOCK_RNG	# VIA Padlock RNG
+device		padlock_rng	# VIA Padlock RNG
 device		ether		# Ethernet support
 device		if_bridge	# Bridge interface
 device		tap		# pty-like virtual Ethernet interface

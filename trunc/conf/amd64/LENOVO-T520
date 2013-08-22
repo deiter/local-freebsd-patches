@@ -153,7 +153,7 @@ device		wlan_amrr	# AMRR transmit rate control algorithm
 device		rum		# Ralink Technology RT2501USB wireless NICs
 device		loop		# Network loopback
 device		random		# Entropy device
-options		RDRAND_RNG	# Intel Bull Mountain RNG
+device		rdrand_rng	# Intel Bull Mountain RNG
 device		ether		# Ethernet support
 device		if_bridge	# Bridge interface
 device		tap		# pty-like virtual Ethernet interface
