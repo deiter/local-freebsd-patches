@@ -100,7 +100,6 @@ device		cpufreq		# non-ACPI CPU frequency control
 device		acpi		# Advanced Power Management
 device		apic		# I/O APIC
 device		pci		# generic PCI driver
-device		ahci		# AHCI-compatible SATA controllers
 device		ata		# generic ATA/ATAPI disk controller
 device		scbus		# SCSI bus (required for SCSI)
 device		da		# Direct Access (disks)
