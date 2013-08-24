@@ -1,0 +1,12 @@
+Index: sys/i386/conf/NOTES
+===================================================================
+--- sys/i386/conf/NOTES	(revision 254801)
++++ sys/i386/conf/NOTES	(working copy)
+@@ -899,6 +899,7 @@
+ #
+ device		coretemp
+ device		amdtemp
++device		viatemp
+ 
+ #
+ # CPU control pseudo-device. Provides access to MSRs, CPUID info and

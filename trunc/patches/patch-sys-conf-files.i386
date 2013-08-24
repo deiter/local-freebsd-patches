@@ -1,0 +1,12 @@
+Index: sys/conf/files.i386
+===================================================================
+--- sys/conf/files.i386	(revision 254801)
++++ sys/conf/files.i386	(working copy)
+@@ -266,6 +266,7 @@
+ dev/tpm/tpm_acpi.c		optional tpm acpi
+ dev/tpm/tpm_isa.c		optional tpm isa
+ dev/uart/uart_cpu_x86.c		optional uart
++dev/viatemp/viatemp.c		optional viatemp
+ dev/viawd/viawd.c		optional viawd
+ dev/vmware/vmxnet3/if_vmx.c	optional vmx
+ dev/acpica/acpi_if.m		standard
