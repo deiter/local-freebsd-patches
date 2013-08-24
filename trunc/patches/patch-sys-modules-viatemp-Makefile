@@ -1,0 +1,9 @@
+--- /dev/null	2013-08-25 03:18:01.000000000 +0400
++++ sys/modules/viatemp/Makefile	2013-08-25 00:49:55.276531601 +0400
+@@ -0,0 +1,6 @@
++.PATH: ${.CURDIR}/../../dev/viatemp
++
++KMOD=	viatemp
++SRCS=	viatemp.c bus_if.h device_if.h isa_if.h
++
++.include <bsd.kmod.mk>

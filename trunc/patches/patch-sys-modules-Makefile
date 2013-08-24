@@ -1,0 +1,20 @@
+Index: sys/modules/Makefile
+===================================================================
+--- sys/modules/Makefile	(revision 254801)
++++ sys/modules/Makefile	(working copy)
+@@ -339,6 +339,7 @@
+ 	${_vesa} \
+ 	${_virtio} \
+ 	vge \
++	${_viatemp} \
+ 	${_viawd} \
+ 	vkbd \
+ 	${_vmm} \
+@@ -603,6 +604,7 @@
+ _nvram=		nvram
+ _nxge=		nxge
+ _tpm=		tpm
++_viatemp=	viatemp
+ _viawd=		viawd
+ _wpi=		wpi
+ .if ${MK_SOURCELESS_UCODE} != "no"
