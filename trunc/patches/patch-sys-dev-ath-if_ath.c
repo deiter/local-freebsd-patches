@@ -1,5 +1,14 @@
---- sys/dev/ath/if_ath.c.orig	2013-08-23 16:58:18.490855134 +0400
-+++ sys/dev/ath/if_ath.c	2013-08-23 16:59:15.493828138 +0400
+--- sys/dev/ath/if_ath.c.orig	2013-08-24 17:08:04.149799214 +0400
++++ sys/dev/ath/if_ath.c	2013-08-24 22:16:08.541213565 +0400
+@@ -3199,7 +3199,7 @@
+ 		if_ath_alq_post(&sc->sc_alq, ATH_ALQ_STUCK_BEACON, 0, NULL);
+ #endif
+ 
+-	if_printf(ifp, "stuck beacon; resetting (bmiss count %u)\n",
++	DPRINTF(sc, ATH_DEBUG_RESET, "stuck beacon; resetting (bmiss count %u)\n",
+ 		sc->sc_bmisscount);
+ 	sc->sc_stats.ast_bstuck++;
+ 	/*
 @@ -6439,7 +6439,7 @@
  	 * Immediately punt.
  	 */
