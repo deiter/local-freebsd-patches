@@ -1,5 +1,5 @@
---- lib/libkse/Makefile.orig	2013-08-08 05:32:39.000000000 +0000
-+++ lib/libkse/Makefile	2013-08-08 05:33:38.000000000 +0000
+--- lib/libkse/Makefile.orig	2013-08-24 17:07:40.599787690 +0400
++++ lib/libkse/Makefile	2013-08-24 17:17:18.907747780 +0400
 @@ -21,18 +21,12 @@
  CFLAGS+=-I${.CURDIR}/../../libexec/rtld-elf/${MACHINE_CPUARCH}
  CFLAGS+=-fno-builtin
