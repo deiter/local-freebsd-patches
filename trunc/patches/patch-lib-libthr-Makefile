@@ -1,5 +1,5 @@
---- lib/libthr/Makefile.orig	2013-08-24 17:07:39.816793762 +0400
-+++ lib/libthr/Makefile	2013-08-24 17:17:18.956742275 +0400
+--- lib/libthr/Makefile.orig	2013-08-25 14:00:00.763849998 +0400
++++ lib/libthr/Makefile	2013-08-25 14:07:33.525823619 +0400
 @@ -38,10 +38,6 @@
  
  MAN=	libthr.3
