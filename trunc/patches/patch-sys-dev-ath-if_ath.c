@@ -1,5 +1,5 @@
---- sys/dev/ath/if_ath.c.orig	2013-08-24 17:08:04.149799214 +0400
-+++ sys/dev/ath/if_ath.c	2013-08-24 22:16:08.541213565 +0400
+--- sys/dev/ath/if_ath.c.orig	2013-08-25 14:00:48.647845509 +0400
++++ sys/dev/ath/if_ath.c	2013-08-25 14:07:33.782821876 +0400
 @@ -3199,7 +3199,7 @@
  		if_ath_alq_post(&sc->sc_alq, ATH_ALQ_STUCK_BEACON, 0, NULL);
  #endif

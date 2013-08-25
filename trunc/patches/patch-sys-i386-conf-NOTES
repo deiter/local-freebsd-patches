@@ -1,7 +1,5 @@
-Index: sys/i386/conf/NOTES
-===================================================================
---- sys/i386/conf/NOTES	(revision 254801)
-+++ sys/i386/conf/NOTES	(working copy)
+--- sys/i386/conf/NOTES.orig	2013-08-25 14:00:23.347852230 +0400
++++ sys/i386/conf/NOTES	2013-08-25 14:07:34.154818085 +0400
 @@ -899,6 +899,7 @@
  #
  device		coretemp

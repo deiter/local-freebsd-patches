@@ -1,7 +1,5 @@
-Index: sys/modules/Makefile
-===================================================================
---- sys/modules/Makefile	(revision 254801)
-+++ sys/modules/Makefile	(working copy)
+--- sys/modules/Makefile.orig	2013-08-25 14:00:35.171850262 +0400
++++ sys/modules/Makefile	2013-08-25 14:07:34.213811093 +0400
 @@ -339,6 +339,7 @@
  	${_vesa} \
  	${_virtio} \
