@@ -1,8 +1,8 @@
 #
 # $Id$
 #
-cpu		HAMMER
-ident		LENOVO-T520
+cpu		HAMMER			# aka K8, aka Opteron & Athlon64
+ident		LENOVO-T520		# Lenovo T520 laptop
 options		SCHED_ULE		# ULE scheduler
 options 	PREEMPTION		# Enable kernel thread preemption
 options 	INET			# InterNETworking
