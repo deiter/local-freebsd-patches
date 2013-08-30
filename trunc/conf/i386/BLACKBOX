@@ -1,8 +1,8 @@
 #
 # $Id$
 #
-cpu		I686_CPU
-ident		BLACKBOX
+cpu		I686_CPU		# aka Pentium Pro(tm)
+ident		BLACKBOX		# WiFi router
 options		SCHED_ULE		# ULE scheduler
 options 	PREEMPTION		# Enable kernel thread preemption
 options 	INET			# InterNETworking
