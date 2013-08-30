@@ -22,6 +22,7 @@ fi
 cd $SRCDIR
 svn cleanup
 svn revert -R .
+rm -rf sys/dev/viatemp sys/modules/viatemp
 svn diff
 svn status
 svn up
