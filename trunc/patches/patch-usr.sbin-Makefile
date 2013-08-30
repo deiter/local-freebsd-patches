@@ -1,0 +1,14 @@
+--- usr.sbin/Makefile.orig	2013-08-30 21:57:59.558523449 +0400
++++ usr.sbin/Makefile	2013-08-30 21:58:28.202520529 +0400
+@@ -41,11 +41,9 @@
+ 	makefs \
+ 	memcontrol \
+ 	mergemaster \
+-	mfiutil \
+ 	mixer \
+ 	mlxcontrol \
+ 	mountd \
+-	mptutil \
+ 	mtest \
+ 	mtree \
+ 	newsyslog \

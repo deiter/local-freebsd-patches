@@ -1,0 +1,10 @@
+--- cddl/usr.sbin/zhack/Makefile.orig	2013-08-30 21:51:54.814545884 +0400
++++ cddl/usr.sbin/zhack/Makefile	2013-08-30 21:52:06.033543616 +0400
+@@ -26,7 +26,4 @@
+ 	${LIBUUTIL} ${LIBZFS_CORE} ${LIBZFS} ${LIBZPOOL}
+ LDADD=	-lgeom -lm -lnvpair -lpthread -lumem -luutil -lzfs_core -lzfs -lzpool
+ 
+-CFLAGS+=	-DDEBUG=1
+-#DEBUG_FLAGS+=	-g
+-
+ .include <bsd.prog.mk>
