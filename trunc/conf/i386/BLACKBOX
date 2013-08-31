@@ -91,7 +91,7 @@ device		iicsmb		# I2C to SMB bridge
 device		smbus		# System Management Bus
 device		smb		# SMB generic I/O device
 device		nvram		# Access to rtc cmos via /dev/nvram
-device		wbwd		# Winbond watchdog timer
+# device	wbwd		# Winbond watchdog timer
 device		viatemp		# VIA CPU Thermal Sensor
 device		viapm		# VIA chipsets Power Management controller
 device		smbios		# DMI/SMBIOS entry point
