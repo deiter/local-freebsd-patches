@@ -2,7 +2,7 @@
 # $Id$
 #
 cpu		HAMMER			# aka K8, aka Opteron & Athlon64
-ident		LENOVO-T520		# Lenovo T520 laptop
+ident		BLACKBIRD		# Gigabyte GA-C1037UN-EU
 options		SCHED_ULE		# ULE scheduler
 options 	PREEMPTION		# Enable kernel thread preemption
 options 	INET			# InterNETworking
@@ -22,7 +22,6 @@ options 	CD9660			# ISO 9660 Filesystem
 options 	PROCFS			# Process filesystem (requires PSEUDOFS)
 options		FDESCFS			# File descriptor filesystem
 options 	PSEUDOFS		# Pseudo-filesystem framework
-options		PROCDESC		# Support for process descriptors
 options		TMPFS			# Efficient memory file system
 options		NULLFS			# NULL filesystem
 options		FUSE			# FUSE support module
@@ -95,15 +94,9 @@ device		iicbus		# I2C bus system
 device		iicsmb		# I2C to SMB bridge
 device		smbus		# System Management Bus
 device		smb		# SMB generic I/O device
-# device		intpm		# Intel PIIX4 Power Management controller driver
-# options		ENABLE_ALART	# Control alarm on Intel intpm driver
 device		ichwd		# Intel ICH watchdog timer
 device		ichsmb		# Intel ICH SMBus controller driver
-device		vpd		# Vital Product Data kernel interface
 device		nvram		# Access to rtc cmos via /dev/nvram
-device		mmc		# MMC/SD bus
-device		mmcsd		# MMC/SD memory card
-device		sdhci		# Generic PCI SD Host Controller
 device		smbios		# DMI/SMBIOS entry point
 device		sound		# The generic sound driver
 device		snd_hda		# Intel High Definition Audio
@@ -113,9 +106,6 @@ device		cpufreq		# non-ACPI CPU frequency control
 device		coretemp	# on-die sensor on Intel Core and newer CPUs
 device		acpi		# Advanced Power Management
 options		ACPI_DMAR	# Virtualization Technology for Directed I/O 
-# device		acpi_ibm
-# device		acpi_video
-# device		acpi_dock
 device		pci		# generic PCI driver
 device		ahci		# AHCI-compatible SATA controllers
 device		ata		# generic ATA/ATAPI disk controller
@@ -140,11 +130,10 @@ options		X86BIOS			# x86 real mode BIOS emulator
 options		TEKEN_UTF8		# UTF-8 output handling
 options		PSM_HOOKRESUME		# hook the system resume event, useful
 options		PSM_RESETAFTERSUSPEND	# reset the device at the resume event
-# device		dpms			# DPMS suspend & resume via VESA BIOS
 device		agp		# support several AGP chipsets
 device		uart		# Generic UART driver
 device		miibus		# MII bus support
-device		em		# Intel Pro/1000 Gigabit Ethernet
+device		re		# RealTek 8139C+/8169/8169S/8110S
 device		wlan		# 802.11 support
 device		wlan_wep	# 802.11 WEP support
 device		wlan_ccmp	# 802.11 CCMP support
@@ -153,6 +142,28 @@ device		wlan_xauth	# 802.11 External authenticator support
 device		wlan_acl	# 802.11 MAC-based ACL support
 device		wlan_amrr	# AMRR transmit rate control algorithm
 device		rum		# Ralink Technology RT2501USB wireless NICs
+device		run		# Ralink Technology USB IEEE 802.11a/g/n wireless NICs
+device		runfw		# Firmware Module for Ralink driver
+device		ath		# Atheros NICs
+device		ath_pci		# Atheros pci/cardbus glue
+device		ath_hal		# pci/cardbus chip support
+device         ath_ar5210      # AR5210 chips
+device         ath_ar5211      # AR5211 chips
+device         ath_ar5212      # AR5212 chips
+device         ath_rf2413
+device         ath_rf2417
+device         ath_rf2425
+device         ath_rf5111
+device         ath_rf5112
+device         ath_rf5413
+device         ath_ar5416      # AR5416 chips
+device         ath_ar9160      # AR9160 chips
+device         ath_ar9280      # AR9280 chips
+device         ath_ar9285      # AR9285 chips
+options		AH_SUPPORT_AR5416		# enable AR5416 tx/rx descriptors
+options		AH_AR5416_INTERRUPT_MITIGATION	# AR5416 interrupt mitigation
+options		ATH_ENABLE_11N	# Enable 802.11n support for AR5416 and later
+device		ath_rate_sample	# SampleRate tx rate control for ath
 device		loop		# Network loopback
 device		random		# Entropy device
 device		rdrand_rng	# Intel Bull Mountain RNG
@@ -176,4 +187,3 @@ device		umass		# Disks/Mass storage - Requires scbus and da
 device		ums		# Mouse
 device		ucom		# Generic com ttys
 device		uplcom		# Prolific PL-2303 serial adapters
-# device		firewire
