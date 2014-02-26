@@ -13,31 +13,37 @@ WRKDIR=$(dirname $(dirname $SCRIPT))
 JOBS=$(( $(sysctl -n kern.smp.cpus) * 2 ))
 KERNCONF=$(hostname -s | tr [a-z] [A-Z])
 TARGET=$(uname -m)
+SVN=svnlite
 
 if [ ! -d $SRCDIR/.svn ]; then
 	mkdir -p $SRCDIR
-	svn checkout http://svn.freebsd.org/base/head $SRCDIR
+	$SVN checkout http://svn.freebsd.org/base/head $SRCDIR
 fi
 
 cd $SRCDIR
-svn cleanup
-svn revert -R .
+$SVN cleanup
+$SVN revert -R .
 rm -rf sys/dev/viatemp sys/modules/viatemp
-svn diff
-svn status
-svn up
+$SVN diff
+$SVN status
+$SVN up
 
 for i in $WRKDIR/patches/patch-*; do patch -p0 <$i || exit 1; done
 for i in make.conf src.conf; do cat $WRKDIR/conf/$i >/etc/$i; done
 for i in i386 amd64; do cp $WRKDIR/conf/$i/* $SRCDIR/sys/$i/conf/; done
 
 LEVEL=$(ls $WRKDIR/patches/patch-* | wc -l | awk '{print $NF}')
-REVISION=$(svn info | awk '/^Revision:/{print $2}')
+REVISION=$($SVN info | awk '/^Revision:/{print $2}')
 VERSION=$(awk -F'"' '/^REVISION=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
 BRANCH=$(awk -F'"' '/^BRANCH=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
 export BRANCH_OVERRIDE="${BRANCH}-r${REVISION}-p${LEVEL}"
 
+read ll
+
 find . -type f -name '*.orig' -exec rm -fv {} ';'
+REJECTED=$(find . -type f -name '*.rej' -exec ls {} ';')
+test -n "$REJECTED" && false
+
 rm -rf $OBJDIR/*
 make -j $JOBS buildworld
 make -j $JOBS buildkernel KERNCONF=$KERNCONF
