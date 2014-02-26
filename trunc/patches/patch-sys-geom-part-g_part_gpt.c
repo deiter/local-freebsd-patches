@@ -1,6 +1,6 @@
---- sys/geom/part/g_part_gpt.c.orig	2013-08-25 14:00:22.107856346 +0400
-+++ sys/geom/part/g_part_gpt.c	2013-08-25 14:07:34.046820123 +0400
-@@ -883,10 +883,12 @@
+--- sys/geom/part/g_part_gpt.c.orig	2014-02-26 20:12:46.000000000 +0400
++++ sys/geom/part/g_part_gpt.c	2014-02-26 20:12:58.000000000 +0400
+@@ -898,10 +898,12 @@
  	}
  
  	if (table->state[GPT_ELT_PRITBL] != GPT_STATE_OK) {
@@ -13,7 +13,7 @@
  		table->hdr = sechdr;
  		basetable->gpt_corrupt = 1;
  		if (prihdr != NULL)
-@@ -902,8 +904,10 @@
+@@ -917,8 +919,10 @@
  			    "suggested.\n", pp->name);
  			basetable->gpt_corrupt = 1;
  		} else if (table->lba[GPT_ELT_SECHDR] != last) {

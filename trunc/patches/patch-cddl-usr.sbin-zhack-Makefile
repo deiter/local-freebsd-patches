@@ -1,5 +1,5 @@
---- cddl/usr.sbin/zhack/Makefile.orig	2013-08-30 21:51:54.814545884 +0400
-+++ cddl/usr.sbin/zhack/Makefile	2013-08-30 21:52:06.033543616 +0400
+--- cddl/usr.sbin/zhack/Makefile.orig	2014-02-26 20:12:45.000000000 +0400
++++ cddl/usr.sbin/zhack/Makefile	2014-02-26 20:12:58.000000000 +0400
 @@ -26,7 +26,4 @@
  	${LIBUUTIL} ${LIBZFS_CORE} ${LIBZFS} ${LIBZPOOL}
  LDADD=	-lgeom -lm -lnvpair -lpthread -lumem -luutil -lzfs_core -lzfs -lzpool
