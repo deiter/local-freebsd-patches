@@ -38,8 +38,6 @@ VERSION=$(awk -F'"' '/^REVISION=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
 BRANCH=$(awk -F'"' '/^BRANCH=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
 export BRANCH_OVERRIDE="${BRANCH}-r${REVISION}-p${LEVEL}"
 
-read ll
-
 find . -type f -name '*.orig' -exec rm -fv {} ';'
 REJECTED=$(find . -type f -name '*.rej' -exec ls {} ';')
 test -n "$REJECTED" && false
