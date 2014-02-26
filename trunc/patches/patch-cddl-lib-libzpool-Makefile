@@ -1,5 +1,5 @@
---- cddl/lib/libzpool/Makefile.orig	2013-08-30 21:52:48.352562454 +0400
-+++ cddl/lib/libzpool/Makefile	2013-08-30 21:53:06.068537321 +0400
+--- cddl/lib/libzpool/Makefile.orig	2014-02-26 20:12:45.000000000 +0400
++++ cddl/lib/libzpool/Makefile	2014-02-26 20:12:58.000000000 +0400
 @@ -64,9 +64,4 @@
  
  CSTD=	c99

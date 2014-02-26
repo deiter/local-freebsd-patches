@@ -1,5 +1,5 @@
---- sys/boot/common/part.c.orig	2013-08-25 14:01:05.801845582 +0400
-+++ sys/boot/common/part.c	2013-08-25 14:07:33.584810760 +0400
+--- sys/boot/common/part.c.orig	2014-02-26 20:12:46.000000000 +0400
++++ sys/boot/common/part.c	2014-02-26 20:12:58.000000000 +0400
 @@ -637,7 +637,7 @@
  			break;
  		}
