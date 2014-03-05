@@ -147,19 +147,19 @@ device		runfw		# Firmware Module for Ralink driver
 device		ath		# Atheros NICs
 device		ath_pci		# Atheros pci/cardbus glue
 device		ath_hal		# pci/cardbus chip support
-device         ath_ar5210      # AR5210 chips
-device         ath_ar5211      # AR5211 chips
-device         ath_ar5212      # AR5212 chips
-device         ath_rf2413
-device         ath_rf2417
-device         ath_rf2425
-device         ath_rf5111
-device         ath_rf5112
-device         ath_rf5413
-device         ath_ar5416      # AR5416 chips
-device         ath_ar9160      # AR9160 chips
-device         ath_ar9280      # AR9280 chips
-device         ath_ar9285      # AR9285 chips
+device		ath_ar5210	# AR5210 chips
+device		ath_ar5211	# AR5211 chips
+device		ath_ar5212	# AR5212 chips
+device		ath_rf2413
+device		ath_rf2417
+device		ath_rf2425
+device		ath_rf5111
+device		ath_rf5112
+device		ath_rf5413
+device		ath_ar5416	# AR5416 chips
+device		ath_ar9160	# AR9160 chips
+device		ath_ar9280	# AR9280 chips
+device		ath_ar9285	# AR9285 chips
 options		AH_SUPPORT_AR5416		# enable AR5416 tx/rx descriptors
 options		AH_AR5416_INTERRUPT_MITIGATION	# AR5416 interrupt mitigation
 options		ATH_ENABLE_11N	# Enable 802.11n support for AR5416 and later
