@@ -1,7 +1,7 @@
---- sys/boot/common/part.c.orig	2014-02-26 20:12:46.000000000 +0400
-+++ sys/boot/common/part.c	2014-02-26 20:12:58.000000000 +0400
+--- sys/boot/common/part.c.orig	2014-08-15 02:23:59.000000000 +0400
++++ sys/boot/common/part.c	2014-08-15 02:24:11.000000000 +0400
 @@ -637,7 +637,7 @@
- 			break;
+ 			goto out;
  		}
  #ifdef LOADER_GPT_SUPPORT
 -		if (dp[i].dp_typ == DOSPTYP_PMBR) {

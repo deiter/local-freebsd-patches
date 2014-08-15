@@ -6,6 +6,8 @@ ident		BLACKBIRD		# Gigabyte GA-C1037UN-EU
 options		SCHED_ULE		# ULE scheduler
 options 	PREEMPTION		# Enable kernel thread preemption
 options 	INET			# InterNETworking
+# options	PCBGROUP		# Protocol control-block groups
+# options	RSS			# Receive-side scaling support
 options		TCP_OFFLOAD		# TCP offload
 options		SCTP			# transport protocol defined by RFC2960
 options 	FFS			# Berkeley Fast Filesystem
@@ -29,9 +31,9 @@ options 	GEOM_PART_GPT		# GUID Partition Tables.
 options		GEOM_LABEL		# Provides labelization
 options		GEOM_ELI		# Disk encryption.
 options		COMPAT_FREEBSD32	# 32-bit runtime support for FreeBSD/i386 binaries
-options		COMPAT_LINUX32		# 32-bit Linux ABI emulation
-options		LINPROCFS		# linux-like proc filesystem support
-options		LINSYSFS		# linux-like sys filesystem support
+# options	COMPAT_LINUX32		# 32-bit Linux ABI emulation
+# options	LINPROCFS		# linux-like proc filesystem support
+# options	LINSYSFS		# linux-like sys filesystem support
 options 	SCSI_DELAY=5000		# Delay (in ms) before probing SCSI
 options 	SYSVSHM			# SYSV-style shared memory
 options 	SYSVMSG			# SYSV-style message queues
@@ -42,7 +44,6 @@ options 	_KPOSIX_PRIORITY_SCHEDULING # POSIX P1003_1B real-time extensions
 options		PRINTF_BUFR_SIZE=128	# Prevent printf output bein ...
 options 	KBD_INSTALL_CDEV	# install a CDEV entry in /dev
 options		FLOWTABLE		# per-cpu routing cache
-device		lindev			# Linux-specific pseudo devices support
 device		pf			# PF OpenBSD packet-filter firewall
 device		pflog			# logging support interface for PF
 options		KTRACE			# ktrace(1) support

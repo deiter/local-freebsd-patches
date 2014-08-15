@@ -13,7 +13,7 @@ WRKDIR=$(dirname $(dirname $SCRIPT))
 JOBS=$(( $(sysctl -n kern.smp.cpus) * 2 ))
 KERNCONF=$(hostname -s | tr [a-z] [A-Z])
 TARGET=$(uname -m)
-SVN=svnlite
+SVN=svn
 
 if [ ! -d $SRCDIR/.svn ]; then
 	mkdir -p $SRCDIR
