@@ -1,6 +1,6 @@
---- usr.sbin/Makefile.orig	2014-02-26 20:12:44.000000000 +0400
-+++ usr.sbin/Makefile	2014-02-26 20:12:58.000000000 +0400
-@@ -42,11 +42,9 @@
+--- usr.sbin/Makefile.orig	2014-08-15 02:23:57.000000000 +0400
++++ usr.sbin/Makefile	2014-08-15 02:24:11.000000000 +0400
+@@ -43,11 +43,9 @@
  	makefs \
  	memcontrol \
  	mergemaster \
