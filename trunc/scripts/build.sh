@@ -13,7 +13,15 @@ WRKDIR=$(dirname $(dirname $SCRIPT))
 JOBS=$(( $(sysctl -n kern.smp.cpus) * 2 ))
 KERNCONF=$(hostname -s | tr [a-z] [A-Z])
 TARGET=$(uname -m)
-SVN=svn
+
+if [ -x /usr/bin/svnlite ]; then
+	SVN=/usr/bin/svnlite
+elif [ -x /usr/bin/svn ]; then
+	SVN=/usr/bin/svn
+else
+	echo "svn not found"
+	exit 1
+fi
 
 if [ ! -d $SRCDIR/.svn ]; then
 	mkdir -p $SRCDIR
