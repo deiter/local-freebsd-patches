@@ -101,7 +101,6 @@ device		ichwd		# Intel ICH watchdog timer
 device		ichsmb		# Intel ICH SMBus controller driver
 device		nvram		# Access to rtc cmos via /dev/nvram
 device		smbios		# DMI/SMBIOS entry point
-device		sound		# The generic sound driver
 options		SMP		# Symmetric MultiProcessor Kernel
 device		cpuctl		# CPU control pseudo-device
 device		cpufreq		# non-ACPI CPU frequency control
