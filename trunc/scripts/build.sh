@@ -82,15 +82,13 @@ EOF
 cat >etc/rc.conf <<-EOF
 cron_enable="NO"
 sendmail_enable="NONE"
-powerd_enable="YES"
-powerd_flags="-a adaptive"
 fsck_y_enable="YES"
 background_fsck="NO"
 blanktime="NO"
 update_motd="NO"
 entropy_file="NO"
 dumpdev="NO"
-hostname="install.deiter.ru"
+hostname="install.deiter.local"
 EOF
 
 cat >>boot/loader.conf <<-EOF
@@ -101,15 +99,16 @@ EOF
 rm -f $TMPDIR/base.tbz
 tar pcfy $TMPDIR/base.tbz .
 
-cat >>etc/rc.conf <<-EOF
-root_rw_mount="NO"
-EOF
+# ISO
+#cat >>etc/rc.conf <<-EOF
+#root_rw_mount="NO"
+#EOF
+#
+#cat >>boot/loader.conf <<-EOF
+#boot_cdrom="YES"
+#EOF
 
-cat >>boot/loader.conf <<-EOF
-boot_cdrom="YES"
-EOF
-
-mv $TMPDIR/base.tbz media
-mkisofs -b boot/cdboot -no-emul-boot -r -J \
-	-V "${TARGET}-${VERSION}-${BRANCH_OVERRIDE}" \
-	-o $TMPDIR/FreeBSD-${TARGET}-${VERSION}-${BRANCH_OVERRIDE}.iso .
+#mv $TMPDIR/base.tbz media
+#mkisofs -b boot/cdboot -no-emul-boot -r -J \
+#	-V "${TARGET}-${VERSION}-${BRANCH_OVERRIDE}" \
+#	-o $TMPDIR/FreeBSD-${TARGET}-${VERSION}-${BRANCH_OVERRIDE}.iso .
