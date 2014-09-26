@@ -102,7 +102,6 @@ device		ichsmb		# Intel ICH SMBus controller driver
 device		nvram		# Access to rtc cmos via /dev/nvram
 device		smbios		# DMI/SMBIOS entry point
 device		sound		# The generic sound driver
-device		snd_hda		# Intel High Definition Audio
 options		SMP		# Symmetric MultiProcessor Kernel
 device		cpuctl		# CPU control pseudo-device
 device		cpufreq		# non-ACPI CPU frequency control
