@@ -1,19 +1,18 @@
 #!/bin/sh -x
 
-killall dhclient
+HW="iwn0"
+IN="wlan0"
+
 killall wpa_supplicant
-ifconfig wlan0 destroy
-
+killall dhclient
+ifconfig $IN destroy
 sleep 3
-set -e
-
-# ifconfig wlan0 create wlandev rum0
-ifconfig wlan0 create wlandev iwn0
-wpa_supplicant -s -B -i wlan0 -c /etc/wpa_supplicant.conf
+ifconfig wlan create wlandev $HW
+ifconfig $IN country RU regdomain ETSI
+wpa_supplicant -s -B -i $IN -c /etc/wpa_supplicant.conf
 while [ 1 ]; do
-        ifconfig wlan0 | grep 'status: associated' && break
-        sleep 1
+	ifconfig $IN | grep 'status: associated' && break
+	sleep 1
 done
 
-dhclient wlan0
-
+#ifconfig $IN inet 172.27.0.98 netmask 255.255.255.0 up

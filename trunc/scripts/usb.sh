@@ -9,23 +9,27 @@ if [ $# -ne 1 ]; then
 else
 	USB="$1"
 	CWD="$PWD"
+	SRC=$(dirname $(realpath $0))
 fi
 
 gpart destroy -F $USB || true
 gpart create -s GPT $USB
-gpart bootcode -b /boot/pmbr $USB
-gpart add -t freebsd-boot -s 512k -a 4k -l usb4boot $USB
-gpart bootcode -p /boot/gptboot -i 1 $USB
-gpart add -t freebsd-ufs -b 1m -l usb4root $USB
-newfs -j -L usb4root -O 2 -U /dev/gpt/usb4root
-mkdir /usb4mnt
-mount /dev/gpt/usb4root /usb4mnt
-cd /usb4mnt
+gpart add -t freebsd-boot -s 512k -l usb-boot $USB
+gpart add -t freebsd-ufs -b 1m -l usb-root $USB
+gpart bootcode -b /boot/pmbr -p /boot/gptboot -i 1 $USB
+
+newfs -L usb-root -O 2 -U -j -l /dev/gpt/usb-root
+tunefs -a enable /dev/gpt/usb-root
+
+mkdir -p /usb-mnt
+mount /dev/ufs/usb-root /usb-mnt
+cd /usb-mnt
 tar pxf /var/tmp/base.tbz
 cat >etc/fstab <<-EOF
-/dev/gpt/usb4root	/	ufs	rw	1	1
+/dev/ufs/usb-root	/	ufs	rw	1	1
 EOF
 cp /var/tmp/base.tbz media
+cp $SRC/*.sh media
 cd $CWD
-umount /usb4mnt
-rmdir /usb4mnt
+umount /usb-mnt
+rmdir /usb-mnt
