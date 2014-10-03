@@ -30,7 +30,7 @@ cat >etc/fstab <<-EOF
 EOF
 cd media
 cp /var/tmp/base.tbz .
-svn checkout https://local-freebsd-patches.googlecode.com/svn/ local-freebsd-patches --trust-server-cert
+svn checkout https://local-freebsd-patches.googlecode.com/svn/ local-freebsd-patches --trust-server-cert --non-interactive
 cd $CWD
 umount /usb_mnt
 rmdir /usb_mnt
