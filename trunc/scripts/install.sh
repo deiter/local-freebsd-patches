@@ -64,6 +64,10 @@ gpart add -a 4k -t freebsd-zfs -l shared_data_0 ada3
 gpart bootcode -b /boot/pmbr -p /boot/gptzfsboot -i 1 ada3
 gnop create -S 4096 /dev/gpt/shared_data_0
 
+gpart add -a 4k -s 512k -t freebsd-boot -l backup_boot ada2
+gpart add -a 4k -t freebsd-zfs -l backup_data_0 ada2
+gpart bootcode -b /boot/pmbr -p /boot/gptzfsboot -i 1 ada2
+
 zpool create \
 	-O compression=lz4 \
 	-O atime=off \
@@ -73,6 +77,12 @@ zpool create \
 	cache /dev/gpt/shared_cache_0.nop \
 	log /dev/gpt/shared_log_0.nop
 
+zpool create \
+	-O compression=lz4 \
+	-O atime=off \
+	-O mountpoint=none \
+	backup \
+	/dev/gpt/backup_data_0
 
 for k in system shared; do
 	zpool export $k
