@@ -28,8 +28,9 @@ tar pxf /var/tmp/base.tbz
 cat >etc/fstab <<-EOF
 /dev/ufs/usb_root	/	ufs	rw	1	1
 EOF
-cp /var/tmp/base.tbz media
-cp $SRC/*.sh media
+cd media
+cp /var/tmp/base.tbz .
+svn checkout https://local-freebsd-patches.googlecode.com/svn/ local-freebsd-patches --trust-server-cert
 cd $CWD
 umount /usb_mnt
 rmdir /usb_mnt
