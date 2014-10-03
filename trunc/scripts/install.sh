@@ -113,6 +113,9 @@ zfs create system/$ROOT/var/spool
 zfs create system/$ROOT/var/tmp
 chmod 1777 /mnt/var/tmp
 
+zfs create -V 64G system/swap
+zfs set org.freebsd:swap=on system/swap
+
 zpool set bootfs=system/$ROOT system
 
 cd /mnt
