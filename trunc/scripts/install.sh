@@ -2,7 +2,7 @@
 
 rm -f /boot/zfs/zpool.cache
 
-RELEASE=$(uname -r)
+RELEASE=$(uname -r | awk -F- '{printf "%s_%s", $3, $4}')
 
 # ada0: <INTEL SSDSC2BW120A4 DC22> ATA-9 SATA 3.x device
 # ada1: <INTEL SSDSC2CW120A3 400i> ATA-9 SATA 3.x device
@@ -17,7 +17,10 @@ SSD="ada0 ada1"
 HDD="ada2 ada3 ada4 ada5 ada6 ada7"
 
 for i in $HDD $SSD; do
-	gpart destroy -F $i || true
+	gpart show $i >/dev/null 2>&1 && gpart destroy -F $i || true
+	dd if=/dev/zero of=/dev/$i bs=1M count=100
+	SEEK=$(diskinfo $i | awk '{printf "%d", $3/1024/1024-100}')
+	dd if=/dev/zero of=/dev/$i bs=1M seek=$SEEK || true
 	gpart create -s gpt $i
 done
 
@@ -43,11 +46,11 @@ for i in ada4 ada5 ada6 ada7; do
 	n=$(( $n + 1 ))
 done
 
-for i in shared_cache_0 tank_log_0 system_cache_0 system_log_0; do
+for i in shared_log_0 system_log_0; do
 	gnop create -S 4096 /dev/gpt/$i
 done
 
-zpool create \
+zpool create -f \
 	-O compression=lz4 \
 	-O atime=off \
 	-O mountpoint=none \
@@ -56,28 +59,28 @@ zpool create \
 	/dev/gpt/system_data_1 \
 	/dev/gpt/system_data_2 \
 	/dev/gpt/system_data_3 \
-	cache /dev/gpt/system_cache_0.nop \
+	cache /dev/gpt/system_cache_0 \
 	log /dev/gpt/system_log_0.nop
 
-gpart add -a 4k -s 512k -t freebsd-boot -l shared_boot ada3
+gpart add -a 4k -s 512k -t freebsd-boot -l shared_boot_0 ada3
 gpart add -a 4k -t freebsd-zfs -l shared_data_0 ada3
 gpart bootcode -b /boot/pmbr -p /boot/gptzfsboot -i 1 ada3
 gnop create -S 4096 /dev/gpt/shared_data_0
 
-gpart add -a 4k -s 512k -t freebsd-boot -l backup_boot ada2
+gpart add -a 4k -s 512k -t freebsd-boot -l backup_boot_0 ada2
 gpart add -a 4k -t freebsd-zfs -l backup_data_0 ada2
 gpart bootcode -b /boot/pmbr -p /boot/gptzfsboot -i 1 ada2
 
-zpool create \
+zpool create -f \
 	-O compression=lz4 \
 	-O atime=off \
 	-O mountpoint=none \
 	shared \
 	/dev/gpt/shared_data_0.nop \
-	cache /dev/gpt/shared_cache_0.nop \
+	cache /dev/gpt/shared_cache_0 \
 	log /dev/gpt/shared_log_0.nop
 
-zpool create \
+zpool create -f \
 	-O compression=lz4 \
 	-O atime=off \
 	-O mountpoint=none \
@@ -86,18 +89,20 @@ zpool create \
 
 for k in system shared; do
 	zpool export $k
-	for i in cache log; do
-		test -f /dev/gpt/${k}_${i}_0.nop && gnop destroy /dev/gpt/${k}_${i}_0.nop
-	done
+	if [ -c /dev/gpt/${k}_log_0.nop ]; then
+		gnop destroy /dev/gpt/${k}_log_0.nop
+	fi
 	for n in 0 1 2 3 4 5 6 7 8 9; do
-		test -f /dev/gpt/${k}_data_${n}.nop && gnop destroy /dev/gpt/${k}_data_${n}.nop
+		if [ -c /dev/gpt/${k}_data_${n}.nop ]; then
+			gnop destroy /dev/gpt/${k}_data_${n}.nop
+		fi
 	done
-	zpool import $k
+	zpool import -d /dev/gpt $k
 done
 
-ROOT="root_$RELEASE"
-zfs create -o mountpoint=/mnt system/root
-zfs create system/root/$ROOT
+ROOT="$RELEASE"
+zfs create system/root
+zfs create -o mountpoint=/mnt system/root/$ROOT
 zfs create system/root/$ROOT/usr
 zfs create system/root/$ROOT/usr/local
 zfs create -o exec=off -o setuid=off system/root/$ROOT/var
@@ -109,14 +114,14 @@ zfs create system/root/$ROOT/var/empty
 zfs create system/root/$ROOT/var/log
 zfs create system/root/$ROOT/var/mail
 zfs create system/root/$ROOT/var/run
-zfs create system/$ROOT/var/spool
-zfs create system/$ROOT/var/tmp
+zfs create system/root/$ROOT/var/spool
+zfs create system/root/$ROOT/var/tmp
 chmod 1777 /mnt/var/tmp
 
 zfs create -V 64G system/swap
 zfs set org.freebsd:swap=on system/swap
 
-zpool set bootfs=system/$ROOT system
+zpool set bootfs=system/root/$ROOT system
 
 cd /mnt
 tar pxf /media/base.tbz
@@ -135,9 +140,11 @@ EOF
 
 cat >>boot/loader.conf <<-EOF
 zfs_load="YES"
-vfs.root.mountfrom="zfs:system/$ROOT"
+vfs.root.mountfrom="zfs:system/root/$ROOT"
 EOF
 
 cp -p /boot/zfs/zpool.cache /mnt/boot/zfs/zpool.cache
+
+cd
 zfs umount -a
-zfs set mountpoint=/ system/$ROOT
+zfs set mountpoint=/ system/root/$ROOT
