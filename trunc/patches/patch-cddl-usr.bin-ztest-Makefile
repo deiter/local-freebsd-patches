@@ -1,5 +1,5 @@
---- cddl/usr.bin/ztest/Makefile.orig	2014-08-15 02:23:57.000000000 +0400
-+++ cddl/usr.bin/ztest/Makefile	2014-08-15 02:24:11.000000000 +0400
+--- cddl/usr.bin/ztest/Makefile.orig	2014-10-06 08:25:40.992211231 +0400
++++ cddl/usr.bin/ztest/Makefile	2014-10-06 08:25:54.262210234 +0400
 @@ -25,8 +25,4 @@
  
  CSTD=	c99
