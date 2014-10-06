@@ -1,5 +1,5 @@
---- sys/sys/diskmbr.h.orig	2014-08-15 02:23:59.000000000 +0400
-+++ sys/sys/diskmbr.h	2014-08-15 02:24:11.000000000 +0400
+--- sys/sys/diskmbr.h.orig	2014-10-06 08:25:42.790211432 +0400
++++ sys/sys/diskmbr.h	2014-10-06 08:25:54.289210574 +0400
 @@ -57,6 +57,7 @@
  #define	DOSPTYP_LINUX	0x83	/* Linux partition */
  #define	DOSPTYP_LINLVM	0x8e	/* Linux LVM partition */

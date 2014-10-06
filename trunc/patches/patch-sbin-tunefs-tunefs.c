@@ -1,5 +1,5 @@
---- sbin/tunefs/tunefs.c.orig	2014-10-02 01:01:06.000000000 +0400
-+++ sbin/tunefs/tunefs.c	2014-10-02 01:03:17.000000000 +0400
+--- sbin/tunefs/tunefs.c.orig	2014-10-06 08:25:44.099211269 +0400
++++ sbin/tunefs/tunefs.c	2014-10-06 08:25:54.267210371 +0400
 @@ -183,11 +183,11 @@
  			found_arg = 1;
  			name = "volume label";

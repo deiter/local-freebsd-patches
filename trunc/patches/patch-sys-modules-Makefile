@@ -1,6 +1,6 @@
---- sys/modules/Makefile.orig	2014-08-15 02:23:59.000000000 +0400
-+++ sys/modules/Makefile	2014-08-15 02:24:11.000000000 +0400
-@@ -352,6 +352,7 @@
+--- sys/modules/Makefile.orig	2014-10-06 08:25:41.799211450 +0400
++++ sys/modules/Makefile	2014-10-06 08:25:54.287210141 +0400
+@@ -356,6 +356,7 @@
  	${_vesa} \
  	${_virtio} \
  	vge \
@@ -8,11 +8,11 @@
  	${_viawd} \
  	vkbd \
  	${_vmm} \
-@@ -623,6 +624,7 @@
- _nvram=		nvram
- _nxge=		nxge
+@@ -587,6 +588,7 @@
  _tpm=		tpm
+ _twa=		twa
+ _vesa=		vesa
 +_viatemp=	viatemp
  _viawd=		viawd
+ _virtio=	virtio
  _wpi=		wpi
- .if ${MK_SOURCELESS_UCODE} != "no"
