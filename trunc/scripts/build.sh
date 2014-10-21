@@ -41,7 +41,7 @@ for i in make.conf src.conf; do cat $WRKDIR/conf/$i >/etc/$i; done
 for i in i386 amd64; do cp $WRKDIR/conf/$i/* $SRCDIR/sys/$i/conf/; done
 
 LEVEL=$(ls $WRKDIR/patches/patch-* | wc -l | awk '{print $NF}')
-REVISION=$($SVN info | awk '/^Revision:/{print $2}')
+REVISION=$($SVN info | awk '/^Last\ Changed\ Rev:/{print $NF}')
 VERSION=$(awk -F'"' '/^REVISION=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
 BRANCH=$(awk -F'"' '/^BRANCH=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
 export BRANCH_OVERRIDE="${BRANCH}-r${REVISION}-p${LEVEL}"
