@@ -54,7 +54,7 @@ for i in loader.conf zfs/zpool.cache ; do
 done
 
 grep -v ^vfs.root.mountfrom /boot/loader.conf >boot/loader.conf
-cat >>boot/loader.conf <<-EOF
+cat >>boot/loader.conf <<EOF
 vfs.root.mountfrom="zfs:system/root/$ROOT"
 EOF
 
@@ -75,6 +75,13 @@ zfs set readonly=on system/root/$ROOT/var/empty
 
 cd
 
-#zfs umount system/root/$ROOT
-#zpool set bootfs=system/root/$ROOT system
-#zfs set mountpoint=/ system/root/$ROOT
+cat <<EOF
+*********************************************************************
+zfs umount system/root/$ROOT
+zfs set canmount=noauto system/root/$ROOT
+zfs set mountpoint=/ system/root/$ROOT
+zpool set bootfs=system/root/$ROOT system
+zfs set canmount=noauto $(zpool get -H -o value bootfs system)
+zfs set canmount=on system/root/$ROOT
+*********************************************************************
+EOF
