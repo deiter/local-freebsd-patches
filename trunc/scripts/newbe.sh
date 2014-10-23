@@ -83,12 +83,13 @@ for i in $(zfs list -r -H -o name system/root/$ROOT); do
 done
 
 zfs set mountpoint=/ system/root/$ROOT
-zpool set bootfs=system/root/$ROOT system
 
 current_boot_fs=$(zpool get -H -o value bootfs system)
 for i in $(zfs list -r -H -o name $current_boot_fs); do
 	zfs set canmount=noauto $i
 done
+
+zpool set bootfs=system/root/$ROOT system
 
 for i in $(zfs list -r -H -o name system/root/$ROOT); do
 	zfs set canmount=on $i
