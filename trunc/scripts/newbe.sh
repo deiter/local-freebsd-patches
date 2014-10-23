@@ -43,6 +43,7 @@ chmod 1777 /mnt/var/tmp
 
 cd /mnt
 tar pxf $TMPDIR/base.tbz
+cp $TMPDIR/base.tbz root
 pw -V etc usermod root -w yes
 
 install -d -v -o root -g wheel -m 0755 usr/local/etc
