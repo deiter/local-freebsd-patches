@@ -76,13 +76,20 @@ zfs set readonly=on system/root/$ROOT/var/empty
 
 cd
 
-cat <<EOF
-*********************************************************************
 zfs umount system/root/$ROOT
-zfs set canmount=noauto system/root/$ROOT
+
+for i in $(zfs list -r -H -o name system/root/$ROOT); do
+	zfs set canmount=noauto $i
+done
+
 zfs set mountpoint=/ system/root/$ROOT
 zpool set bootfs=system/root/$ROOT system
-zfs set canmount=noauto $(zpool get -H -o value bootfs system)
-zfs set canmount=on system/root/$ROOT
-*********************************************************************
-EOF
+
+current_boot_fs=$(zpool get -H -o value bootfs system)
+for i in $(zfs list -r -H -o name $current_boot_fs); do
+	zfs set canmount=noauto $i
+done
+
+for i in $(zfs list -r -H -o name system/root/$ROOT); do
+	zfs set canmount=on $i
+done
