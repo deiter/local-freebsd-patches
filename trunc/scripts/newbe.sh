@@ -20,7 +20,7 @@ fi
 cd $SRCDIR
 LEVEL=$(ls $WRKDIR/patches/patch-* | wc -l | awk '{print $NF}')
 REVISION=$($SVN info | awk '/^Last\ Changed\ Rev:/{print $NF}')
-RELEASE="r${REVISION}_${LEVEL}"
+RELEASE="r${REVISION}_p${LEVEL}"
 
 ROOT="$RELEASE"
 
