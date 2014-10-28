@@ -45,6 +45,8 @@ for i in $NEW_ROOT_TREE; do
 	mount -t zfs $i /mnt$MOUNT_POINT
 done
 
+read done
+
 zfs set readonly=off $NEW_ROOT_FS/var/empty
 
 cd /usr/src
@@ -61,7 +63,7 @@ cat >>boot/loader.conf <<EOF
 vfs.root.mountfrom="zfs:$NEW_ROOT_FS"
 EOF
 
-cat boot/loader.conf ; read ff
+cat boot/loader.conf && read done
 
 mergemaster -i -F -D /mnt
 mergemaster -i -F -D /mnt
@@ -74,13 +76,13 @@ zfs umount $NEW_ROOT_FS
 
 echo "change root fs ..." && read done
 
-for i in $CURRENT_ROOT_TREE; do
+for i in $(zfs list -r -H -o name $ROOT_DATASET); do
 	zfs set canmount=noauto $i
 done
 
 zpool set bootfs=$NEW_ROOT_FS $ROOT_POOL
 
-for i in $NEW_ROOT_TREE; do
+for i in $(zfs list -r -H -o name $NEW_ROOT_FS); do
 	zfs set canmount=on $i
 	zfs promote $i
 done
