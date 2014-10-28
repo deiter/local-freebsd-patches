@@ -1,0 +1,110 @@
+Index: devel/cmake/Makefile
+===================================================================
+--- devel/cmake/Makefile	(revision 371637)
++++ devel/cmake/Makefile	(working copy)
+@@ -18,7 +18,6 @@
+ CONFIGURE_ARGS=	--prefix=${PREFIX} \
+ 		--datadir="/${DATADIR_REL}" \
+ 		--docdir="/${DOCSDIR_REL}" \
+-		--sphinx-man \
+ 		--system-libs \
+ 		--parallel=${MAKE_JOBS_NUMBER} \
+ 		--init="${PATCHDIR}/InitialCache.cmake"
+@@ -32,7 +31,6 @@
+ OPTIONS_SUB=	yes
+ HAS_CONFIGURE=	yes
+ 
+-BUILD_DEPENDS=	sphinx-build:${PORTSDIR}/textproc/py-sphinx
+ LIB_DEPENDS=	libcurl.so:${PORTSDIR}/ftp/curl \
+ 		libexpat.so:${PORTSDIR}/textproc/expat2
+ RUN_DEPENDS=	${LOCALBASE}/share/cmake/Modules/CMake.cmake:${PORTSDIR}/devel/cmake-modules
+Index: devel/cmake/pkg-plist
+===================================================================
+--- devel/cmake/pkg-plist	(revision 371637)
++++ devel/cmake/pkg-plist	(working copy)
+@@ -2,23 +2,6 @@
+ bin/cmake
+ bin/cpack
+ bin/ctest
+-man/man1/ccmake.1.gz
+-man/man1/cmake.1.gz
+-man/man1/cpack.1.gz
+-man/man1/ctest.1.gz
+-man/man7/cmake-buildsystem.7.gz
+-man/man7/cmake-commands.7.gz
+-man/man7/cmake-developer.7.gz
+-man/man7/cmake-generator-expressions.7.gz
+-man/man7/cmake-generators.7.gz
+-man/man7/cmake-language.7.gz
+-man/man7/cmake-modules.7.gz
+-man/man7/cmake-packages.7.gz
+-man/man7/cmake-policies.7.gz
+-man/man7/cmake-properties.7.gz
+-man/man7/cmake-qt.7.gz
+-man/man7/cmake-toolchains.7.gz
+-man/man7/cmake-variables.7.gz
+ share/aclocal/cmake.m4
+ %%DATADIR%%/Help/command/FIND_XXX.txt
+ %%DATADIR%%/Help/command/FIND_XXX_MAC.txt
+Index: dns/bind910/Makefile
+===================================================================
+--- dns/bind910/Makefile	(revision 371637)
++++ dns/bind910/Makefile	(working copy)
+@@ -25,13 +25,10 @@
+ CPE_UPDATE=	${ISCVERSION:C/.*-//:tl}
+ .endif
+ 
+-LIB_DEPENDS=	libxml2.so:${PORTSDIR}/textproc/libxml2
+-
+ GNU_CONFIGURE=	yes
+ CONFIGURE_ARGS=	--localstatedir=/var --disable-linux-caps \
+ 		--disable-symtable \
+-		--with-randomdev=/dev/random \
+-		--with-libxml2=${LOCALBASE}
++		--with-randomdev=/dev/random
+ ETCDIR=		${PREFIX}/etc/namedb
+ 
+ CONFLICTS+=	bind9*-9.[456789].* bind9*-sdb-9.[456789].*
+Index: multimedia/ffmpegthumbnailer/Makefile
+===================================================================
+--- multimedia/ffmpegthumbnailer/Makefile	(revision 371637)
++++ multimedia/ffmpegthumbnailer/Makefile	(working copy)
+@@ -18,12 +18,11 @@
+ 
+ CPPFLAGS+=	-I${LOCALBASE}/include
+ LIBS+=		-L${LOCALBASE}/lib
+-CONFIGURE_ARGS=	--with-pkgconfigdir=${PREFIX}/libdata/pkgconfig --enable-gio
++CONFIGURE_ARGS=	--with-pkgconfigdir=${PREFIX}/libdata/pkgconfig --disable-gio
+ 
+ GNU_CONFIGURE=	yes
+ INSTALL_TARGET=	install-strip
+ USES=		libtool pathfix pkgconfig
+-USE_GNOME=	glib20
+ USE_LDCONFIG=	yes
+ 
+ OPTIONS_DEFINE=	GNOME MATE
+Index: sysutils/ipmitool/Makefile
+===================================================================
+--- sysutils/ipmitool/Makefile	(revision 371637)
++++ sysutils/ipmitool/Makefile	(working copy)
+@@ -13,7 +13,7 @@
+ LICENSE=	BSD3CLAUSE
+ LICENSE_FILE=	${WRKSRC}/COPYING
+ 
+-USES=		tar:bzip2 gmake readline
++USES=		tar:bzip2 gmake
+ USE_OPENSSL=	yes
+ GNU_CONFIGURE=	yes
+ CONFIGURE_ARGS+=--enable-intf-lan --enable-intf-lanplus \
+Index: sysutils/nut/Makefile
+===================================================================
+--- sysutils/nut/Makefile	(revision 371637)
++++ sysutils/nut/Makefile	(working copy)
+@@ -60,6 +60,7 @@
+ 		--with-pkgconfig-dir=${PREFIX}/libdata/pkgconfig \
+ 		--with-user=${NUT_USER} \
+ 		--with-group=${NUT_GROUP} \
++		--with-wrap \
+ 		--with-dev
+ 
+ .if ${PORT_OPTIONS:MCGI}
