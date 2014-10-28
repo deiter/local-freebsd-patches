@@ -50,8 +50,8 @@ mount && read done
 zfs set readonly=off $NEW_ROOT_FS/var/empty
 
 cd /usr/src
-make installkernel DESTDIR=/mnt KERNCONF=$KERNCONF
 make installworld  DESTDIR=/mnt KERNCONF=$KERNCONF
+make installkernel DESTDIR=/mnt KERNCONF=$KERNCONF
 
 cd /mnt
 install -v -o root -g wheel -m 0444 usr/share/zoneinfo/$TZ etc/localtime
