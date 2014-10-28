@@ -1,6 +1,6 @@
 Index: devel/cmake/Makefile
 ===================================================================
---- devel/cmake/Makefile	(revision 371637)
+--- devel/cmake/Makefile	(revision 371644)
 +++ devel/cmake/Makefile	(working copy)
 @@ -18,7 +18,6 @@
  CONFIGURE_ARGS=	--prefix=${PREFIX} \
@@ -20,7 +20,7 @@ Index: devel/cmake/Makefile
  RUN_DEPENDS=	${LOCALBASE}/share/cmake/Modules/CMake.cmake:${PORTSDIR}/devel/cmake-modules
 Index: devel/cmake/pkg-plist
 ===================================================================
---- devel/cmake/pkg-plist	(revision 371637)
+--- devel/cmake/pkg-plist	(revision 371644)
 +++ devel/cmake/pkg-plist	(working copy)
 @@ -2,23 +2,6 @@
  bin/cmake
@@ -48,7 +48,7 @@ Index: devel/cmake/pkg-plist
  %%DATADIR%%/Help/command/FIND_XXX_MAC.txt
 Index: dns/bind910/Makefile
 ===================================================================
---- dns/bind910/Makefile	(revision 371637)
+--- dns/bind910/Makefile	(revision 371644)
 +++ dns/bind910/Makefile	(working copy)
 @@ -25,13 +25,10 @@
  CPE_UPDATE=	${ISCVERSION:C/.*-//:tl}
@@ -67,7 +67,7 @@ Index: dns/bind910/Makefile
  CONFLICTS+=	bind9*-9.[456789].* bind9*-sdb-9.[456789].*
 Index: multimedia/ffmpegthumbnailer/Makefile
 ===================================================================
---- multimedia/ffmpegthumbnailer/Makefile	(revision 371637)
+--- multimedia/ffmpegthumbnailer/Makefile	(revision 371644)
 +++ multimedia/ffmpegthumbnailer/Makefile	(working copy)
 @@ -18,12 +18,11 @@
  
@@ -85,9 +85,9 @@ Index: multimedia/ffmpegthumbnailer/Makefile
  OPTIONS_DEFINE=	GNOME MATE
 Index: sysutils/ipmitool/Makefile
 ===================================================================
---- sysutils/ipmitool/Makefile	(revision 371637)
+--- sysutils/ipmitool/Makefile	(revision 371644)
 +++ sysutils/ipmitool/Makefile	(working copy)
-@@ -13,7 +13,7 @@
+@@ -13,10 +13,11 @@
  LICENSE=	BSD3CLAUSE
  LICENSE_FILE=	${WRKSRC}/COPYING
  
@@ -96,9 +96,13 @@ Index: sysutils/ipmitool/Makefile
  USE_OPENSSL=	yes
  GNU_CONFIGURE=	yes
  CONFIGURE_ARGS+=--enable-intf-lan --enable-intf-lanplus \
++		--disable-ipmishell \
+ 		--disable-intf-imb --disable-intf-lipmi --disable-intf-bmc
+ PLIST_FILES=	bin/ipmitool man/man1/ipmitool.1.gz man/man8/ipmievd.8.gz \
+ 		sbin/ipmievd share/ipmitool/oem_ibm_sel_map \
 Index: sysutils/nut/Makefile
 ===================================================================
---- sysutils/nut/Makefile	(revision 371637)
+--- sysutils/nut/Makefile	(revision 371644)
 +++ sysutils/nut/Makefile	(working copy)
 @@ -60,6 +60,7 @@
  		--with-pkgconfig-dir=${PREFIX}/libdata/pkgconfig \
