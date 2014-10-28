@@ -72,8 +72,7 @@ cd
 
 zfs umount $NEW_ROOT_FS
 
-echo change root fs ...
-read done
+echo "change root fs ..." && read done
 
 for i in $CURRENT_ROOT_TREE; do
 	zfs set canmount=noauto $i
@@ -86,4 +85,4 @@ for i in $NEW_ROOT_TREE; do
 	zfs promote $i
 done
 
-echo ok
+echo done
