@@ -39,7 +39,7 @@ done
 
 zfs set mountpoint=/ $NEW_ROOT_FS
 
-NEW_ROOT_TREE=$(zfs list -H -o name $NEW_ROOT_FS | sort)
+NEW_ROOT_TREE=$(zfs list -r -H -o name $NEW_ROOT_FS | sort)
 for i in $NEW_ROOT_TREE; do
 	MOUNT_POINT=$(zfs get -H -o value mountpoint $i)
 	mount -t zfs $i /mnt$MOUNT_POINT
@@ -76,13 +76,13 @@ zfs umount $NEW_ROOT_FS
 
 echo "change root fs ..." && read done
 
-for i in $(zfs list -r -H -o name $ROOT_DATASET); do
+for i in $(zfs list -r -H -o name $ROOT_DATASET | sort); do
 	zfs set canmount=noauto $i
 done
 
 zpool set bootfs=$NEW_ROOT_FS $ROOT_POOL
 
-for i in $(zfs list -r -H -o name $NEW_ROOT_FS); do
+for i in $NEW_ROOT_TREE; do
 	zfs set canmount=on $i
 	zfs promote $i
 done
