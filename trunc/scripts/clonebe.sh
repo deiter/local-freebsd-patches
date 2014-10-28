@@ -45,7 +45,7 @@ for i in $NEW_ROOT_TREE; do
 	mount -t zfs $i /mnt$MOUNT_POINT
 done
 
-read done
+mount && read done
 
 zfs set readonly=off $NEW_ROOT_FS/var/empty
 
