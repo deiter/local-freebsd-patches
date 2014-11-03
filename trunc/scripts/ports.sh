@@ -38,3 +38,5 @@ cp -pR $WRKDIR/ports/* $PORTSDIR
 for i in $PORTS; do
 	cd $PORTSDIR/$i && make clean config-recursive fetch-recursive install clean
 done
+
+pkg remove -x autoconf bash binutils bison cmake gmake help2man gmp indexinfo patch texi2html texinfo m4 mpfr nasm yasm
