@@ -92,14 +92,14 @@ device		crypto		# core crypto support
 device		cryptodev	# /dev/crypto for access to h/w
 device		aesni		# AES-NI OpenCrypto module
 device		ipmi		# Intelligent Platform Management Interface
-device		iicbb		# I2C generic bit-banging
-device		iicbus		# I2C bus system
-device		iicsmb		# I2C to SMB bridge
+# device	iicbb		# I2C generic bit-banging
+# device	iicbus		# I2C bus system
+# device	iicsmb		# I2C to SMB bridge
 device		smbus		# System Management Bus
 device		smb		# SMB generic I/O device
 device		ichwd		# Intel ICH watchdog timer
 device		ichsmb		# Intel ICH SMBus controller driver
-device		nvram		# Access to rtc cmos via /dev/nvram
+# device	nvram		# Access to rtc cmos via /dev/nvram
 device		smbios		# DMI/SMBIOS entry point
 options		SMP		# Symmetric MultiProcessor Kernel
 device		cpuctl		# CPU control pseudo-device
@@ -122,7 +122,7 @@ device		ses		# Enclosure Services (SES and SAF-TE)
 # device	vkbd		# virtual AT keyboard interface
 device		vt		# virtual terminal console driver
 device		vt_vga		# vt VGA
-device		vt_efifb	# EFI framebuffer
+# device	vt_efifb	# EFI framebuffer
 device		kbdmux		# keyboard multiplexer
 # device	vga		# VGA video card driver
 # device	sc		# syscons console driver
@@ -131,7 +131,7 @@ device		kbdmux		# keyboard multiplexer
 # options	SC_ALT_MOUSE_IMAGE	# simplified mouse cursor in text mode
 # options	SC_HISTORY_SIZE=1000	# number of history buffer lines
 # options	VESA			# Support for VGA VESA video modes
-options		X86BIOS			# x86 real mode BIOS emulator
+# options	X86BIOS			# x86 real mode BIOS emulator
 # options	TEKEN_UTF8		# UTF-8 output handling
 # options	PSM_HOOKRESUME		# hook the system resume event, useful
 # options	PSM_RESETAFTERSUSPEND	# reset the device at the resume event
