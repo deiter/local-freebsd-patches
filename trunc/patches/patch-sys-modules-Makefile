@@ -1,6 +1,6 @@
---- sys/modules/Makefile.orig	2014-10-06 08:25:41.799211450 +0400
-+++ sys/modules/Makefile	2014-10-06 08:25:54.287210141 +0400
-@@ -356,6 +356,7 @@
+--- sys/modules/Makefile.orig	2014-11-04 04:12:53.264779752 +0300
++++ sys/modules/Makefile	2014-11-04 04:13:08.390778406 +0300
+@@ -359,6 +359,7 @@
  	${_vesa} \
  	${_virtio} \
  	vge \
@@ -8,7 +8,7 @@
  	${_viawd} \
  	vkbd \
  	${_vmm} \
-@@ -587,6 +588,7 @@
+@@ -592,6 +593,7 @@
  _tpm=		tpm
  _twa=		twa
  _vesa=		vesa
