@@ -1,5 +1,5 @@
---- sys/conf/files.i386.orig	2014-10-06 08:25:42.935211487 +0400
-+++ sys/conf/files.i386	2014-10-06 08:25:54.273210162 +0400
+--- sys/conf/files.i386.orig	2014-11-04 04:12:52.927780046 +0300
++++ sys/conf/files.i386	2014-11-04 04:13:08.376778567 +0300
 @@ -277,6 +277,7 @@
  dev/tpm/tpm_acpi.c		optional tpm acpi
  dev/tpm/tpm_isa.c		optional tpm isa

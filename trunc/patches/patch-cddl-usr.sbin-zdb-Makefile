@@ -1,5 +1,5 @@
---- cddl/usr.sbin/zdb/Makefile.orig	2014-10-06 08:25:41.000211278 +0400
-+++ cddl/usr.sbin/zdb/Makefile	2014-10-06 08:25:54.263210306 +0400
+--- cddl/usr.sbin/zdb/Makefile.orig	2014-11-04 04:12:58.774779294 +0300
++++ cddl/usr.sbin/zdb/Makefile	2014-11-04 04:13:08.366779329 +0300
 @@ -28,8 +28,4 @@
  	${LIBUUTIL} ${LIBZFS_CORE} ${LIBZFS} ${LIBZPOOL}
  LDADD=	-lgeom -lm -lnvpair -lpthread -lumem -luutil -lzfs_core -lzfs -lzpool

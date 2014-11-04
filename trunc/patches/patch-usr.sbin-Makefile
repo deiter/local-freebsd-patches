@@ -1,5 +1,5 @@
---- usr.sbin/Makefile.orig	2014-10-06 08:25:47.610211054 +0400
-+++ usr.sbin/Makefile	2014-10-06 08:25:54.290210069 +0400
+--- usr.sbin/Makefile.orig	2014-11-04 04:12:58.428779424 +0300
++++ usr.sbin/Makefile	2014-11-04 04:13:08.393778498 +0300
 @@ -43,11 +43,9 @@
  	makefs \
  	memcontrol \
