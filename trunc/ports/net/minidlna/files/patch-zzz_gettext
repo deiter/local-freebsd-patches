@@ -1,0 +1,33 @@
+--- configure.ac.orig	2014-11-29 02:12:41.468016971 +0300
++++ configure.ac	2014-11-29 02:13:00.582036314 +0300
+@@ -26,10 +26,6 @@
+ 
+ #MiniDLNA
+ 
+-AM_ICONV
+-AM_GNU_GETTEXT([external])
+-AM_GNU_GETTEXT_VERSION(0.18)
+-
+ # Checks for programs.
+ AC_PROG_AWK
+ AC_PROG_CC
+--- Makefile.am.orig	2014-11-29 02:13:24.743014947 +0300
++++ Makefile.am	2014-11-29 02:13:52.253014942 +0300
+@@ -17,8 +17,6 @@
+ 
+ AM_CFLAGS = -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 @STATIC_CFLAGS@
+ 
+-SUBDIRS=po
+-
+ sbin_PROGRAMS = minidlnad
+ check_PROGRAMS = testupnpdescgen
+ minidlnad_SOURCES = minidlna.c upnphttp.c upnpdescgen.c upnpsoap.c \
+@@ -45,8 +43,6 @@
+ 	@LIBAVFORMAT_LIBS@ \
+ 	@LIBAVUTIL_LIBS@ \
+ 	@LIBEXIF_LIBS@ \
+-	@LIBINTL@ \
+-	@LIBICONV@ \
+ 	-lFLAC  $(flacoggflag) $(vorbisflag) @LIBFFMPEGTHUMBNAILER_LIBS@
+ 
+ minidlnad_LDFLAGS = @STATIC_LDFLAGS@
