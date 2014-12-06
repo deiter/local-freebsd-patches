@@ -7,7 +7,7 @@ PORTSDIR=/usr/ports
 SCRIPT=$(realpath $0)
 WRKDIR=$(dirname $(dirname $SCRIPT))
 
-PORTS="lang/perl5.20 sysutils/tmux sysutils/smartmontools sysutils/ipmitool dns/bind910 net/isc-dhcp43-server sysutils/nut security/openvpn net-p2p/transmission-daemon editors/vim-lite net/mediatomb"
+PORTS="lang/perl5.20 sysutils/tmux sysutils/smartmontools sysutils/ipmitool dns/bind910 net/isc-dhcp43-server sysutils/nut security/openvpn net-p2p/transmission-daemon editors/vim-lite multimedia/ffmpegthumbnailer net/minidlna net/samba36"
 
 if [ -x /usr/bin/svnlite ]; then
 	SVN=/usr/bin/svnlite
@@ -35,8 +35,10 @@ $SVN up
 patch -p0 < $WRKDIR/ports/patch.diff
 cp -pR $WRKDIR/ports/* $PORTSDIR
 
+read f
+
 for i in $PORTS; do
 	cd $PORTSDIR/$i && make clean config-recursive fetch-recursive install clean
 done
 
-pkg remove -x autoconf bash binutils bison cmake gmake help2man gmp indexinfo patch texi2html texinfo m4 mpfr nasm yasm
+pkg remove -yx automake autoconf bash binutils bison cmake gmake help2man gmp indexinfo patch texi2html texinfo m4 mpfr nasm yasm python
