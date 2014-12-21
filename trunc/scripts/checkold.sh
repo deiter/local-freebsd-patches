@@ -1,16 +1,18 @@
-#!/bin/sh -x
+#!/bin/sh -xe
 
-cd /var/devel/alt 
-find . | grep -v /boot/kernel | sort > /tmp/alt.txt
+DIRS="bin boot etc lib libexec rescue sbin usr"
 
-umount /usr/src
-umount /home/tiamat
-umount /home
-umount /export/iso
-umount /export
-umount /var/devel/obj
-umount /var/devel/dist
-umount /var/devel/build
+rm -f /tmp/alt.txt /tmp/ext.txt
+
+cd /var/tmp/alt 
+for i in $DIRS; do
+	find $i | sort >> /tmp/alt.txt
+done
 
 cd /
-find . | grep -v /compat/linux/ | grep -v /root/ | grep -v /usr/local/ | grep -v /proc/ | grep -v /boot/kernel | grep -v /var/devel/ | sort > /tmp/root.txt
+for i in $DIRS; do
+	find $i | grep -v usr/src | grep -v usr/obj | grep -v usr/ports | sort >> /tmp/ext.txt
+done
+
+cd /tmp
+diff -u alt.txt ext.txt

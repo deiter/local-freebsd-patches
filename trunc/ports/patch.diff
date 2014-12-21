@@ -175,3 +175,21 @@ Index: Makefile
  
  CONFIGURE_ARGS+=	--bundled-libraries=!talloc
  
+Index: lang/spidermonkey17/Makefile
+===================================================================
+--- lang/spidermonkey17/Makefile	(revision 374236)
++++ lang/spidermonkey17/Makefile	(working copy)
+@@ -17,11 +17,11 @@
+ CONFLICTS=	njs-[0-9]*
+ 
+ MAKE_ARGS+=	JS_THREADSAFE=YES \
+-		PROG_LIBS="-lreadline -ltermcap -lm ${PTHREAD_LIBS}" \
++		PROG_LIBS="-ledit -lm ${PTHREAD_LIBS}" \
+ 		LDFLAGS="-L${LOCALBASE}/lib"
+ CFLAGS+=	-I${LOCALBASE}/include/nspr
+ 
+-USES=		gmake readline
++USES=		gmake
+ MAKEFILE=	Makefile.ref
+ ALL_TARGET=	${OPSYS}`${UNAME} -r`_DBG.OBJ/js
+ MAKE_ENV+=	CCC="${CXX}"
