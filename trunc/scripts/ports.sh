@@ -7,7 +7,9 @@ PORTSDIR=/usr/ports
 SCRIPT=$(realpath $0)
 WRKDIR=$(dirname $(dirname $SCRIPT))
 
-PORTS="lang/perl5.20 sysutils/tmux sysutils/smartmontools sysutils/ipmitool dns/bind910 net/isc-dhcp43-server sysutils/nut security/openvpn net-p2p/transmission-daemon editors/vim-lite multimedia/ffmpegthumbnailer net/minidlna net/samba36"
+PORTS="lang/perl5.20 sysutils/tmux sysutils/smartmontools sysutils/ipmitool dns/bind910 net/isc-dhcp43-server sysutils/nut security/openvpn net-p2p/transmission-daemon editors/vim-lite net/samba36 multimedia/plexmediaserver"
+
+# multimedia/ffmpegthumbnailer net/minidlna net/samba36"
 
 if [ -x /usr/bin/svnlite ]; then
 	SVN=/usr/bin/svnlite
@@ -33,6 +35,9 @@ $SVN status
 $SVN up
 
 patch -p0 < $WRKDIR/ports/patch.diff
+REJECTED=$(find . -type f -name '*.rej' -exec ls {} ';')
+test -n "$REJECTED" && false
+
 cp -pR $WRKDIR/ports/* $PORTSDIR
 
 read f
