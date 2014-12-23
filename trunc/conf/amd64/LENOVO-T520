@@ -22,13 +22,13 @@ options 	CD9660			# ISO 9660 Filesystem
 options 	PROCFS			# Process filesystem (requires PSEUDOFS)
 options		FDESCFS			# File descriptor filesystem
 options 	PSEUDOFS		# Pseudo-filesystem framework
-options		PROCDESC		# Support for process descriptors
 options		TMPFS			# Efficient memory file system
 options		NULLFS			# NULL filesystem
 options		FUSE			# FUSE support module
 options 	GEOM_PART_GPT		# GUID Partition Tables.
 options		GEOM_LABEL		# Provides labelization
 options		GEOM_ELI		# Disk encryption.
+options		GEOM_MIRROR		# Disk mirroring.
 options		COMPAT_FREEBSD32	# 32-bit runtime support for FreeBSD/i386 binaries
 options		COMPAT_LINUX32		# 32-bit Linux ABI emulation
 options		LINPROCFS		# linux-like proc filesystem support
@@ -42,8 +42,6 @@ options		P1003_1B_MQUEUE		# POSIX message queue
 options 	_KPOSIX_PRIORITY_SCHEDULING # POSIX P1003_1B real-time extensions
 options		PRINTF_BUFR_SIZE=128	# Prevent printf output bein ...
 options 	KBD_INSTALL_CDEV	# install a CDEV entry in /dev
-options		FLOWTABLE		# per-cpu routing cache
-device		lindev			# Linux-specific pseudo devices support
 device		pf			# PF OpenBSD packet-filter firewall
 device		pflog			# logging support interface for PF
 options		KTRACE			# ktrace(1) support
@@ -90,17 +88,10 @@ options		IEEE80211_SUPPORT_MESH	# enable 802.11s D3.0 support
 options		IEEE80211_SUPPORT_TDMA	# enable TDMA support
 device		crypto		# core crypto support
 device		cryptodev	# /dev/crypto for access to h/w
-device		iicbb		# I2C generic bit-banging
-device		iicbus		# I2C bus system
-device		iicsmb		# I2C to SMB bridge
 device		smbus		# System Management Bus
 device		smb		# SMB generic I/O device
-# device		intpm		# Intel PIIX4 Power Management controller driver
-# options		ENABLE_ALART	# Control alarm on Intel intpm driver
 device		ichwd		# Intel ICH watchdog timer
 device		ichsmb		# Intel ICH SMBus controller driver
-device		vpd		# Vital Product Data kernel interface
-device		nvram		# Access to rtc cmos via /dev/nvram
 device		mmc		# MMC/SD bus
 device		mmcsd		# MMC/SD memory card
 device		sdhci		# Generic PCI SD Host Controller
@@ -113,9 +104,9 @@ device		cpufreq		# non-ACPI CPU frequency control
 device		coretemp	# on-die sensor on Intel Core and newer CPUs
 device		acpi		# Advanced Power Management
 options		ACPI_DMAR	# Virtualization Technology for Directed I/O 
-# device		acpi_ibm
-# device		acpi_video
-# device		acpi_dock
+device		acpi_ibm
+device		acpi_video
+device		acpi_dock
 device		pci		# generic PCI driver
 device		ahci		# AHCI-compatible SATA controllers
 device		ata		# generic ATA/ATAPI disk controller
@@ -127,21 +118,14 @@ device		ses		# Enclosure Services (SES and SAF-TE)
 device		atkbdc		# AT keyboard controller
 device		atkbd		# AT keyboard
 device		psm		# PS/2 mouse
-device		vkbd		# virtual AT keyboard interface
+device		vt		# virtual terminal console driver
+device		vt_vga		# vt VGA
+device		vt_efifb	# EFI framebuffer
 device		kbdmux		# keyboard multiplexer
-device		vga		# VGA video card driver
-device		sc		# syscons console driver
-device		splash			# Splash screen and screen saver support
-options		SC_PIXEL_MODE		# add support for the raster text mode
-options		SC_ALT_MOUSE_IMAGE	# simplified mouse cursor in text mode
-options		SC_HISTORY_SIZE=1000	# number of history buffer lines
-options		VESA			# Support for VGA VESA video modes
-options		X86BIOS			# x86 real mode BIOS emulator
-options		TEKEN_UTF8		# UTF-8 output handling
 options		PSM_HOOKRESUME		# hook the system resume event, useful
 options		PSM_RESETAFTERSUSPEND	# reset the device at the resume event
-# device		dpms			# DPMS suspend & resume via VESA BIOS
 device		agp		# support several AGP chipsets
+options		SC_HISTORY_SIZE=8192	# number of history buffer lines
 device		uart		# Generic UART driver
 device		miibus		# MII bus support
 device		em		# Intel Pro/1000 Gigabit Ethernet
@@ -153,9 +137,19 @@ device		wlan_xauth	# 802.11 External authenticator support
 device		wlan_acl	# 802.11 MAC-based ACL support
 device		wlan_amrr	# AMRR transmit rate control algorithm
 device		rum		# Ralink Technology RT2501USB wireless NICs
+device		run		# Ralink Technology USB IEEE 802.11a/g/n wireless NICs
+device		runfw		# Firmware Module for Ralink driver
+device		ath		# Atheros NICs
+device		ath_pci		# Atheros pci/cardbus glue
+device		ath_hal		# pci/cardbus chip support
+options		AH_SUPPORT_AR5416		# enable AR5416 tx/rx descriptors
+options		AH_AR5416_INTERRUPT_MITIGATION	# AR5416 interrupt mitigation
+options		ATH_ENABLE_11N	# Enable 802.11n support for AR5416 and later
+device		ath_rate_sample	# SampleRate tx rate control for ath
 device		loop		# Network loopback
 device		random		# Entropy device
 device		rdrand_rng	# Intel Bull Mountain RNG
+options		RANDOM_FORTUNA	# Fortuna CSPRNG
 device		ether		# Ethernet support
 device		if_bridge	# Bridge interface
 device		tap		# pty-like virtual Ethernet interface
