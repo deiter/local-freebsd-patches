@@ -3,21 +3,34 @@
 # $Id$
 #
 
-if [ $# -ne 1 ]; then
-	echo "usage: $0 <daX>"
+if [ $# -ne 2 ]; then
+	echo "usage: $0 <daX> <gpt | uefi>"
 	exit 1
 else
 	USB="$1"
+	BOOT="$2"
 	CWD="$PWD"
 	SRC=$(dirname $(realpath $0))
 fi
 
 gpart destroy -F $USB || true
 gpart create -s GPT $USB
-gpart add -t freebsd-boot -s 512k -l usb_boot $USB
-gpart add -t freebsd-ufs -b 1m -l usb_root $USB
-gpart bootcode -b /boot/pmbr -p /boot/gptboot -i 1 $USB
 
+case "$BOOT" in
+gpt)
+	gpart add -t freebsd-boot -s 512k -l usb_boot $USB
+	gpart bootcode -b /boot/pmbr -p /boot/gptboot -i 1 $USB
+	;;
+uefi)
+	gpart add -t efi -s 1M -l usb_efi $USB
+	dd if=/var/tmp/alt/boot/boot1.efifat of=/dev/${USB}p1
+	;;
+*)
+	echo "unknown boot type: $BOOT"
+	exit 2
+esac
+
+gpart add -t freebsd-ufs -l usb_root $USB
 newfs -L usb_root -O 2 -U -j -l /dev/gpt/usb_root
 tunefs -a enable /dev/gpt/usb_root
 
