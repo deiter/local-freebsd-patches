@@ -1,5 +1,5 @@
---- sys/dev/wbwd/wbwd.c.orig	2014-11-04 04:12:53.688779902 +0300
-+++ sys/dev/wbwd/wbwd.c	2014-11-04 04:13:08.385778711 +0300
+--- sys/dev/wbwd/wbwd.c.orig	2015-03-01 02:39:05.967514378 +0300
++++ sys/dev/wbwd/wbwd.c	2015-03-01 02:39:15.609513393 +0300
 @@ -185,6 +185,12 @@
  		.device_rev	= 0x33,
  		.descr		= "Nuvoton WPCM450RA0BX",   
