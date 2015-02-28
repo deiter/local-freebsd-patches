@@ -1,5 +1,5 @@
---- sys/dev/ath/if_ath_tx.c.orig	2014-11-04 04:12:53.509780175 +0300
-+++ sys/dev/ath/if_ath_tx.c	2014-11-04 04:13:08.382778546 +0300
+--- sys/dev/ath/if_ath_tx.c.orig	2015-03-01 02:39:05.745514422 +0300
++++ sys/dev/ath/if_ath_tx.c	2015-03-01 02:39:15.606513495 +0300
 @@ -1691,7 +1691,7 @@
  			flags |= HAL_TXDESC_NOACK;
  		break;

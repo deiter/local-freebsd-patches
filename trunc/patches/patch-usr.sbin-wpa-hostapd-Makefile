@@ -1,5 +1,5 @@
---- usr.sbin/wpa/hostapd/Makefile.orig	2014-11-04 04:12:58.234779689 +0300
-+++ usr.sbin/wpa/hostapd/Makefile	2014-11-04 04:13:08.394778507 +0300
+--- usr.sbin/wpa/hostapd/Makefile.orig	2015-03-01 02:39:03.464514616 +0300
++++ usr.sbin/wpa/hostapd/Makefile	2015-03-01 02:39:15.617513281 +0300
 @@ -34,6 +34,9 @@
  
  CFLAGS+=-DCONFIG_DRIVER_BSD \
@@ -10,7 +10,7 @@
  	-DCONFIG_DRIVER_RADIUS_ACL \
  	-DCONFIG_RSN_PREAUTH \
  	-DCONFIG_PEERKEY \
-@@ -77,6 +80,10 @@
+@@ -76,6 +79,10 @@
  	eap_server_tls_common.c \
  	eap_server_ttls.c \
  	eap_server_wsc.c \

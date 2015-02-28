@@ -1,6 +1,6 @@
---- sbin/newfs/newfs.c.orig	2014-11-04 04:12:55.075779841 +0300
-+++ sbin/newfs/newfs.c	2014-11-04 04:13:08.369778420 +0300
-@@ -152,10 +152,10 @@
+--- sbin/newfs/newfs.c.orig	2015-03-01 02:39:06.931514324 +0300
++++ sbin/newfs/newfs.c	2015-03-01 02:39:15.592513828 +0300
+@@ -150,10 +150,10 @@
  			break;
  		case 'L':
  			volumelabel = optarg;

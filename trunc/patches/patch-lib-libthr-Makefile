@@ -1,12 +1,11 @@
---- lib/libthr/Makefile.orig	2014-11-04 04:12:59.139779437 +0300
-+++ lib/libthr/Makefile	2014-11-04 04:13:08.368778540 +0300
-@@ -38,10 +38,6 @@
+--- lib/libthr/Makefile.orig	2015-03-01 02:39:04.050514562 +0300
++++ lib/libthr/Makefile	2015-03-01 02:39:15.591513279 +0300
+@@ -38,9 +38,6 @@
  
  MAN=	libthr.3
  
 -# enable extra internal consistancy checks
 -CFLAGS+=-D_PTHREADS_INVARIANTS
--#CFLAGS+=-g
 -
  PRECIOUSLIB=
  

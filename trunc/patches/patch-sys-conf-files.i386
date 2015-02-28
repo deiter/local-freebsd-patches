@@ -1,6 +1,6 @@
---- sys/conf/files.i386.orig	2014-11-04 04:12:52.927780046 +0300
-+++ sys/conf/files.i386	2014-11-04 04:13:08.376778567 +0300
-@@ -277,6 +277,7 @@
+--- sys/conf/files.i386.orig	2015-03-01 02:39:06.025514452 +0300
++++ sys/conf/files.i386	2015-03-01 02:39:15.599513457 +0300
+@@ -282,6 +282,7 @@
  dev/tpm/tpm_acpi.c		optional tpm acpi
  dev/tpm/tpm_isa.c		optional tpm isa
  dev/uart/uart_cpu_x86.c		optional uart

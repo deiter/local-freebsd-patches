@@ -1,6 +1,6 @@
---- sys/cam/scsi/scsi_da.c.orig	2014-11-04 04:12:52.994779828 +0300
-+++ sys/cam/scsi/scsi_da.c	2014-11-04 04:13:08.375778479 +0300
-@@ -728,6 +728,16 @@
+--- sys/cam/scsi/scsi_da.c.orig	2015-03-01 02:39:05.342514543 +0300
++++ sys/cam/scsi/scsi_da.c	2015-03-01 02:39:15.598513565 +0300
+@@ -739,6 +739,16 @@
  		/*quirks*/DA_Q_4K
  	},
  	{
@@ -17,7 +17,7 @@
  		/* Seagate Barracuda Green Advanced Format (4k) drives */
  		{ T_DIRECT, SIP_MEDIA_FIXED, "ATA", "ST????DL*", "*" },
  		/*quirks*/DA_Q_4K
-@@ -1030,6 +1040,14 @@
+@@ -1041,6 +1051,14 @@
  	},
  	{
  		/*
