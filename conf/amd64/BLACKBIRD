@@ -1,5 +1,5 @@
 #
-# $Id$
+# $Id: BLACKBIRD 58 2014-08-15 09:48:35Z alex.deiter@gmail.com $
 #
 cpu		HAMMER			# aka K8, aka Opteron & Athlon64
 ident		BLACKBIRD		# Gigabyte GA-C1037UN-EU

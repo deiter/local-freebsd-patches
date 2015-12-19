@@ -1,8 +1,8 @@
---- cddl/usr.sbin/zdb/Makefile.orig	2015-03-01 02:39:03.947514589 +0300
-+++ cddl/usr.sbin/zdb/Makefile	2015-03-01 02:39:15.588513783 +0300
-@@ -28,8 +28,4 @@
- 	${LIBUUTIL} ${LIBZFS_CORE} ${LIBZFS} ${LIBZPOOL}
- LDADD=	-lgeom -lm -lnvpair -lpthread -lumem -luutil -lzfs_core -lzfs -lzpool
+--- cddl/usr.sbin/zdb/Makefile.orig	2015-12-19 20:05:52.886502000 +0300
++++ cddl/usr.sbin/zdb/Makefile	2015-12-19 20:06:01.866337000 +0300
+@@ -26,8 +26,4 @@
+ 
+ LIBADD=	geom m nvpair pthread umem uutil zfs_core zfs zpool
  
 -# Since there are many asserts in this program, it makes no sense to compile
 -# it without debugging.

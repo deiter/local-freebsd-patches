@@ -1,5 +1,5 @@
---- sys/modules/viatemp/Makefile.orig	2015-03-01 02:39:15.615513557 +0300
-+++ sys/modules/viatemp/Makefile	2015-03-01 02:39:15.615513557 +0300
+--- sys/modules/viatemp/Makefile.orig	2015-12-19 20:06:01.891729000 +0300
++++ sys/modules/viatemp/Makefile	2015-12-19 20:06:01.891935000 +0300
 @@ -0,0 +1,6 @@
 +.PATH: ${.CURDIR}/../../dev/viatemp
 +

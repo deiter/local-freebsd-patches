@@ -7,7 +7,7 @@ PORTSDIR=/usr/ports
 SCRIPT=$(realpath $0)
 WRKDIR=$(dirname $(dirname $SCRIPT))
 
-PORTS="lang/perl5.20 sysutils/tmux sysutils/smartmontools sysutils/ipmitool dns/bind910 net/isc-dhcp43-server sysutils/nut security/openvpn net-p2p/transmission-daemon editors/vim-lite net/samba36 multimedia/plexmediaserver"
+PORTS="lang/perl5.22 devel/m4 sysutils/tmux sysutils/smartmontools sysutils/ipmitool dns/bind910 net/isc-dhcp43-server sysutils/nut security/openvpn net-p2p/transmission-daemon editors/vim-lite net/samba36 multimedia/plexmediaserver-plexpass"
 
 # multimedia/ffmpegthumbnailer net/minidlna net/samba36"
 

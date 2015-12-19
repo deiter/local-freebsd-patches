@@ -1,6 +1,6 @@
---- sys/boot/common/part.c.orig	2015-03-01 02:39:04.789514364 +0300
-+++ sys/boot/common/part.c	2015-03-01 02:39:15.594513625 +0300
-@@ -645,7 +645,7 @@
+--- sys/boot/common/part.c.orig	2015-12-19 20:05:53.655447000 +0300
++++ sys/boot/common/part.c	2015-12-19 20:06:01.871973000 +0300
+@@ -650,7 +650,7 @@
  			goto out;
  		}
  #ifdef LOADER_GPT_SUPPORT

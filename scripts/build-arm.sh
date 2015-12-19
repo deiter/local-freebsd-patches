@@ -1,19 +1,18 @@
-#!/bin/sh -xe
+#!/bin/sh -exu
 #
-# $Id: build.sh 105 2015-02-28 23:50:56Z alex.deiter@gmail.com $
+# $Id$
 #
 
 TZ="Europe/Moscow"
 TMPDIR="/var/tmp"
-ALTDIR="$TMPDIR/alt"
+ALTDIR="$TMPDIR/arm"
 SRCDIR="/usr/src"
 OBJDIR="/usr/obj"
 SCRIPT=$(realpath $0)
 WRKDIR=$(dirname $(dirname $SCRIPT))
 JOBS=$(( $(sysctl -n kern.smp.cpus) * 4 ))
-KERNCONF=$(hostname -s | tr [a-z] [A-Z])
-KERNCONF=SERENITY
-TARGET=$(uname -m)
+KERNCONF=RADXA
+IMAGE=$TMPDIR/$KERNCONF.img
 
 if [ -x /usr/bin/svnlite ]; then
 	SVN=/usr/bin/svnlite
@@ -37,12 +36,10 @@ $SVN diff
 $SVN status
 $SVN up
 
-
-for i in $WRKDIR/patches/patch-*; do patch -p0 <$i || exit 1; done
-for i in make.conf src.conf; do cat $WRKDIR/conf/$i >/etc/$i; done
-for i in i386 amd64; do cp $WRKDIR/conf/$i/* $SRCDIR/sys/$i/conf/; done
-
+for i in $WRKDIR/patches/patch-arm*; do patch -p0 <$i || exit 1; done
 read f
+#for i in make.conf src.conf; do cat $WRKDIR/conf/$i >/etc/$i; done
+#for i in i386 amd64; do cp $WRKDIR/conf/$i/* $SRCDIR/sys/$i/conf/; done
 
 LEVEL=$(ls $WRKDIR/patches/patch-* | wc -l | awk '{print $NF}')
 REVISION=$($SVN info | awk '/^Last\ Changed\ Rev:/{print $NF}')
@@ -55,19 +52,25 @@ REJECTED=$(find . -type f -name '*.rej' -exec ls {} ';')
 test -n "$REJECTED" && false
 
 rm -rf $OBJDIR/*
-make -j $JOBS buildworld
-make -j $JOBS buildkernel KERNCONF=$KERNCONF
+make -j $JOBS TARGET_ARCH=armv6 kernel-toolchain
+make -j $JOBS TARGET_ARCH=armv6 KERNCONF=$KERNCONF buildkernel
+make -j $JOBS TARGET_ARCH=armv6 buildworld
 
 if [ -d $ALTDIR ]; then
+	umount $ALTDIR || true
+	mdconfig -d -u0 || true
 	chflags -R noschg $ALTDIR
 	rm -rf $ALTDIR
 fi
 
+rm -f $IMAGE
+truncate -s 1024M $IMAGE
+mdconfig -f $IMAGE -u0
+newfs /dev/md0
 mkdir -p $ALTDIR
+mount /dev/md0 $ALTDIR
 
-for i in installworld distribution installkernel; do
-	make $i DESTDIR=$ALTDIR KERNCONF=$KERNCONF
-done
+make TARGET_ARCH=armv6 DESTDIR=$ALTDIR KERNCONF=$KERNCONF installworld distribution installkernel
 
 cd $ALTDIR
 install -v -o root -g wheel -m 0644 /dev/null etc/fstab
@@ -92,27 +95,9 @@ blanktime="NO"
 update_motd="NO"
 entropy_file="NO"
 dumpdev="NO"
-hostname="install.deiter.local"
+hostname="arm.deiter.local"
 EOF
 
-cat >>boot/loader.conf <<-EOF
-beastie_disable="YES"
-autoboot_delay="3"
-EOF
-
-rm -f $TMPDIR/base-$BRANCH_OVERRIDE.tbz
-tar pcfy $TMPDIR/base-$BRANCH_OVERRIDE.tbz .
-
-# ISO
-#cat >>etc/rc.conf <<-EOF
-#root_rw_mount="NO"
-#EOF
-#
-#cat >>boot/loader.conf <<-EOF
-#boot_cdrom="YES"
-#EOF
-
-#mv $TMPDIR/base.tbz media
-#mkisofs -b boot/cdboot -no-emul-boot -r -J \
-#	-V "${TARGET}-${VERSION}-${BRANCH_OVERRIDE}" \
-#	-o $TMPDIR/FreeBSD-${TARGET}-${VERSION}-${BRANCH_OVERRIDE}.iso .
+sync; sync; sync
+umount $ALTDIR
+mdconfig -d -u0

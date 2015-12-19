@@ -1,8 +1,8 @@
---- cddl/usr.sbin/zhack/Makefile.orig	2015-03-01 02:39:03.949514850 +0300
-+++ cddl/usr.sbin/zhack/Makefile	2015-03-01 02:39:15.589513438 +0300
-@@ -27,7 +27,4 @@
- 	${LIBUUTIL} ${LIBZFS_CORE} ${LIBZFS} ${LIBZPOOL}
- LDADD=	-lgeom -lm -lnvpair -lpthread -lumem -luutil -lzfs_core -lzfs -lzpool
+--- cddl/usr.sbin/zhack/Makefile.orig	2015-12-19 20:05:52.887867000 +0300
++++ cddl/usr.sbin/zhack/Makefile	2015-12-19 20:06:01.867435000 +0300
+@@ -25,7 +25,4 @@
+ 
+ LIBADD=	geom m nvpair pthread umem uutil zfs_core zfs zpool
  
 -CFLAGS+=	-DDEBUG=1
 -#DEBUG_FLAGS+=	-g

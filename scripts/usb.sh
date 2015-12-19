@@ -1,6 +1,6 @@
 #!/bin/sh -ex
 #
-# $Id$
+# $Id: usb.sh 103 2014-12-23 09:36:52Z alex.deiter@gmail.com $
 #
 
 if [ $# -ne 2 ]; then

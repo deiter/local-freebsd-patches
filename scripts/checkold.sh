@@ -11,7 +11,7 @@ done
 
 cd /
 for i in $DIRS; do
-	find $i | grep -v usr/src | grep -v usr/obj | grep -v usr/ports | sort >> /tmp/ext.txt
+	find $i | grep -v usr/src | grep -v usr/obj | grep -v usr/ports | grep -v usr/local | sort >> /tmp/ext.txt
 done
 
 cd /tmp
