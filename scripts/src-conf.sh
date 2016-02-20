@@ -2,7 +2,7 @@
 
 # ( echo .Dd UNTITLED ; cat /usr/src/tools/build/options/WITHOUT_ACCT ) | mandoc | egrep -v 'UNTITLED|^$' 
 
-BASENAME=$(basename $0)
+BASENAME=$(basename $0 .sh)
 OPTIONS_TEXT=$(mktemp -qt $BASENAME)
 OPTIONS_ONLY=$(mktemp -qt $BASENAME)
 SRC_CONF=$(mktemp -qt $BASENAME)
@@ -12,7 +12,7 @@ cd /usr/src/tools/build/options
 LIST=$(ls | grep -v '[a-z]' | sort)
 
 for ITEM in $LIST ; do
-	(echo '.Dd UNTITLED' ; cat $ITEM) | mandoc | egrep -v 'UNTITLED|^$' | sed 's|^|## |'
+	(echo '.Dd UNTITLED' ; cat $ITEM) | mandoc -Tascii -O width=70 | egrep -v 'UNTITLED|^$' | sed 's|^|## |'
 	echo "# $ITEM=YES"
 	echo ''
 done >$OPTIONS_TEXT
