@@ -154,7 +154,6 @@ device		if_bridge	# Bridge interface
 device		tap		# pty-like virtual Ethernet interface
 device		vlan		# VLAN tagging of Ethernet frames
 device		tun		# Packet tunnel.
-device		pty		# BSD-style compatibility pseudo ttys
 device		md		# Memory "disks"
 device		firmware	# firmware assist module
 device		bpf		# Berkeley packet filter

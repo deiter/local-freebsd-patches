@@ -13,6 +13,7 @@ options 	SOFTUPDATES		# Enable FFS soft updates support
 options 	UFS_ACL			# Support for access control lists
 options 	UFS_DIRHASH		# Improve performance on big directories
 options 	MD_ROOT			# MD is a potential root device
+options		ZFS			# ZFS Filesystem
 options		NFSCL			# New Network Filesystem Client
 options		NFSD			# New Network Filesystem Server
 options 	NFSLOCKD		# Network Lock Manager
@@ -28,9 +29,9 @@ options		FUSE			# FUSE support module
 options 	GEOM_PART_GPT		# GUID Partition Tables.
 options		GEOM_LABEL		# Provides labelization
 options		GEOM_ELI		# Disk encryption.
-options		COMPAT_FREEBSD32	# 32-bit runtime support for FreeBSD/i386 binaries
+# options	COMPAT_FREEBSD32	# 32-bit runtime support for FreeBSD/i386 binaries
 options		COMPAT_FREEBSD9		# Compatible with FreeBSD9
-options		COMPAT_FREEBSD10	# Compatible with FreeBSD10
+# options	COMPAT_FREEBSD10	# Compatible with FreeBSD10
 # options	COMPAT_LINUX32		# 32-bit Linux ABI emulation
 # options	LINPROCFS		# linux-like proc filesystem support
 # options	LINSYSFS		# linux-like sys filesystem support
@@ -65,7 +66,7 @@ options		SW_WATCHDOG		# Software watchdog routines
 # options	ALTQ_NOPCC		# Required if the TSC is unusable
 options		INCLUDE_CONFIG_FILE	# Include this file in kernel
 # options	DEVICE_POLLING		# mixed interrupt-polling handling
-options		VFS_AIO			# aio_* system calls
+# options	VFS_AIO			# aio_* system calls
 options		DIRECTIO		# bypass the buffer cache
 options		LIBICONV		# Kernel side iconv library
 options		CD9660_ICONV		# CD9660 optional character code conversion
@@ -85,9 +86,9 @@ options		UNIONFS			# Union filesystem
 # options	NETGRAPH_SOCKET			# ng_socket(4)
 # options	NETGRAPH_ETHER			# ng_ether(4)
 # options	NETGRAPH_PPPOE			# ng_ppoe(4)
-options		IEEE80211_AMPDU_AGE	# age frames in AMPDU reorder q's
-options		IEEE80211_SUPPORT_MESH	# enable 802.11s D3.0 support
-options		IEEE80211_SUPPORT_TDMA	# enable TDMA support
+# options	IEEE80211_AMPDU_AGE	# age frames in AMPDU reorder q's
+# options	IEEE80211_SUPPORT_MESH	# enable 802.11s D3.0 support
+# options	IEEE80211_SUPPORT_TDMA	# enable TDMA support
 device		crypto		# core crypto support
 device		cryptodev	# /dev/crypto for access to h/w
 device		aesni		# AES-NI OpenCrypto module
@@ -96,6 +97,7 @@ device		smbus		# System Management Bus
 device		smb		# SMB generic I/O device
 device		ichwd		# Intel ICH watchdog timer
 device		ichsmb		# Intel ICH SMBus controller driver
+device		nvram		# Access to rtc cmos via /dev/nvram
 device		smbios		# DMI/SMBIOS entry point
 options		SMP		# Symmetric MultiProcessor Kernel
 device		cpuctl		# CPU control pseudo-device
@@ -103,9 +105,11 @@ device		cpufreq		# non-ACPI CPU frequency control
 device		coretemp	# on-die sensor on Intel Core and newer CPUs
 device		acpi		# Advanced Power Management
 options		ACPI_DMAR	# Virtualization Technology for Directed I/O 
+options		PCI_IOV		# PCI SR-IOV support
 device		pci		# generic PCI driver
+device		mps		# LSI-Logic MPT-Fusion 2
 device		ahci		# AHCI-compatible SATA controllers
-device		ata		# generic ATA/ATAPI disk controller
+# device	ata		# generic ATA/ATAPI disk controller
 device		scbus		# SCSI bus (required for SCSI)
 device		da		# Direct Access (disks)
 device		cd		# CD
@@ -113,30 +117,30 @@ device		pass		# Passthrough device (direct SCSI access)
 device		ses		# Enclosure Services (SES and SAF-TE)
 device		vt		# virtual terminal console driver
 device		vt_vga		# vt VGA
-# device	vt_efifb	# EFI framebuffer
+device		vt_efifb	# EFI framebuffer
 device		kbdmux		# keyboard multiplexer
 options		SC_HISTORY_SIZE=8192	# number of history buffer lines
 device		uart		# Generic UART driver
-device		miibus		# MII bus support
-device		em		# Intel Pro/1000 Gigabit Ethernet
+# device	miibus		# MII bus support
+# device	em		# Intel Pro/1000 Gigabit Ethernet
 device		igb		# Intel Pro/1000 PCIE Gigabit Ethernet
-device		wlan		# 802.11 support
-device		wlan_wep	# 802.11 WEP support
-device		wlan_ccmp	# 802.11 CCMP support
-device		wlan_tkip	# 802.11 TKIP support
-device		wlan_xauth	# 802.11 External authenticator support
-device		wlan_acl	# 802.11 MAC-based ACL support
-device		wlan_amrr	# AMRR transmit rate control algorithm
-device		rum		# Ralink Technology RT2501USB wireless NICs
-device		run		# Ralink Technology USB IEEE 802.11a/g/n wireless NICs
-device		runfw		# Firmware Module for Ralink driver
-device		ath		# Atheros NICs
-device		ath_pci		# Atheros pci/cardbus glue
-device		ath_hal		# pci/cardbus chip support
-options		AH_SUPPORT_AR5416		# enable AR5416 tx/rx descriptors
-options		AH_AR5416_INTERRUPT_MITIGATION	# AR5416 interrupt mitigation
-options		ATH_ENABLE_11N	# Enable 802.11n support for AR5416 and later
-device		ath_rate_sample	# SampleRate tx rate control for ath
+# device	wlan		# 802.11 support
+# device	wlan_wep	# 802.11 WEP support
+# device	wlan_ccmp	# 802.11 CCMP support
+# device	wlan_tkip	# 802.11 TKIP support
+# device	wlan_xauth	# 802.11 External authenticator support
+# device	wlan_acl	# 802.11 MAC-based ACL support
+# device	wlan_amrr	# AMRR transmit rate control algorithm
+# device	rum		# Ralink Technology RT2501USB wireless NICs
+# device	run		# Ralink Technology USB IEEE 802.11a/g/n wireless NICs
+# device	runfw		# Firmware Module for Ralink driver
+# device	ath		# Atheros NICs
+# device	ath_pci		# Atheros pci/cardbus glue
+# device	ath_hal		# pci/cardbus chip support
+# options	AH_SUPPORT_AR5416		# enable AR5416 tx/rx descriptors
+# options	AH_AR5416_INTERRUPT_MITIGATION	# AR5416 interrupt mitigation
+# options	ATH_ENABLE_11N	# Enable 802.11n support for AR5416 and later
+# device	ath_rate_sample	# SampleRate tx rate control for ath
 device		loop		# Network loopback
 device		random		# Entropy device
 device		rdrand_rng	# Intel Bull Mountain RNG
@@ -145,7 +149,6 @@ device		if_bridge	# Bridge interface
 device		tap		# pty-like virtual Ethernet interface
 device		vlan		# VLAN tagging of Ethernet frames
 device		tun		# Packet tunnel.
-device		pty		# BSD-style compatibility pseudo ttys
 device		md		# Memory "disks"
 device		firmware	# firmware assist module
 device		bpf		# Berkeley packet filter
@@ -153,7 +156,6 @@ device		bpf		# Berkeley packet filter
 device		uhci		# UHCI PCI->USB interface
 device		ehci		# EHCI PCI->USB interface (USB 2.0)
 device		usb		# USB Bus (required)
-device		uhid		# "Human Interface Devices"
 device		ukbd		# Keyboard
 device		umass		# Disks/Mass storage - Requires scbus and da
 device		ums		# Mouse

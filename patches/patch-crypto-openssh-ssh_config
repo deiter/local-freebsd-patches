@@ -1,0 +1,11 @@
+Index: crypto/openssh/ssh_config
+===================================================================
+--- crypto/openssh/ssh_config	(revision 296811)
++++ crypto/openssh/ssh_config	(working copy)
+@@ -51,3 +51,6 @@
+ #   RekeyLimit 1G 1h
+ #   VerifyHostKeyDNS yes
+ #   VersionAddendum FreeBSD-20160310
++
++GSSAPIAuthentication yes
++GSSAPIDelegateCredentials yes

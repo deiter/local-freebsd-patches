@@ -1,5 +1,5 @@
---- sys/boot/common/part.c.orig	2015-12-19 20:05:53.655447000 +0300
-+++ sys/boot/common/part.c	2015-12-19 20:06:01.871973000 +0300
+--- sys/boot/common/part.c.orig	2016-02-21 02:18:18.719545000 +0300
++++ sys/boot/common/part.c	2016-02-21 02:23:15.400075000 +0300
 @@ -650,7 +650,7 @@
  			goto out;
  		}

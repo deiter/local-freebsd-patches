@@ -1,0 +1,12 @@
+Index: devel/tevent/Makefile
+===================================================================
+--- devel/tevent/Makefile	(revision 411143)
++++ devel/tevent/Makefile	(working copy)
+@@ -31,7 +31,6 @@
+ MANPAGES_DESC=		Build and install manpages (requires textproc/docbook-xsl)
+ 
+ BUILD_DEPENDS+=		talloc>=2.1.5:${PORTSDIR}/devel/talloc
+-RUN_DEPENDS:=		${BUILD_DEPENDS}
+ 
+ .include <bsd.port.options.mk>
+ 

@@ -3,4 +3,3 @@
 #
 include		SUPERMICRO
 ident		SERENITY	# Supermicro A1SRM-2758F
-device		mps		# LSI-Logic MPT-Fusion 2

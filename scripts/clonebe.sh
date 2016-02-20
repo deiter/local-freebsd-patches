@@ -1,90 +1,119 @@
-#!/bin/sh -exu
-#
-# $Id$
-#
+#!/bin/sh -eu
 
-ROOT_POOL="system"
-ROOT_DATASET="$ROOT_POOL/root"
-TZ="Europe/Moscow"
-TMPDIR="/var/tmp"
-SRCDIR="/usr/src"
-SCRIPT=$(realpath $0)
-WRKDIR=$(dirname $(dirname $SCRIPT))
-KERNCONF=$(hostname -s | tr [a-z] [A-Z])
+_root_pool='zroot'
+_tz='Europe/Moscow'
+_tmpdir='/var/tmp'
+_srcdir='/usr/src'
+_objdir='/usr/obj'
+_kernconf=$(uname -i)
+_dstdir=$(TMPDIR=$_tmpdir mktemp -d -t $_kernconf)
+_log=$(TMPDIR=$_tmpdir mktemp -t $_kernconf)
+_relfile="$_objdir/usr/src/sys/${_kernconf}/vers.c"
+_timeout=30
+_prompt='...'
+_force=''
 
-if [ -x /usr/bin/svnlite ]; then
-	SVN=/usr/bin/svnlite
-elif [ -x /usr/bin/svn ]; then
-	SVN=/usr/bin/svn
+if [ -r $_relfile ]; then
+	_release=$(awk -F'"' '/^#define.*RELSTR/{split($2, a, "-"); printf "%s-%s\n", a[3], a[4]}' $_relfile)
 else
-	echo "svn not found"
 	exit 1
 fi
 
-cd $SRCDIR
-LEVEL=$(ls $WRKDIR/patches/patch-* | wc -l | awk '{print $NF}')
-REVISION=$($SVN info | awk '/^Last\ Changed\ Rev:/{print $NF}')
-RELEASE="r${REVISION}_p${LEVEL}"
+if [ -n "$_release" ]; then
+	echo " ==> Update system up to $_release."
+else
+	exit 1
+fi
 
-NEW_ROOT_FS="$ROOT_DATASET/$RELEASE"
-SNAPSHOT=$(date +%F_%T)
-CURRENT_ROOT_FS=$(zfs list -H -o name /)
-zfs snapshot -r ${CURRENT_ROOT_FS}@${SNAPSHOT}
+_old_root=$(zfs list -H -o name /)
+if [ -n "$_old_root" ]; then
+	echo " ==> Old root $_old_root."
+else
+	exit 1
+fi
 
-CURRENT_ROOT_TREE=$(zfs list -r -H -o name / | sort)
-for i in $CURRENT_ROOT_TREE; do
-	CLONE=$(echo $i | sed "s|^$CURRENT_ROOT_FS|$NEW_ROOT_FS|g")
-	zfs clone -o canmount=noauto ${i}@${SNAPSHOT} $CLONE
+_new_root="${_root_pool}/${_release}"
+if [ -n "$_new_root" ]; then
+	echo " ==> New root $_new_root."
+else
+	exit 1
+fi
+
+_snapshot=$(date +%F_%T)
+echo " ==> Create snapshot $_snapshot."
+zfs snapshot -r ${_old_root}@${_snapshot}
+
+_old_root_tree=$(zfs list -r -H -t filesystem -o name / | sort)
+echo " ==> Clone old root tree:"
+for _fs in $_old_root_tree; do
+	_clone=$(echo $_fs | sed "s|^$_old_root|$_new_root|g")
+	if zfs list $_clone >/dev/null 2>&1; then
+		if [ -n "$_force" ]; then
+			echo "  ==> Destroy cloned filesystem $_clone."
+			zfs destroy -Rv $_clone
+		fi
+	fi
+	echo "  ==> Clone snapshot ${_fs}@${_snapshot} to filesystem $_clone."
+	zfs clone -o canmount=noauto ${_fs}@${_snapshot} $_clone
 done
 
-zfs set mountpoint=/ $NEW_ROOT_FS
+echo " ==> Set mountpoint for new root tree."
+zfs set mountpoint=/ $_new_root
 
-NEW_ROOT_TREE=$(zfs list -r -H -o name $NEW_ROOT_FS | sort)
-for i in $NEW_ROOT_TREE; do
-	MOUNT_POINT=$(zfs get -H -o value mountpoint $i)
-	mount -t zfs $i /mnt$MOUNT_POINT
+_new_root_tree=$(zfs list -r -H -t filesystem -o name $_new_root | sort)
+echo " ==> Mount new root tree:"
+for _fs in $_new_root_tree; do
+	_mount_point=$(zfs get -H -o value mountpoint $_fs)
+	echo "  ==> Mount filesystem $_fs into ${_dstdir}${_mount_point}."
+	mount -t zfs $_fs ${_dstdir}${_mount_point}
 done
 
-mount && read done
+zfs set readonly=off $_new_root/var/empty
 
-zfs set readonly=off $NEW_ROOT_FS/var/empty
+cd $_srcdir
+echo " ==> Install $_release into $_dstdir."
+make installworld  DESTDIR=$_dstdir >>$_log 2>&1
+make installkernel DESTDIR=$_dstdir KERNCONF=$_kernconf >>$_log 2>&1
 
-cd /usr/src
-make installworld  DESTDIR=/mnt KERNCONF=$KERNCONF
-make installkernel DESTDIR=/mnt KERNCONF=$KERNCONF
-
-cd /mnt
-install -v -o root -g wheel -m 0444 usr/share/zoneinfo/$TZ etc/localtime
+cd $_dstdir
+install -v -o root -g wheel -m 0444 usr/share/zoneinfo/$_tz etc/localtime
 install -v -o root -g wheel -m 0444 /dev/null etc/wall_cmos_clock
-echo $TZ >var/db/zoneinfo
+echo $_tz >var/db/zoneinfo
 
-grep -v ^vfs.root.mountfrom /boot/loader.conf >boot/loader.conf
+grep -v '^vfs.root.mountfrom=' /boot/loader.conf >boot/loader.conf
 cat >>boot/loader.conf <<EOF
-vfs.root.mountfrom="zfs:$NEW_ROOT_FS"
+vfs.root.mountfrom="zfs:$_new_root"
 EOF
 
-cat boot/loader.conf && read done
+cat boot/loader.conf && read -p $_prompt -t $_timeout done
 
-mergemaster -i -F -D /mnt
-mergemaster -i -F -D /mnt
+echo " ==> Merge config files into $_dstdir."
+rm -f etc/COPYRIGHT
+mergemaster -s -i -F --run-updates=always -D $_dstdir
+mergemaster -s -i -F --run-updates=always -D $_dstdir
 
-zfs set readonly=on $NEW_ROOT_FS/var/empty
+zfs set readonly=on $_new_root/var/empty
 
 cd
 
-zfs umount $NEW_ROOT_FS
+echo " ==> Umount $_new_root tree."
+zfs umount $_new_root
 
-echo "change root fs ..." && read done
-
-for i in $(zfs list -r -H -o name $ROOT_DATASET | sort); do
-	zfs set canmount=noauto $i
+echo " ==> Disable canmount propery for $_old_root tree."
+for _fs in $_old_root_tree; do
+	echo "  ==> Disable canmount propery for filesystem $_fs."
+	zfs set canmount=noauto $_fs
 done
 
-zpool set bootfs=$NEW_ROOT_FS $ROOT_POOL
+echo " ==> Update bootfs for $_root_pool: $_new_root."
+zpool set bootfs=$_new_root $_root_pool
 
-for i in $NEW_ROOT_TREE; do
-	zfs set canmount=on $i
-	zfs promote $i
+echo " ==> Enable canmount propery for $_new_root tree."
+for _fs in $_new_root_tree; do
+	echo "  ==> Enable canmount propery for filesystem $_fs."
+	zfs set canmount=on $_fs
+	echo "  ==> Promote filesystem $_fs."
+	zfs promote $_fs
 done
 
-echo done
+echo " ==> Done."

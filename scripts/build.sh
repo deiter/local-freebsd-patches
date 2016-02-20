@@ -1,82 +1,104 @@
-#!/bin/sh -xe
+#!/bin/sh -xeu
 #
 # $Id: build.sh 105 2015-02-28 23:50:56Z alex.deiter@gmail.com $
 #
 
-TZ="Europe/Moscow"
-TMPDIR="/var/tmp"
-ALTDIR="$TMPDIR/alt"
-SRCDIR="/usr/src"
-OBJDIR="/usr/obj"
-SCRIPT=$(realpath $0)
-WRKDIR=$(dirname $(dirname $SCRIPT))
-JOBS=$(( $(sysctl -n kern.smp.cpus) * 4 ))
-KERNCONF=$(hostname -s | tr [a-z] [A-Z])
-KERNCONF=SERENITY
-TARGET=$(uname -m)
+if [ $# -eq 0 ]; then
+	_kernconf=$(uname -i)
+else
+	_kernconf="$1"
+fi
+
+_tz='Europe/Moscow'
+_tmpdir='/var/tmp'
+_srcdir='/usr/src'
+_objdir='/usr/obj'
+
+_osname=$(uname -o)
+_target=$(uname -m)
+_script=$(realpath $0)
+_bindir=$(dirname $_script)
+_svndir=$(dirname $_bindir)
+_jobs=$(sysctl -n kern.smp.cpus)
+_template=$(echo $_kernconf-$_target | tr '[:upper:]' '[:lower:]')
+_dstdir=$(TMPDIR=$_tmpdir mktemp -d -t $_template)
 
 if [ -x /usr/bin/svnlite ]; then
-	SVN=/usr/bin/svnlite
+	_svn=/usr/bin/svnlite
 elif [ -x /usr/bin/svn ]; then
-	SVN=/usr/bin/svn
+	_svn=/usr/bin/svn
+elif [ -x /usr/local/bin/svn ]; then
+	_svn=/usr/local/bin/svn
 else
-	echo "svn not found"
 	exit 1
 fi
 
-if [ ! -d $SRCDIR/.svn ]; then
-	mkdir -p $SRCDIR
-	$SVN checkout http://svn.freebsd.org/base/head $SRCDIR
+if [ ! -r $_svndir/conf/$_target/$_kernconf ]; then
+	exit 1
 fi
 
-cd $SRCDIR
-$SVN cleanup
-$SVN revert -R .
+if [ ! -d $_srcdir/.svn ]; then
+	mkdir -p $_srcdir
+	$_svn checkout http://svn.freebsd.org/base/head $_srcdir
+fi
+
+cd $_srcdir
 rm -rf sys/dev/viatemp sys/modules/viatemp
-$SVN diff
-$SVN status
-$SVN up
-$SVN up -r292468
+$_svn cleanup
+$_svn revert -R .
+$_svn diff
+$_svn status
+$_svn up
 
 read f
 
-for i in $WRKDIR/patches/patch-*; do patch -p0 <$i || exit 1; done
-for i in make.conf src.conf; do cat $WRKDIR/conf/$i >/etc/$i; done
-for i in i386 amd64; do cp $WRKDIR/conf/$i/* $SRCDIR/sys/$i/conf/; done
-
-LEVEL=$(ls $WRKDIR/patches/patch-* | wc -l | awk '{print $NF}')
-REVISION=$($SVN info | awk '/^Last\ Changed\ Rev:/{print $NF}')
-VERSION=$(awk -F'"' '/^REVISION=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
-BRANCH=$(awk -F'"' '/^BRANCH=/{print $2}' $SRCDIR/sys/conf/newvers.sh)
-export BRANCH_OVERRIDE="${BRANCH}-r${REVISION}-p${LEVEL}"
-
-find . -type f -name '*.orig' -exec rm -fv {} ';'
-REJECTED=$(find . -type f -name '*.rej' -exec ls {} ';')
-test -n "$REJECTED" && false
-
-rm -rf $OBJDIR/*
-make -j $JOBS buildworld
-make -j $JOBS buildkernel KERNCONF=$KERNCONF
-
-if [ -d $ALTDIR ]; then
-	chflags -R noschg $ALTDIR
-	rm -rf $ALTDIR
-fi
-
-mkdir -p $ALTDIR
-
-for i in installworld distribution installkernel; do
-	make $i DESTDIR=$ALTDIR KERNCONF=$KERNCONF
+for i in $_svndir/patches/patch-*; do
+	patch -p0 <$i || exit 1
 done
 
-cd $ALTDIR
+for i in make.conf src.conf; do
+	cat $_svndir/conf/$i >/etc/$i
+done
+
+for i in i386 amd64; do
+	cp $_svndir/conf/$i/* $_srcdir/sys/$i/conf/
+done
+
+_plevel=$(ls $_svndir/patches/patch-* | wc -l | awk '{print $NF}')
+_revision=$($_svn info | awk '/^Last\ Changed\ Rev:/{print $NF}')
+_version=$(awk -F'"' '/^REVISION=/{print $2}' $_srcdir/sys/conf/newvers.sh)
+_branch=$(awk -F'"' '/^BRANCH=/{print $2}' $_srcdir/sys/conf/newvers.sh)
+
+export BRANCH_OVERRIDE="${_branch}-r${_revision}-p${_plevel}"
+
+_label="${_osname}-${_version}-${_target}-${BRANCH_OVERRIDE}"
+
+find . -type f -name '*.orig' -exec rm -fv {} ';'
+_rejected=$(find . -type f -name '*.rej' -exec ls {} ';')
+
+if [ -n "$_rejected" ]; then
+	exit 1
+fi
+
+cd $_objdir
+rm -rf *
+
+cd $_srcdir
+make -j $_jobs buildworld
+for _config in NOSTROMO SERENITY BLACKBIRD; do
+	make -j $_jobs buildkernel KERNCONF=$_config
+done
+
+make DESTDIR=$_dstdir installworld
+make DESTDIR=$_dstdir distribution
+make DESTDIR=$_dstdir KERNCONF=$_kernconf installkernel
+
+cd $_dstdir
 install -v -o root -g wheel -m 0644 /dev/null etc/fstab
-install -v -o root -g wheel -m 0444 usr/share/zoneinfo/$TZ etc/localtime
 install -v -o root -g wheel -m 0444 /dev/null etc/wall_cmos_clock
-echo $TZ >var/db/zoneinfo
-mv COPYRIGHT etc/COPYRIGHT
-cat /dev/null >etc/COPYRIGHT
-cat /dev/null >etc/motd
+install -v -o root -g wheel -m 0444 usr/share/zoneinfo/$_tz etc/localtime
+echo $_tz >var/db/zoneinfo
+rm -f COPYRIGHT
 
 cat >etc/host.conf <<-EOF
 hosts
@@ -84,13 +106,14 @@ dns
 EOF
 
 cat >etc/rc.conf <<-EOF
+rc_startmsgs="NO"
+rc_debug="NO"
+rc_info="NO"
 cron_enable="NO"
 sendmail_enable="NONE"
 fsck_y_enable="YES"
 background_fsck="NO"
-blanktime="NO"
 update_motd="NO"
-entropy_file="NO"
 dumpdev="NO"
 hostname="install.deiter.local"
 EOF
@@ -100,19 +123,24 @@ beastie_disable="YES"
 autoboot_delay="3"
 EOF
 
-rm -f $TMPDIR/base-$BRANCH_OVERRIDE.tbz
-tar pcfy $TMPDIR/base-$BRANCH_OVERRIDE.tbz .
+rm -f $_tmpdir/$_label.tbz $_tmpdir/base.tbz
+tar pcfy $_tmpdir/$_label.tbz .
+ln -s $_tmpdir/$_label.tbz $_tmpdir/base.tbz
 
-# ISO
-#cat >>etc/rc.conf <<-EOF
-#root_rw_mount="NO"
-#EOF
-#
-#cat >>boot/loader.conf <<-EOF
-#boot_cdrom="YES"
-#EOF
+# cat >>etc/rc.conf <<-EOF
+# hostid_file="/var/db/hostid"
+# entropy_file="NO"
+# entropy_boot_file="NO"
+# hostid_enable="NO"
+# root_rw_mount="NO"
+# EOF
 
-#mv $TMPDIR/base.tbz media
-#mkisofs -b boot/cdboot -no-emul-boot -r -J \
-#	-V "${TARGET}-${VERSION}-${BRANCH_OVERRIDE}" \
-#	-o $TMPDIR/FreeBSD-${TARGET}-${VERSION}-${BRANCH_OVERRIDE}.iso .
+# cat >>boot/loader.conf <<-EOF
+# boot_cdrom="YES"
+# EOF
+
+# cp $_tmpdir/base.tbz media
+# cp -pR $_svndir media
+
+# rm -f $_tmpdir/$_label.iso
+# mkisofs -b boot/cdboot -no-emul-boot -r -J -o $_tmpdir/$_label.iso .

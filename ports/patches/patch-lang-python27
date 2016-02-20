@@ -1,0 +1,25 @@
+Index: lang/python27/Makefile
+===================================================================
+--- lang/python27/Makefile	(revision 411143)
++++ lang/python27/Makefile	(working copy)
+@@ -13,7 +13,7 @@
+ 
+ LICENSE=	PSFL
+ 
+-USES=		cpe ncurses pkgconfig readline tar:xz
++USES=		cpe ncurses pkgconfig tar:xz
+ USE_LDCONFIG=	yes
+ USE_OPENSSL=	yes
+ GNU_CONFIGURE=	yes
+Index: lang/python27/pkg-plist
+===================================================================
+--- lang/python27/pkg-plist	(revision 411143)
++++ lang/python27/pkg-plist	(working copy)
+@@ -2213,7 +2213,6 @@
+ lib/python2.7/lib-dynload/ossaudiodev.so
+ lib/python2.7/lib-dynload/parser.so
+ lib/python2.7/lib-dynload/pyexpat.so
+-lib/python2.7/lib-dynload/readline.so
+ lib/python2.7/lib-dynload/resource.so
+ lib/python2.7/lib-dynload/select.so
+ lib/python2.7/lib-dynload/strop.so

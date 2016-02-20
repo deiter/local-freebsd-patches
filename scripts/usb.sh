@@ -1,52 +1,56 @@
 #!/bin/sh -exu
-#
-# $Id$
-#
 
 if [ $# -ne 2 ]; then
-	echo "usage: $0 <daX> <gpt | uefi>"
+	echo "usage: $0 <daX> <gpt | efi>"
 	exit 1
 fi
 
-DISK=$(basename $1)
-TYPE=$2
-CWD=$(pwd)
-SRC=$(dirname $(realpath $0))
-DEV=$(glabel list $DISK | awk '/diskid/{print $NF}')
-BOOT=${DEV}p1
-DATA=${DEV}p2
-MNTP=$(mktemp -d)
+_tarball=/var/tmp/base.tbz
+_disk=$(basename $1)
+_type=$2
+_cwd=$(pwd)
+_dev=$(glabel list $_disk | awk '/diskid/{print $NF}')
+_boot=${_dev}p1
+_data=${_dev}p2
+_mntpoint=$(mktemp -d)
+_tmpdir=$(mktemp -d)
 
-gpart destroy -F $DEV || true
-gpart create -s GPT $DEV
+gpart destroy -F $_dev || true
+gpart create -s gpt $_dev
 
-case "$TYPE" in
+cd $_tmpdir
+tar pxf $_tarball boot
+
+case "$_type" in
 gpt)
-	gpart add -t freebsd-boot -s 512k $DEV
-	gpart bootcode -b /boot/pmbr -p /boot/gptboot -i 1 $DEV
+	gpart add -t freebsd-boot -s 512k $_dev
+	gpart bootcode -b boot/pmbr -p boot/gptboot -i 1 $_dev
 	;;
-uefi)
-	gpart add -t efi -s 1M $DEV
-	dd if=/var/tmp/alt/boot/boot1.efifat of=/dev/$BOOT
+efi)
+	gpart add -t efi -s 1M $_dev
+	dd if=boot/boot1.efifat of=/dev/$_boot
 	;;
 *)
-	echo "unknown boot type: $TYPE"
+	echo "unknown boot type: $_type"
 	exit 2
 esac
 
-gpart add -t freebsd-ufs $DEV
-newfs -O 2 -U -j -l /dev/$DATA
-tunefs -a enable /dev/$DATA
+gpart add -t freebsd-ufs $_dev
+newfs -O 2 -U -j -l /dev/$_data
+tunefs -a enable /dev/$_data
 
-mount /dev/$DATA $MNTP
-cd $MNTP
-tar pxf /var/tmp/base.tbz
+mount /dev/$_data $_mntpoint
+cd $_mntpoint
+tar pxf $_tarball
+
 cat >etc/fstab <<-EOF
-/dev/da0p2	/	ufs	rw	1	1
+/dev/$_data	/	ufs	rw	1	1
 EOF
+
 cd media
-cp /var/tmp/base.tbz .
+cp $_tarball .
 cp -pR /root/src/local-freebsd-patches .
-cd $CWD
-umount $MNTP
-rmdir $MNTP
+cd $_cwd
+umount $_mntpoint
+rmdir $_mntpoint
+rm -rf $_tmpdir

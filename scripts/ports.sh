@@ -1,49 +1,50 @@
 #!/bin/sh -exu
-#
-# $Id$
-#
 
-PORTSDIR=/usr/ports
-SCRIPT=$(realpath $0)
-WRKDIR=$(dirname $(dirname $SCRIPT))
+_portsdir=/usr/ports
+_script=$(realpath $0)
+_workdir=$(dirname $(dirname $_script))
 
-PORTS="lang/perl5.22 devel/m4 sysutils/tmux sysutils/smartmontools sysutils/ipmitool dns/bind910 net/isc-dhcp43-server sysutils/nut security/openvpn net-p2p/transmission-daemon editors/vim-lite net/samba36 multimedia/plexmediaserver-plexpass"
-
-# multimedia/ffmpegthumbnailer net/minidlna net/samba36"
+_portslist="lang/perl5.22 sysutils/tmux sysutils/smartmontools sysutils/ipmitool dns/bind910 net/isc-dhcp43-server sysutils/nut security/openvpn net-p2p/transmission-daemon editors/vim-lite net/samba36 multimedia/plexmediaserver-plexpass"
 
 if [ -x /usr/bin/svnlite ]; then
-	SVN=/usr/bin/svnlite
+	_svn=/usr/bin/svnlite
 elif [ -x /usr/bin/svn ]; then
-	SVN=/usr/bin/svn
+	_svn=/usr/bin/svn
+elif [ -x /usr/local/bin/svn ]; then
+	_svn=/usr/local/bin/svn
 else
 	echo "svn not found"
 	exit 1
 fi
 
-if [ ! -d $PORTSDIR/.svn ]; then
-	mkdir -p $PORTSDIR
-	$SVN checkout http://svn.freebsd.org/ports/head $PORTSDIR
+if [ ! -d $_portsdir/.svn ]; then
+	mkdir -p $_portsdir
+	$_svn checkout http://svn.freebsd.org/ports/head $_portsdir
 fi
 
-cd $PORTSDIR
-$SVN status
-$SVN status | awk '/^\?/{print $NF}' | xargs rm -rf
-$SVN cleanup
-$SVN revert -R .
-$SVN diff
-$SVN status
-$SVN up
+cd $_portsdir
+$_svn status
+$_svn status | awk '/^\?/{print $NF}' | xargs rm -rf
+$_svn cleanup
+$_svn revert -R .
+$_svn diff
+$_svn status
+$_svn up
 
-patch -p0 < $WRKDIR/ports/patch.diff
-REJECTED=$(find . -type f -name '*.rej' -exec ls {} ';')
-test -n "$REJECTED" && false
+for i in $_workdir/patches/patch-*; do
+        patch -p0 <$i || exit 1
+done
 
-cp -pR $WRKDIR/ports/* $PORTSDIR
+_rejected=$(find . -type f -name '*.rej' -ls ';')
+test -n "$_rejected" && false
+
+cp -pR $_workdir/ports/* $_portsdir
 
 read f
 
-for i in $PORTS; do
-	cd $PORTSDIR/$i && make clean config-recursive fetch-recursive install clean
+for i in $_portslist; do
+	cd $_portsdir/$i && make clean config-recursive fetch-recursive install package
 done
 
-pkg remove -yx automake autoconf bash binutils bison cmake gmake help2man gmp indexinfo patch texi2html texinfo m4 mpfr nasm yasm python
+pkg remove -yx automake autoconf bash binutils bison cmake gmake help2man gmp indexinfo \
+	patch texi2html texinfo m4 mpfr nasm yasm python

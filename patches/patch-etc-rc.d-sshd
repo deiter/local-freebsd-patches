@@ -1,0 +1,12 @@
+Index: etc/rc.d/sshd
+===================================================================
+--- etc/rc.d/sshd	(revision 296811)
++++ etc/rc.d/sshd	(working copy)
+@@ -73,7 +73,6 @@
+ 
+ sshd_configtest()
+ {
+-	echo "Performing sanity check on ${name} configuration."
+ 	eval ${command} ${sshd_flags} -t
+ }
+ 

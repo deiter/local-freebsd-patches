@@ -1,0 +1,12 @@
+Index: sysutils/nut/Makefile
+===================================================================
+--- sysutils/nut/Makefile	(revision 411143)
++++ sysutils/nut/Makefile	(working copy)
+@@ -59,6 +59,7 @@
+ 		--with-pkgconfig-dir=${PREFIX}/libdata/pkgconfig \
+ 		--with-user=${NUT_USER} \
+ 		--with-group=${NUT_GROUP} \
++		--with-wrap \
+ 		--with-dev
+ 
+ .if ${PORT_OPTIONS:MCGI}

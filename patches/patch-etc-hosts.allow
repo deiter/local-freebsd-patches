@@ -1,0 +1,13 @@
+Index: etc/hosts.allow
+===================================================================
+--- etc/hosts.allow	(revision 296811)
++++ etc/hosts.allow	(working copy)
+@@ -38,7 +38,7 @@
+ # name) *MUST* be specified for rpcbind(8).
+ ALL : localhost 127.0.0.1 : allow
+ # Comment out next line if you build libwrap without IPv6 support.
+-ALL : [::1] : allow
++#ALL : [::1] : allow
+ #ALL : my.machine.example.com 192.0.2.35 : allow
+ 
+ # To use IPv6 addresses you must enclose them in []'s

@@ -1,0 +1,18 @@
+Index: dns/bind910/Makefile
+===================================================================
+--- dns/bind910/Makefile	(revision 411143)
++++ dns/bind910/Makefile	(working copy)
+@@ -41,13 +41,10 @@
+ CPE_UPDATE=	${ISCVERSION:C/.*-//:tl}
+ .endif
+ 
+-LIB_DEPENDS=	libxml2.so:${PORTSDIR}/textproc/libxml2
+-
+ GNU_CONFIGURE=	yes
+ CONFIGURE_ARGS+=	--localstatedir=/var --disable-linux-caps \
+ 		--disable-symtable \
+ 		--with-randomdev=/dev/random \
+-		--with-libxml2=${LOCALBASE} \
+ 		--with-readline=-ledit \
+ 		--sysconfdir=${ETCDIR}
+ .if defined(BIND_TOOLS_SLAVE)

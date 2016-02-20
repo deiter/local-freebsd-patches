@@ -12,7 +12,8 @@ cd /usr/src/tools/build/options
 LIST=$(ls | grep -v '[a-z]' | sort)
 
 for ITEM in $LIST ; do
-	(echo '.Dd UNTITLED' ; egrep -v '^\.' $ITEM) | mandoc -Tascii -O width=70 | egrep -v 'UNTITLED|^$' | sed 's|^|## |'
+	(echo '.Dd UNTITLED' ; cat $ITEM) | mandoc -Tascii -O width=70 | \
+		col -bx | tr -s ' ' | egrep -v 'UNTITLED|^$' | sed 's|^|## |'
 	echo "# $ITEM=YES"
 	echo ''
 done >$OPTIONS_TEXT
