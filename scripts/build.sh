@@ -36,13 +36,13 @@ rm -rf sys/dev/viatemp sys/modules/viatemp
 $SVN diff
 $SVN status
 $SVN up
+$SVN up -r292468
 
+read f
 
 for i in $WRKDIR/patches/patch-*; do patch -p0 <$i || exit 1; done
 for i in make.conf src.conf; do cat $WRKDIR/conf/$i >/etc/$i; done
 for i in i386 amd64; do cp $WRKDIR/conf/$i/* $SRCDIR/sys/$i/conf/; done
-
-read f
 
 LEVEL=$(ls $WRKDIR/patches/patch-* | wc -l | awk '{print $NF}')
 REVISION=$($SVN info | awk '/^Last\ Changed\ Rev:/{print $NF}')

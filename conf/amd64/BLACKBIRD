@@ -54,7 +54,6 @@ options		AUDIT			# Security event auditing
 options		CAPABILITY_MODE		# Capsicum sandboxes with no global namespace access
 options		CAPABILITIES		# Capsicum fine-grained rights on file descriptors
 options		SW_WATCHDOG		# Software watchdog routines
-options		ATA_STATIC_ID		# Static device numbering
 options		ALTQ			# Alternate queuing of network packets
 options		ALTQ_CBQ		# Class Based Queueing
 options		ALTQ_RED		# Random Early Detection
