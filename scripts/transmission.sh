@@ -21,7 +21,7 @@ install -m 0444 -g wheel -o root -v /etc/localtime etc/localtime
 install -m 0111 -g wheel -o root -v /usr/local/bin/transmission-daemon bin/transmission
 cp -pR /usr/local/share/transmission/web var/db
 chown -R root:wheel var/db/web
-find var/db/web -type d -exec chmod 0755 {} ';'
+find var/db/web -type d -exec chmod 0555 {} ';'
 find var/db/web -type f -exec chmod 0444 {} ';'
 
 
@@ -38,6 +38,7 @@ for _file in $(find . -type f); do
 	ldd $_file >/dev/null 2>&1 || continue
 	ldd -a $_file | grep -v ':$' | awk '{print $1}'
 done | sort | uniq | while read _lib; do
+	test -f lib/$_lib && continue
         _path=$(find /lib /usr/lib /usr/local/lib -name $_lib | head -1)
         if [ -z "$_path" ]; then
                 echo "$_lib: library not found"
@@ -101,7 +102,7 @@ EOF
 
 cat >etc/nsswitch.conf <<-EOF
 group: files
-hosts: files dns
+hosts: dns
 networks: files
 passwd: files
 shells: files

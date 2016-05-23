@@ -38,8 +38,6 @@ chmod 0444 lib/*
 ln -s Plex\ Media\ Server plex/Plex_Media_Server
 ln -s libpython2.7.so.1 lib/libpython2.7.so
 
-ls -l $_dst
-read f
 rm -rf $_dst $_tarball
 
 for _file in $(find . -type f); do
@@ -120,7 +118,7 @@ EOF
 
 cat >etc/nsswitch.conf <<-EOF
 group: files
-hosts: files dns
+hosts: dns
 networks: files
 passwd: files
 shells: files
