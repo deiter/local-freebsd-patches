@@ -1,7 +1,5 @@
 #!/bin/sh -eu
 
-# ( echo .Dd UNTITLED ; cat /usr/src/tools/build/options/WITHOUT_ACCT ) | mandoc | egrep -v 'UNTITLED|^$' 
-
 BASENAME=$(basename $0 .sh)
 OPTIONS_TEXT=$(mktemp -qt $BASENAME)
 OPTIONS_ONLY=$(mktemp -qt $BASENAME)

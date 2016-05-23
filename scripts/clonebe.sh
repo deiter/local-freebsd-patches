@@ -40,20 +40,20 @@ else
 fi
 
 _snapshot=$(date +%F_%T)
-echo " ==> Create snapshot $_snapshot."
+echo " ==> Creating snapshot $_snapshot."
 zfs snapshot -r ${_old_root}@${_snapshot}
 
 _old_root_tree=$(zfs list -r -H -t filesystem -o name / | sort)
-echo " ==> Clone old root tree:"
+echo " ==> Cloning old root tree."
 for _fs in $_old_root_tree; do
 	_clone=$(echo $_fs | sed "s|^$_old_root|$_new_root|g")
 	if zfs list $_clone >/dev/null 2>&1; then
 		if [ -n "$_force" ]; then
-			echo "  ==> Destroy cloned filesystem $_clone."
+			echo "  ==> Destroing cloned filesystem $_clone."
 			zfs destroy -Rv $_clone
 		fi
 	fi
-	echo "  ==> Clone snapshot ${_fs}@${_snapshot} to filesystem $_clone."
+	echo "  ==> Cloning snapshot ${_fs}@${_snapshot} to filesystem $_clone."
 	zfs clone -o canmount=noauto ${_fs}@${_snapshot} $_clone
 done
 

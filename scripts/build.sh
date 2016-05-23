@@ -1,7 +1,4 @@
 #!/bin/sh -xeu
-#
-# $Id: build.sh 105 2015-02-28 23:50:56Z alex.deiter@gmail.com $
-#
 
 if [ $# -eq 0 ]; then
 	_kernconf=$(uname -i)

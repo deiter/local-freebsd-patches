@@ -1,6 +1,6 @@
 Index: crypto/openssh/sshd_config
 ===================================================================
---- crypto/openssh/sshd_config	(revision 296811)
+--- crypto/openssh/sshd_config	(revision 299715)
 +++ crypto/openssh/sshd_config	(working copy)
 @@ -14,7 +14,7 @@
  # Note that some of FreeBSD's defaults differ from OpenBSD's, and
@@ -11,20 +11,6 @@ Index: crypto/openssh/sshd_config
  #AddressFamily any
  #ListenAddress 0.0.0.0
  #ListenAddress ::
-@@ -25,10 +25,10 @@
- # HostKey for protocol version 1
- #HostKey /etc/ssh/ssh_host_key
- # HostKeys for protocol version 2
--#HostKey /etc/ssh/ssh_host_rsa_key
-+HostKey /etc/ssh/ssh_host_rsa_key
- #HostKey /etc/ssh/ssh_host_dsa_key
--#HostKey /etc/ssh/ssh_host_ecdsa_key
--#HostKey /etc/ssh/ssh_host_ed25519_key
-+HostKey /etc/ssh/ssh_host_ecdsa_key
-+HostKey /etc/ssh/ssh_host_ed25519_key
- 
- # Lifetime and size of ephemeral version 1 server key
- #KeyRegenerationInterval 1h
 @@ -45,7 +45,7 @@
  # Authentication:
  
