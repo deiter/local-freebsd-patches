@@ -8,8 +8,10 @@ fi
 _dir="$1"
 _url="$2"
 
+_osname=$(uname -o | tr '[:upper:]' '[:lower:]')
+_target=$(uname -m)
 _tarball=$(basename $_url)
-_dst=$(basename -s -freebsd-amd64.tar.bz2 $_tarball)
+_dst=$(basename -s -$_osname-$_target.tar.bz2 $_tarball)
 
 test -d "$_dir" || mkdir -p "$_dir"
 cd "$_dir"
