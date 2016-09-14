@@ -32,7 +32,10 @@ $_svn diff
 $_svn status
 $_svn up
 
+#exit
+
 for i in $_workdir/ports/patches/patch-*; do
+	echo "==> $i"
         patch -p0 <$i || exit 1
 done
 
@@ -43,9 +46,19 @@ cp -pR $_workdir/ports/* $_portsdir
 
 read f
 
+cd $_portsdir/ports-mgmt/pkg
+make install package-recursive
+
 for i in $_portslist; do
-	cd $_portsdir/$i && make package-recursive
+	cd $_portsdir/$i && make config && make config-recursive
+done
+
+for i in $_portslist; do
+	cd $_portsdir/$i && make install package-recursive
 done
 
 pkg remove -yx automake autoconf bash binutils bison cmake gmake help2man gmp indexinfo \
-	patch texi2html texinfo m4 mpfr nasm yasm python makedepend xproto xorg-macros
+	patch texi2html texinfo m4 mpfr nasm yasm python makedepend xproto xorg-macros \
+	pkgconf
+
+pkg repo /var/devel/pkg

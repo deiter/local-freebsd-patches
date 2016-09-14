@@ -1,6 +1,6 @@
---- sys/modules/Makefile.orig	2016-02-21 02:18:18.909327000 +0300
-+++ sys/modules/Makefile	2016-02-21 02:23:15.419090000 +0300
-@@ -373,6 +373,7 @@
+--- sys/modules/Makefile.orig	2016-09-02 11:22:11.699609000 +0300
++++ sys/modules/Makefile	2016-09-02 11:22:22.120379000 +0300
+@@ -378,6 +378,7 @@
  	${_vesa} \
  	${_virtio} \
  	vge \
@@ -8,7 +8,7 @@
  	${_viawd} \
  	videomode \
  	vkbd \
-@@ -641,6 +642,7 @@
+@@ -658,6 +659,7 @@
  _tpm=		tpm
  _twa=		twa
  _vesa=		vesa

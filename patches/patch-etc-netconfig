@@ -1,7 +1,5 @@
-Index: etc/netconfig
-===================================================================
---- etc/netconfig	(revision 296811)
-+++ etc/netconfig	(working copy)
+--- etc/netconfig.orig	2016-09-02 11:22:11.309343000 +0300
++++ etc/netconfig	2016-09-02 11:22:22.068060000 +0300
 @@ -11,8 +11,8 @@
  #
  # The <device> and <nametoaddr_libs> fields are always empty in FreeBSD.

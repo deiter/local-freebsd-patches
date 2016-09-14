@@ -1,6 +1,6 @@
 #!/bin/sh -xe
 
-DIRS="bin boot etc lib libexec rescue sbin usr"
+DIRS="bin boot etc lib libexec rescue sbin usr var"
 
 rm -f /tmp/alt.txt /tmp/ext.txt
 

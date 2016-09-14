@@ -13,33 +13,35 @@ _target=$(uname -m)
 _tarball=$(basename $_url)
 _dst=$(basename -s -$_osname-$_target.tar.bz2 $_tarball)
 
-test -d "$_dir" || mkdir -p "$_dir"
+mkdir -p "$_dir"
 cd "$_dir"
 
-fetch "$_url"
+fetch --no-verify-peer "$_url"
 tar pxf $_tarball
 
 test -d $_dst
 chown -R root:wheel $_dst
 find $_dst/Resources -name '*.so' -exec strip -p {} ';'
-strip -p $_dst/Resources/rsync $_dst/Resources/Python/bin/python
-chmod 0111 $_dst/Plex* $_dst/Resources/rsync $_dst/Resources/Plex* $_dst/Resources/Python/bin/python
+chmod 0111 $_dst/Plex*
 chmod 0644 $_dst/Resources/*.db
 
-install -d -v -m 0755 -g wheel -o root bin dev etc lib libexec plex var var/run var/log
+install -d -v -m 0755 -g wheel -o root bin sbin dev etc lib libexec plex var var/run var/log media media/series media/films
 install -d -v -m 1777 -g wheel -o root var/tmp tmp
 install -d -v -m 0750 -g plex -o plex data var/log/plex var/run/plex
 install -v -m 0555 -g wheel -o root /libexec/ld-elf.so.1 libexec/ld-elf.so.1
-install -v -m 0111 -g wheel -o root /usr/sbin/daemon bin/daemon
 install -v -m 0111 -g wheel -o root /usr/sbin/nologin bin/nologin
 install -v -m 0444 -g wheel -o root /etc/localtime etc/localtime
+install -v -m 0444 -g wheel -o root /usr/local/lib/compat/libsupc++.so.1 lib
 
-mv $_dst/Resources $_dst/Plex* plex
-mv $_dst/lib* lib
+mv -i $_dst/Resources $_dst/Plex* plex
+mv -i $_dst/lib* lib
 chmod 0444 lib/*
 ln -s Plex\ Media\ Server plex/Plex_Media_Server
+rm -f lib/libpython2.7.so
 ln -s libpython2.7.so.1 lib/libpython2.7.so
 
+find $_dst
+read f
 rm -rf $_dst $_tarball
 
 for _file in $(find . -type f); do
@@ -67,21 +69,20 @@ done
 
 ldconfig -s -f var/run/ld-elf.so.hints lib
 
-cat >etc/master.passwd <<-EOF
+cat >etc/master.passwd <<'EOF'
 root:*:0:0::0:0:root:/:/bin/nologin
 plex:*:972:972:plex:0:0:Plex Media Server:/data/Plex Media Server:/bin/nologin
 EOF
 
 pwd_mkdb -p -d etc etc/master.passwd
 
-cat >etc/group <<-EOF
+cat >etc/group <<'EOF'
 wheel:*:0:root
 plex:*:972:
 EOF
 
-cat >etc/login.conf <<-EOF
+cat >etc/login.conf <<'EOF'
 default:\
-	:path=/bin:\
 	:cputime=unlimited:\
 	:datasize=unlimited:\
 	:stacksize=unlimited:\
@@ -102,25 +103,28 @@ default:\
 	:umask=022:
 
 plex:\
-	:setenv=PLEX_MEDIA_SERVER_HOME=/plex,PLEX_MEDIA_SERVER_MAX_PLUGIN_PROCS=6,PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR=/data,PLEX_MEDIA_SERVER_LOG_DIR=/var/log/plex,PLEX_MEDIA_SERVER_PIDFILE=/var/run/plex/plex.pid,PLEX_MEDIA_SERVER_TMPDIR=/var/tmp,PYTHONHOME=/plex/Resources/Python,TMPDIR=/var/tmp,LC_ALL=en_US.UTF-8:\
+	:setenv=PLEX_MEDIA_SERVER_HOME=/plex,PLEX_MEDIA_SERVER_MAX_PLUGIN_PROCS=6,SUPPORT_PATH=/data,PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR=/data,PLEX_MEDIA_SERVER_LOG_DIR=/var/log/plex,PLEX_MEDIA_SERVER_PIDFILE=/var/run/plex/plex.pid,PLEX_MEDIA_SERVER_TMPDIR=/var/tmp,PYTHONHOME=/plex/Resources/Python,TMPDIR=/var/tmp,LC_ALL=en_US.UTF-8:\
 	:charset=UTF-8:\
 	:lang=en_US.UTF-8:\
-	:path=/bin /plex /plex/Resources/Python/bin:\
+	:path=/bin /plex:\
 	:tc=default:
 EOF
 
 cap_mkdb etc/login.conf
 
-cat >etc/resolv.conf <<-EOF
-search deiter.local
-nameserver 172.27.10.2
-nameserver 8.8.8.8
-nameserver 8.8.4.4
+cat >etc/hosts <<'EOF'
+127.0.0.1	localhost.deiter.local	localhost
+172.27.10.20	plex.deiter.local	plex
 EOF
 
-cat >etc/nsswitch.conf <<-EOF
+cat >etc/resolv.conf <<'EOF'
+search deiter.local
+nameserver 172.27.10.2
+EOF
+
+cat >etc/nsswitch.conf <<'EOF'
 group: files
-hosts: dns
+hosts: files dns
 networks: files
 passwd: files
 shells: files
@@ -129,4 +133,6 @@ protocols: files
 rpc: files
 EOF
 
-chflags -R simmutable bin etc lib libexec plex var/run/ld-elf.so.hints
+chflags -R simmutable bin sbin etc lib libexec plex var/run/ld-elf.so.hints
+
+echo "done."

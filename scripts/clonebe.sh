@@ -116,4 +116,7 @@ for _fs in $_new_root_tree; do
 	zfs promote $_fs
 done
 
+rmdir $_dstdir
+rm $_log
+
 echo " ==> Done."

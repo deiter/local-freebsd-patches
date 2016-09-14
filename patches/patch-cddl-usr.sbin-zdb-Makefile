@@ -1,5 +1,5 @@
---- cddl/usr.sbin/zdb/Makefile.orig	2016-02-21 02:23:05.619661000 +0300
-+++ cddl/usr.sbin/zdb/Makefile	2016-02-21 02:23:15.395251000 +0300
+--- cddl/usr.sbin/zdb/Makefile.orig	2016-09-02 11:22:08.664734000 +0300
++++ cddl/usr.sbin/zdb/Makefile	2016-09-02 11:22:22.054346000 +0300
 @@ -26,8 +26,4 @@
  
  LIBADD=	nvpair umem uutil zfs zpool

@@ -6,6 +6,7 @@ ident		SUPERMICRO		# generic Supermicro
 options		SCHED_ULE		# ULE scheduler
 options 	PREEMPTION		# Enable kernel thread preemption
 options 	INET			# InterNETworking
+options		VIMAGE			# Network stack virtualization
 options		TCP_OFFLOAD		# TCP offload
 options		SCTP			# transport protocol defined by RFC2960
 options 	FFS			# Berkeley Fast Filesystem
@@ -145,6 +146,7 @@ device		igb		# Intel Pro/1000 PCIE Gigabit Ethernet
 device		loop		# Network loopback
 device		random		# Entropy device
 device		rdrand_rng	# Intel Bull Mountain RNG
+device		epair		# Virtual back-to-back connected Ethernet
 device		ether		# Ethernet support
 device		if_bridge	# Bridge interface
 device		tap		# pty-like virtual Ethernet interface

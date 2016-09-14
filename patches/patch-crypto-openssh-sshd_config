@@ -1,7 +1,5 @@
-Index: crypto/openssh/sshd_config
-===================================================================
---- crypto/openssh/sshd_config	(revision 299715)
-+++ crypto/openssh/sshd_config	(working copy)
+--- crypto/openssh/sshd_config.orig	2016-09-02 11:22:12.579195000 +0300
++++ crypto/openssh/sshd_config	2016-09-02 11:22:22.058010000 +0300
 @@ -14,7 +14,7 @@
  # Note that some of FreeBSD's defaults differ from OpenBSD's, and
  # FreeBSD has a few additional options.

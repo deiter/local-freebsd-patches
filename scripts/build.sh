@@ -70,6 +70,8 @@ export BRANCH_OVERRIDE="${_branch}-r${_revision}-p${_plevel}"
 
 _label="${_osname}-${_version}-${_target}-${BRANCH_OVERRIDE}"
 
+# exit
+
 find . -type f -name '*.orig' -exec rm -fv {} ';'
 _rejected=$(find . -type f -name '*.rej' -exec ls {} ';')
 

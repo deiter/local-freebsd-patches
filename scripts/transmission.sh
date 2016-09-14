@@ -10,16 +10,22 @@ _dir="$1"
 test -d "$_dir" || mkdir -p "$_dir"
 cd "$_dir"
 
-install -d -m 0755 -g wheel -o root -v bin dev etc lib libexec var var/db var/log var/run
+install -d -m 0755 -g wheel -o root -v bin sbin dev etc lib libexec var var/db var/log var/run
 install -d -m 1777 -g wheel -o root -v var/tmp tmp
 install -d -m 0750 -g transmission -o transmission -v var/db/transmission var/run/transmission var/log/transmission
+
+for _dir in blocklists download incomplete resume torrents; do
+	install -d -m 0750 -g transmission -o transmission -v var/db/transmission/$_dir
+done
+
 install -m 0555 -g wheel -o root -v /libexec/ld-elf.so.1 libexec/ld-elf.so.1
-install -m 0111 -g wheel -o root -v /usr/sbin/daemon bin/daemon
 install -m 0111 -g wheel -o root -v /usr/sbin/nologin bin/nologin
 install -m 0444 -g wheel -o root -v /etc/localtime etc/localtime
 
 install -m 0111 -g wheel -o root -v /usr/local/bin/transmission-daemon bin/transmission
+
 cp -pR /usr/local/share/transmission/web var/db
+
 chown -R root:wheel var/db/web
 find var/db/web -type d -exec chmod 0555 {} ';'
 find var/db/web -type f -exec chmod 0444 {} ';'
@@ -50,19 +56,19 @@ done
 
 ldconfig -s -f var/run/ld-elf.so.hints lib
 
-cat >etc/master.passwd <<-EOF
+cat >etc/master.passwd <<'EOF'
 root:*:0:0::0:0:root:/:/bin/nologin
 transmission:*:921:921:transmission:0:0:Transmission Daemon User:/var/db/transmission:/bin/nologin
 EOF
 
 pwd_mkdb -p -d etc etc/master.passwd
 
-cat >etc/group <<-EOF
+cat >etc/group <<'EOF'
 wheel:*:0:root
 transmission:*:921:
 EOF
 
-cat >etc/login.conf <<-EOF
+cat >etc/login.conf <<'EOF'
 default:\
 	:path=/bin:\
 	:cputime=unlimited:\
@@ -93,16 +99,19 @@ EOF
 
 cap_mkdb etc/login.conf
 
-cat >etc/resolv.conf <<-EOF
-search deiter.local
-nameserver 172.27.10.2
-nameserver 8.8.8.8
-nameserver 8.8.4.4
+cat >etc/hosts <<'EOF'
+127.0.0.1	localhost.deiter.local		localhost
+172.27.10.21	transmission.deiter.local	transmission
 EOF
 
-cat >etc/nsswitch.conf <<-EOF
+cat >etc/resolv.conf <<'EOF'
+search deiter.local
+nameserver 172.27.10.2
+EOF
+
+cat >etc/nsswitch.conf <<'EOF'
 group: files
-hosts: dns
+hosts: files dns
 networks: files
 passwd: files
 shells: files
@@ -111,4 +120,4 @@ protocols: files
 rpc: files
 EOF
 
-chflags -R simmutable bin etc lib libexec var/db/web var/run/ld-elf.so.hints
+chflags -R simmutable bin sbin etc lib libexec var/db/web var/run/ld-elf.so.hints
