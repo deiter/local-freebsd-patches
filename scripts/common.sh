@@ -12,6 +12,7 @@ _src="$_devel/src"
 _obj="$_devel/obj"
 _pkg="$_devel/pkg"
 
+_hostname=$(uname -n)
 _osname=$(uname -o)
 _target=$(uname -m)
 _kernel=$(uname -i)
@@ -54,6 +55,15 @@ _update_cfg()
 	local _cfg
 	for _cfg in make.conf src.conf; do
 		install -v -m 0644 -g wheel -o root $_root/conf/$_cfg /etc/$_cfg
+	done
+}
+
+_mount_fs()
+{
+	local _fs
+	test "$_hostname" = "nostromo" && return 0
+	for _fs in $_devel $_src $_obj ;do
+		install -v -d -m 0755 -g wheel -o root $_fs
 	done
 }
 

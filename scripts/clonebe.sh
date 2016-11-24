@@ -2,6 +2,9 @@
 
 . common.sh
 
+_update_cfg
+_mount_fs
+
 _ver="$_obj$_src/sys/$_kernel/vers.c"
 _force='true'
 
