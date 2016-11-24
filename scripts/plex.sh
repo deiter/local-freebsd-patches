@@ -1,50 +1,83 @@
 #!/bin/sh -eu
 
+if jls -j plex >/dev/null 2>&1; then
+ 	echo "Jail must be died."
+	exit 1
+fi
+
+if ! pkg info compat10x-amd64 >/dev/null 2>&1; then
+	echo "Package compat9x must be installed."
+	exit 1
+fi
+
+if ! pkg info gdbm >/dev/null 2>&1; then
+	echo "Package gdbm must be installed."
+	exit 1
+fi
+
 if [ $# -ne 2 ]; then
 	echo "$0 <destination_dir> <plex_tarball_url>"
 	exit 1
 fi
 
-_dir="$1"
+_dst="$1"
 _url="$2"
-
 _osname=$(uname -o | tr '[:upper:]' '[:lower:]')
 _target=$(uname -m)
 _tarball=$(basename $_url)
-_dst=$(basename -s -$_osname-$_target.tar.bz2 $_tarball)
+_src=$(basename -s -$_osname-$_target.tar.bz2 $_tarball)
 
-mkdir -p "$_dir"
-cd "$_dir"
+install -d -m 0755 -g wheel -o root -v "$_dst"
+cd "$_dst"
+
+chflags -R nosimmutable bin sbin dev etc lib libexec plex var/run
+rm -rf bin sbin dev etc lib libexec var/run plex
 
 fetch --no-verify-peer "$_url"
 tar pxf $_tarball
 
-test -d $_dst
-chown -R root:wheel $_dst
-find $_dst/Resources -name '*.so' -exec strip -p {} ';'
-chmod 0111 $_dst/Plex*
-chmod 0644 $_dst/Resources/*.db
+if [ ! -d $_src ]; then
+	echo "Check source plex tarball:"
+	ls -la
+	exit 1
+fi
 
-install -d -v -m 0755 -g wheel -o root bin sbin dev etc lib libexec plex var var/run var/log media media/series media/films
-install -d -v -m 1777 -g wheel -o root var/tmp tmp
-install -d -v -m 0750 -g plex -o plex data var/log/plex var/run/plex
-install -v -m 0555 -g wheel -o root /libexec/ld-elf.so.1 libexec/ld-elf.so.1
-install -v -m 0111 -g wheel -o root /usr/sbin/nologin bin/nologin
-install -v -m 0444 -g wheel -o root /etc/localtime etc/localtime
-install -v -m 0444 -g wheel -o root /usr/local/lib/compat/libsupc++.so.1 lib
+chown -R root:wheel $_src
+rm -f $_src/start.sh
+find $_src/Resources -name '*.so' -exec strip -p {} ';'
+chmod 0111 $_src/Plex* $_src/CrashUploader
+chmod 0644 $_src/Resources/*.db
 
-mv -i $_dst/Resources $_dst/Plex* plex
-mv -i $_dst/lib* lib
+install -d -m 0755 -g wheel -o root -v bin sbin dev etc lib libexec plex var var/run var/log media
+install -d -m 1777 -g wheel -o root -v var/tmp tmp
+install -d -m 0750 -g plex -o plex -v data var/log/plex var/run/plex
+
+for _dir in series films video music; do
+        install -d -m 0755 -g wheel -o root -v media/$_dir
+done
+
+install -m 0555 -g wheel -o root -v /libexec/ld-elf.so.1 libexec/ld-elf.so.1
+install -m 0111 -g wheel -o root -v /usr/sbin/nologin bin/nologin
+install -m 0444 -g wheel -o root -v /etc/localtime etc/localtime
+install -m 0444 -g wheel -o root -v /usr/local/lib/compat/libsupc++.so.1 lib
+
+mv -i $_src/Resources $_src/Plex* $_src/CrashUploader plex/
+mv -i $_src/lib* lib/
 chmod 0444 lib/*
 ln -s Plex\ Media\ Server plex/Plex_Media_Server
 rm -f lib/libpython2.7.so
 ln -s libpython2.7.so.1 lib/libpython2.7.so
 
-find $_dst
-read f
-rm -rf $_dst $_tarball
+_miss=$(find $_src -type f)
 
-for _file in $(find . -type f); do
+if [ -n "$_miss" ]; then
+	echo "Missed files: $_miss"
+	exit 1
+fi
+
+rm -rf $_src $_tarball
+
+for _file in $(find bin lib plex -type f); do
 	_type=$(file -b $_file)
 	case $_type in
 	ELF*)
@@ -55,22 +88,22 @@ for _file in $(find . -type f); do
 	esac
 
 	ldd $_file >/dev/null 2>&1 || continue
-	ldd -a $_file | grep -v ':$' | awk '{print $1}'
+	ldd -a $_file | awk '/=>/{print $1}'
 done | sort | uniq | while read _lib; do
 	test -f lib/$_lib && continue
         _path=$(find /lib /usr/lib /usr/local/lib -name $_lib | head -1)
         if [ -z "$_path" ]; then
-                echo "$_lib: library not found"
+                echo "warning: required file '$_lib' not found"
 		continue
         fi
 
-	install -v -m 0444 -g wheel -o root $_path lib/$_lib
+	install -m 0444 -g wheel -o root -v $_path lib/$_lib
 done
 
 ldconfig -s -f var/run/ld-elf.so.hints lib
 
 cat >etc/master.passwd <<'EOF'
-root:*:0:0::0:0:root:/:/bin/nologin
+root:*:0:0::0:0:root:/:
 plex:*:972:972:plex:0:0:Plex Media Server:/data/Plex Media Server:/bin/nologin
 EOF
 
@@ -125,6 +158,7 @@ EOF
 cat >etc/nsswitch.conf <<'EOF'
 group: files
 hosts: files dns
+netgroup: files
 networks: files
 passwd: files
 shells: files
@@ -135,4 +169,4 @@ EOF
 
 chflags -R simmutable bin sbin etc lib libexec plex var/run/ld-elf.so.hints
 
-echo "done."
+echo "Done."
