@@ -1,18 +1,28 @@
 #!/bin/sh -eu
 
+if jls -j transmission >/dev/null 2>&1; then
+	echo "Jail must be died."
+	exit 1
+fi
+
 if [ $# -ne 1 ]; then
 	echo "$0 <destination_dir>"
 	exit 1
 fi
 
-_dir="$1"
+_dst="$1"
+install -d -m 0755 -g wheel -o root -v "$_dst"
+cd "$_dst"
 
-test -d "$_dir" || mkdir -p "$_dir"
-cd "$_dir"
+chflags -R nosimmutable .
+rm -rf var/db/web bin sbin dev etc lib libexec var/run
 
 install -d -m 0755 -g wheel -o root -v bin sbin dev etc lib libexec var var/db var/log var/run
 install -d -m 1777 -g wheel -o root -v var/tmp tmp
-install -d -m 0750 -g transmission -o transmission -v var/db/transmission var/run/transmission var/log/transmission
+
+for _dir in var/db var/run var/log; do
+	install -d -m 0750 -g transmission -o transmission -v $_dir/transmission
+done
 
 for _dir in blocklists download incomplete resume torrents; do
 	install -d -m 0750 -g transmission -o transmission -v var/db/transmission/$_dir
@@ -21,17 +31,14 @@ done
 install -m 0555 -g wheel -o root -v /libexec/ld-elf.so.1 libexec/ld-elf.so.1
 install -m 0111 -g wheel -o root -v /usr/sbin/nologin bin/nologin
 install -m 0444 -g wheel -o root -v /etc/localtime etc/localtime
-
 install -m 0111 -g wheel -o root -v /usr/local/bin/transmission-daemon bin/transmission
 
 cp -pR /usr/local/share/transmission/web var/db
-
 chown -R root:wheel var/db/web
 find var/db/web -type d -exec chmod 0555 {} ';'
 find var/db/web -type f -exec chmod 0444 {} ';'
 
-
-for _file in $(find . -type f); do
+for _file in $(find bin -type f); do
 	_type=$(file -b $_file)
 	case $_type in
 	ELF*)
@@ -42,12 +49,12 @@ for _file in $(find . -type f); do
 	esac
 
 	ldd $_file >/dev/null 2>&1 || continue
-	ldd -a $_file | grep -v ':$' | awk '{print $1}'
+	ldd -a $_file | awk '/=>/{print $1}'
 done | sort | uniq | while read _lib; do
 	test -f lib/$_lib && continue
         _path=$(find /lib /usr/lib /usr/local/lib -name $_lib | head -1)
         if [ -z "$_path" ]; then
-                echo "$_lib: library not found"
+		echo "warning: required file '$_lib' not found"
 		continue
         fi
 
@@ -57,8 +64,8 @@ done
 ldconfig -s -f var/run/ld-elf.so.hints lib
 
 cat >etc/master.passwd <<'EOF'
-root:*:0:0::0:0:root:/:/bin/nologin
-transmission:*:921:921:transmission:0:0:Transmission Daemon User:/var/db/transmission:/bin/nologin
+root:*:0:0::0:0:root:/:
+transmission:*:921:921:transmission:0:0:Transmission Daemon:/var/db/transmission:/bin/nologin
 EOF
 
 pwd_mkdb -p -d etc etc/master.passwd
@@ -112,6 +119,7 @@ EOF
 cat >etc/nsswitch.conf <<'EOF'
 group: files
 hosts: files dns
+netgroup: files
 networks: files
 passwd: files
 shells: files
@@ -121,3 +129,5 @@ rpc: files
 EOF
 
 chflags -R simmutable bin sbin etc lib libexec var/db/web var/run/ld-elf.so.hints
+
+echo "Done."
