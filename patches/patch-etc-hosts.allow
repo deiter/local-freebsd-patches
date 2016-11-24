@@ -1,5 +1,5 @@
---- etc/hosts.allow.orig	2016-09-02 11:22:11.305826000 +0300
-+++ etc/hosts.allow	2016-09-02 11:22:22.063553000 +0300
+--- etc/hosts.allow.orig	2016-11-09 20:39:23.221172000 +0300
++++ etc/hosts.allow	2016-11-09 20:39:31.818579000 +0300
 @@ -38,7 +38,7 @@
  # name) *MUST* be specified for rpcbind(8).
  ALL : localhost 127.0.0.1 : allow

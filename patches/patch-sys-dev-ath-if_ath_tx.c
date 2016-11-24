@@ -1,6 +1,6 @@
---- sys/dev/ath/if_ath_tx.c.orig	2016-09-02 11:22:11.919728000 +0300
-+++ sys/dev/ath/if_ath_tx.c	2016-09-02 11:22:22.106260000 +0300
-@@ -1674,7 +1674,7 @@
+--- sys/dev/ath/if_ath_tx.c.orig	2016-11-09 20:39:24.098341000 +0300
++++ sys/dev/ath/if_ath_tx.c	2016-11-09 20:39:31.841686000 +0300
+@@ -1683,7 +1683,7 @@
  			flags |= HAL_TXDESC_NOACK;
  		break;
  	default:

@@ -1,0 +1,11 @@
+--- etc/rc.d/fsck.orig	2016-11-09 20:39:23.210361000 +0300
++++ etc/rc.d/fsck	2016-11-09 20:39:31.823576000 +0300
+@@ -17,7 +17,7 @@
+ fsck_start()
+ {
+ 	if [ "$autoboot" = no ]; then
+-		echo "Fast boot: skipping disk checks."
++		:
+ 	elif [ ! -r /etc/fstab ]; then
+ 		echo "Warning! No /etc/fstab: skipping disk checks."
+ 	elif [ "$autoboot" = yes ]; then

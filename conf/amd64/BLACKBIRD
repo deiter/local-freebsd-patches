@@ -43,6 +43,8 @@ options 	KBD_INSTALL_CDEV	# install a CDEV entry in /dev
 # options	FLOWTABLE		# per-cpu routing cache
 device		pf			# PF OpenBSD packet-filter firewall
 device		pflog			# logging support interface for PF
+device		dtrace			# DTrace core
+device		dtraceall		# DTrace modules
 options		KTRACE			# ktrace(1) support
 options		RACCT			# Resource Accounting
 options		RCTL			# Resource Limits
@@ -52,6 +54,13 @@ options		AUDIT			# Security event auditing
 options		CAPABILITY_MODE		# Capsicum sandboxes with no global namespace access
 options		CAPABILITIES		# Capsicum fine-grained rights on file descriptors
 options		SW_WATCHDOG		# Software watchdog routines
+options		KDB			# Enable kernel debugger support
+options		KDB_TRACE		# Print a stack trace for a panic
+options		KDTRACE_FRAME		# Ensure frames are compiled in
+options		KDTRACE_HOOKS		# Kernel DTrace hooks
+options		DDB_CTF			# Kernel ELF linker loads CTF data
+makeoptions	DEBUG=-g		# Build kernel with gdb(1) debug symbols
+makeoptions	WITH_CTF=1		# Run ctfconvert(1) for DTrace support
 # options	ALTQ			# Alternate queuing of network packets
 # options	ALTQ_CBQ		# Class Based Queueing
 # options	ALTQ_RED		# Random Early Detection
@@ -96,6 +105,7 @@ device		smbios		# DMI/SMBIOS entry point
 device		sound		# The generic sound driver
 device		snd_hda		# Intel High Definition Audio
 options		SMP		# Symmetric MultiProcessor Kernel
+options		DEVICE_NUMA	# I/O Device Affinity
 device		cpuctl		# CPU control pseudo-device
 device		cpufreq		# non-ACPI CPU frequency control
 device		coretemp	# on-die sensor on Intel Core and newer CPUs

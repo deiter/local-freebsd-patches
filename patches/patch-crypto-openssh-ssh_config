@@ -1,5 +1,5 @@
---- crypto/openssh/ssh_config.orig	2016-09-02 11:22:12.544962000 +0300
-+++ crypto/openssh/ssh_config	2016-09-02 11:22:22.056391000 +0300
+--- crypto/openssh/ssh_config.orig	2016-11-09 20:39:24.488178000 +0300
++++ crypto/openssh/ssh_config	2016-11-09 20:39:31.814280000 +0300
 @@ -51,3 +51,6 @@
  #   RekeyLimit 1G 1h
  #   VerifyHostKeyDNS yes

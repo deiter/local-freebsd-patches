@@ -1,3 +1,3 @@
 #!/bin/sh -exu
 
-egrep -v '^($|#)' $1 | awk '{print $2}' | sort
+egrep -v '^($|#)' $1 | awk '{print $1, $2}' | sort

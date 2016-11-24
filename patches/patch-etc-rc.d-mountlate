@@ -1,0 +1,13 @@
+--- etc/rc.d/mountlate.orig	2016-11-09 20:39:23.212385000 +0300
++++ etc/rc.d/mountlate	2016-11-09 20:39:31.824607000 +0300
+@@ -22,10 +22,8 @@
+ 	# Mount "late" filesystems.
+ 	#
+ 	err=0
+-	echo -n 'Mounting late filesystems:'
+ 	mount -a -L
+ 	err=$?
+-	echo '.'
+ 
+ 	case ${err} in
+ 	0)

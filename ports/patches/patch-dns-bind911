@@ -1,0 +1,36 @@
+Index: dns/bind911/Makefile
+===================================================================
+--- dns/bind911/Makefile	(revision 425851)
++++ dns/bind911/Makefile	(working copy)
+@@ -31,7 +31,7 @@
+ # ISC releases things like 9.8.0-P1, which our versioning doesn't like
+ ISCVERSION=	9.11.0-P1
+ 
+-USES=	cpe libedit
++USES=	cpe
+ 
+ CPE_VENDOR=	isc
+ CPE_VERSION=	${ISCVERSION:C/-.*//}
+@@ -39,13 +39,10 @@
+ CPE_UPDATE=	${ISCVERSION:C/.*-//:tl}
+ .endif
+ 
+-LIB_DEPENDS=	libxml2.so:textproc/libxml2
+-
+ GNU_CONFIGURE=	yes
+ CONFIGURE_ARGS+=	--localstatedir=/var --disable-linux-caps \
+ 		--disable-symtable \
+ 		--with-randomdev=/dev/random \
+-		--with-libxml2=${LOCALBASE} \
+ 		--with-readline=-ledit \
+ 		--with-dlopen=yes \
+ 		--sysconfdir=${ETCDIR}
+@@ -244,7 +241,7 @@
+ .endif
+ 
+ post-patch:
+-	@${REINPLACE_CMD} -e 's|readline/readline.h|editline/readline.h|; \
++	@${REINPLACE_CMD} -e 's|readline/readline.h|edit/readline/readline.h|; \
+ 		s|readline/history.h|histedit.h|' \
+ 		${WRKSRC}/bin/dig/nslookup.c ${WRKSRC}/bin/nsupdate/nsupdate.c
+ .if defined(BIND_TOOLS_SLAVE)

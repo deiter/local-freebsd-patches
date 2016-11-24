@@ -9,3 +9,5 @@ for i in $(find . -type f -name '*.orig' | sed 's|^\./||'); do
 	PATCH_NAME=patch-$(echo $NEW_NAME | sed 's|/|-|g')
 	diff -u $OLD_NAME $NEW_NAME >$PATCH_DIR/$PATCH_NAME || true
 done
+
+ls -l $PATCH_DIR

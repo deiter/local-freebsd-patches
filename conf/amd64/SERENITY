@@ -1,5 +1,6 @@
 #
 # $Id$
 #
-include		SUPERMICRO
+# include		SUPERMICRO
+include		GENERIC
 ident		SERENITY	# Supermicro A1SRM-2758F

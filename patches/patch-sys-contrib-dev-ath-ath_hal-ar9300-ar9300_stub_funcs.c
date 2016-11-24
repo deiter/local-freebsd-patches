@@ -1,5 +1,5 @@
---- sys/contrib/dev/ath/ath_hal/ar9300/ar9300_stub_funcs.c.orig	2016-09-02 11:22:12.165396000 +0300
-+++ sys/contrib/dev/ath/ath_hal/ar9300/ar9300_stub_funcs.c	2016-09-02 11:22:22.098775000 +0300
+--- sys/contrib/dev/ath/ath_hal/ar9300/ar9300_stub_funcs.c.orig	2016-11-09 20:39:23.329335000 +0300
++++ sys/contrib/dev/ath/ath_hal/ar9300/ar9300_stub_funcs.c	2016-11-09 20:39:31.836122000 +0300
 @@ -430,7 +430,9 @@
  ar9300_Stub_GetAntennaSwitch(struct ath_hal *ah)
  {

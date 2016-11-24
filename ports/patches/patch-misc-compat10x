@@ -1,0 +1,49 @@
+Index: misc/compat10x/pkg-plist.amd64
+===================================================================
+--- misc/compat10x/pkg-plist.amd64	(revision 421349)
++++ misc/compat10x/pkg-plist.amd64	(working copy)
+@@ -39,44 +39,3 @@
+ lib/compat/pam_ssh.so.5
+ lib/compat/pam_tacplus.so.5
+ lib/compat/pam_unix.so.5
+-lib32/compat/libcam.so.6
+-lib32/compat/libcrypto.so.7
+-lib32/compat/libdevinfo.so.5
+-lib32/compat/libdwarf.so.3
+-lib32/compat/libelf.so.1
+-lib32/compat/libgomp.so.1
+-lib32/compat/libgpib.so.3
+-lib32/compat/libheimsqlite.so.11
+-lib32/compat/libhistory.so.8
+-lib32/compat/libipx.so.5
+-lib32/compat/libkvm.so.6
+-lib32/compat/libopie.so.7
+-lib32/compat/libpam.so.5
+-lib32/compat/libproc.so.2
+-lib32/compat/libreadline.so.8
+-lib32/compat/libssl.so.7
+-lib32/compat/libugidfw.so.4
+-lib32/compat/pam_chroot.so.5
+-lib32/compat/pam_deny.so.5
+-lib32/compat/pam_echo.so.5
+-lib32/compat/pam_exec.so.5
+-lib32/compat/pam_ftpusers.so.5
+-lib32/compat/pam_group.so.5
+-lib32/compat/pam_guest.so.5
+-lib32/compat/pam_krb5.so.5
+-lib32/compat/pam_ksu.so.5
+-lib32/compat/pam_lastlog.so.5
+-lib32/compat/pam_login_access.so.5
+-lib32/compat/pam_nologin.so.5
+-lib32/compat/pam_opie.so.5
+-lib32/compat/pam_opieaccess.so.5
+-lib32/compat/pam_passwdqc.so.5
+-lib32/compat/pam_permit.so.5
+-lib32/compat/pam_radius.so.5
+-lib32/compat/pam_rhosts.so.5
+-lib32/compat/pam_rootok.so.5
+-lib32/compat/pam_securetty.so.5
+-lib32/compat/pam_self.so.5
+-lib32/compat/pam_ssh.so.5
+-lib32/compat/pam_tacplus.so.5
+-lib32/compat/pam_unix.so.5

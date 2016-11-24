@@ -1,5 +1,5 @@
---- etc/etc.amd64/ttys.orig	2016-09-02 11:22:11.322884000 +0300
-+++ etc/etc.amd64/ttys	2016-09-02 11:22:22.062039000 +0300
+--- etc/etc.amd64/ttys.orig	2016-11-09 20:39:23.190177000 +0300
++++ etc/etc.amd64/ttys	2016-11-09 20:39:31.817552000 +0300
 @@ -31,13 +31,13 @@
  #
  ttyv0	"/usr/libexec/getty Pc"		xterm	on  secure

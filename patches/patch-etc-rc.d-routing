@@ -1,0 +1,11 @@
+--- etc/rc.d/routing.orig	2016-11-09 20:39:23.210903000 +0300
++++ etc/rc.d/routing	2016-11-09 20:39:31.826844000 +0300
+@@ -179,7 +179,7 @@
+ 			if [ $_skip = 0 ]; then
+ 				route_args=`get_if_var ${i%:*} route_IF`
+ 				if [ -n "$route_args" ]; then
+-					${ROUTE_CMD} ${_action} ${route_args}
++					${ROUTE_CMD} ${_action} ${route_args} >/dev/null 2>&1
+ 				else
+ 					warn "route_${i%:*} not found."
+ 				fi

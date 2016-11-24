@@ -1,5 +1,5 @@
---- sys/dev/viatemp/viatemp.c.orig	2016-09-02 11:22:22.109420000 +0300
-+++ sys/dev/viatemp/viatemp.c	2016-09-02 11:22:22.110013000 +0300
+--- sys/dev/viatemp/viatemp.c.orig	2016-11-09 20:39:31.842596000 +0300
++++ sys/dev/viatemp/viatemp.c	2016-11-09 20:39:31.843004000 +0300
 @@ -0,0 +1,205 @@
 +/* 
 +Copyright (c) 2012, Aleksandr Mishunin 

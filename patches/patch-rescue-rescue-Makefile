@@ -1,0 +1,10 @@
+--- rescue/rescue/Makefile.orig	2016-11-09 20:39:21.058664000 +0300
++++ rescue/rescue/Makefile	2016-11-09 20:39:31.829956000 +0300
+@@ -216,6 +216,7 @@
+ CRUNCH_SRCDIRS+= usr.sbin
+ 
+ CRUNCH_PROGS_usr.sbin+= chroot
++CRUNCH_PROGS_usr.sbin+= daemon
+ 
+ CRUNCH_PROGS_usr.sbin+= chown
+ CRUNCH_ALIAS_chown= chgrp

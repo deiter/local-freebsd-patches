@@ -1,32 +1,37 @@
 #!/bin/sh -eu
 
-BASENAME=$(basename $0 .sh)
-OPTIONS_TEXT=$(mktemp -qt $BASENAME)
-OPTIONS_ONLY=$(mktemp -qt $BASENAME)
-SRC_CONF=$(mktemp -qt $BASENAME)
+. common.sh
 
-cd /usr/src/tools/build/options
+_conf=$(basename $_script .sh)
+_custom_full="$_root/conf/src.conf"
+_system_part=$(mktemp)
+_default_full=$(mktemp)
+_default_part=$(mktemp)
 
-LIST=$(ls | grep -v '[a-z]' | sort)
+cd /var/devel/src/tools/build/options
 
-for ITEM in $LIST ; do
-	(echo '.Dd UNTITLED' ; cat $ITEM) | mandoc -Tascii -O width=70 | \
+_list=$(ls WITH_* WITHOUT_* | sort)
+
+for _item in $_list; do
+	(echo '.Dd UNTITLED' ; cat $_item) | mandoc -Tascii -O width=70 | \
 		col -bx | tr -s ' ' | egrep -v 'UNTITLED|^$' | sed 's|^|## |'
-	echo "# $ITEM=YES"
+	echo "# $_item=YES"
 	echo ''
-done >$OPTIONS_TEXT
+done >$_default_full
 
 # src.conf format:
 # 1. comments: lines which begin with ##
 # 2. enabled control variables: VARIABLE=VALUE
 # 3. disabled control variables: # VARIABLE=VALUE
 
-awk -F= '!/^##.*$|^(\ |\t)*$/{gsub(/^#\ */, ""); print $1}' $OPTIONS_TEXT >$OPTIONS_ONLY
-awk -F= '!/^##.*$|^(\ |\t)*$/{gsub(/^#\ */, ""); print $1}' /etc/src.conf >$SRC_CONF
-diff -u $SRC_CONF $OPTIONS_ONLY || true
+awk -F= '!/^##.*$|^(\ |\t)*$/{gsub(/^#\ */, ""); print $1}' $_default_full >$_default_part
+awk -F= '!/^##.*$|^(\ |\t)*$/{gsub(/^#\ */, ""); print $1}' $_custom_full >$_system_part
+echo "==> options diff:"
+diff -u $_default_part $_system_part || true
 
-echo
-echo "Full src.conf: $OPTIONS_TEXT"
-echo
+grep '^##' $_default_full >$_default_part
+grep '^##' $_custom_full >$_system_part
+echo "==> text diff:"
+diff -u $_default_part $_system_part || true
 
-rm -f $SRC_CONF $OPTIONS_ONLY
+rm -f $_default_full $_default_part $_system_part
