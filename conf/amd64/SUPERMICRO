@@ -32,7 +32,7 @@ options		FUSE			# FUSE support module
 options 	GEOM_PART_GPT		# GUID Partition Tables.
 options		GEOM_LABEL		# Provides labelization
 options		GEOM_ELI		# Disk encryption.
-options		COMPAT_FREEBSD32	# 32-bit runtime support for FreeBSD/i386 binaries
+# options	COMPAT_FREEBSD32	# 32-bit runtime support for FreeBSD/i386 binaries
 options		COMPAT_FREEBSD9		# Compatible with FreeBSD9
 options		COMPAT_FREEBSD10	# Compatible with FreeBSD10
 # options	COMPAT_LINUX32		# 32-bit Linux ABI emulation
@@ -78,7 +78,6 @@ makeoptions	WITH_CTF=1		# Run ctfconvert(1) for DTrace support
 # options	ALTQ_NOPCC		# Required if the TSC is unusable
 options		INCLUDE_CONFIG_FILE	# Include this file in kernel
 # options	DEVICE_POLLING		# mixed interrupt-polling handling
-# options	VFS_AIO			# aio_* system calls
 options		DIRECTIO		# bypass the buffer cache
 options		LIBICONV		# Kernel side iconv library
 options		CD9660_ICONV		# CD9660 optional character code conversion

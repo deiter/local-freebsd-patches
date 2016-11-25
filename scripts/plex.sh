@@ -161,10 +161,10 @@ hosts: files dns
 netgroup: files
 networks: files
 passwd: files
-shells: files
-services: files
 protocols: files
 rpc: files
+services: files
+shells: files
 EOF
 
 chflags -R simmutable bin sbin etc lib libexec plex var/run/ld-elf.so.hints

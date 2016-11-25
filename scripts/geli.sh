@@ -78,6 +78,7 @@ case "$_action" in
 start)
 	_start alien
 	_start predator
+	zfs mount -a
 	for _jail in $_jails; do
 		jail -cv $_jail
 	done

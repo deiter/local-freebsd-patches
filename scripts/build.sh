@@ -40,6 +40,7 @@ _dst="$_stage/$_label"
 
 export BRANCH_OVERRIDE="$_triplet"
 
+test -d $_obj || exit 1
 test -d $_obj$_src && rm -rf $_obj$_src
 test -d $_dst && rm -rf $_dst
 
@@ -55,12 +56,13 @@ echo $_tz >var/db/zoneinfo
 cat >etc/nsswitch.conf <<EOF
 group: files
 hosts: files dns
+netgroup: files
 networks: files
 passwd: files
-shells: files
-services: files
 protocols: files
 rpc: files
+services: files
+shells: files
 EOF
 
 cat >etc/host.conf <<EOF

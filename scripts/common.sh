@@ -12,7 +12,7 @@ _src="$_devel/src"
 _obj="$_devel/obj"
 _pkg="$_devel/pkg"
 
-_hostname=$(uname -n)
+_hostname=$(hostname -s)
 _osname=$(uname -o)
 _target=$(uname -m)
 _kernel=$(uname -i)
@@ -25,6 +25,8 @@ export MAKEOBJDIRPREFIX="$_obj"
 
 if [ -x $_local/bin/mkisofs ]; then
 	_mkisofs="$_local/bin/mkisofs"
+else
+	_mkisofs=""
 fi
 
 if [ -x /usr/bin/svnlite ]; then
@@ -64,6 +66,7 @@ _mount_fs()
 	test "$_hostname" = "nostromo" && return 0
 	for _fs in $_devel $_src $_obj ;do
 		install -v -d -m 0755 -g wheel -o root $_fs
+		mount nostromo:$_fs $_fs
 	done
 }
 
