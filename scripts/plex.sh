@@ -5,15 +5,12 @@ if jls -j plex >/dev/null 2>&1; then
 	exit 1
 fi
 
-if ! pkg info compat10x-amd64 >/dev/null 2>&1; then
-	echo "Package compat9x must be installed."
-	exit 1
-fi
-
-if ! pkg info gdbm >/dev/null 2>&1; then
-	echo "Package gdbm must be installed."
-	exit 1
-fi
+for _package in gdbm compat9x-amd64 compat10x-amd64; do
+	if ! pkg info $_package >/dev/null 2>&1; then
+		echo "Package $_package must be installed."
+		exit 1
+	fi
+done
 
 if [ $# -ne 2 ]; then
 	echo "$0 <destination_dir> <plex_tarball_url>"
