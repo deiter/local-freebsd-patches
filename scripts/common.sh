@@ -1,6 +1,7 @@
 
 unset LANG LC_ALL
 
+_master="nostromo"
 _tz="Europe/Moscow"
 _pool="zroot"
 _local="/usr/local"
@@ -36,10 +37,22 @@ elif [ -x /usr/bin/svn ]; then
 elif [ -x $_local/bin/svn ]; then
 	_svn="$_local/bin/svn"
 else
+	echo "svn command not found"
 	exit 1
 fi
 
 _patch="/usr/bin/patch -p 0 -V none"
+
+_exit()
+{
+	local _msg="$@"
+
+	if [ -n "$_msg" ]; then
+		echo "$_msg"
+	fi
+
+	exit 1
+}
 
 _update_svn()
 {
@@ -63,10 +76,19 @@ _update_cfg()
 _mount_fs()
 {
 	local _fs
-	test "$_hostname" = "nostromo" && return 0
-	for _fs in $_devel $_src $_obj ;do
-		install -v -d -m 0755 -g wheel -o root $_fs
-		mount nostromo:$_fs $_fs
+	test "$_hostname" = "$_master" && return 0
+	test -d $_devel || install -v -d -m 0755 -g wheel -o root $_devel
+	for _fs in $_devel $_src $_obj; do
+		mount $_master:$_fs $_fs
+	done
+}
+
+_umount_fs()
+{
+	local _fs
+	test "$_hostname" = "$_master" && return 0
+	for _fs in $_obj $_src $_devel; do
+		umount $_fs
 	done
 }
 
@@ -80,9 +102,12 @@ _clean_old()
 
 	rm -rf /var/cache
 
-	for _dir in /usr/src /usr/obj /var/games /var/yp /var/unbound \
+	for _dir in /usr/src /usr/obj /var/games /var/yp \
+		/var/unbound/conf.d /var/unbound \
 		/var/db/freebsd-update /var/db/hyperv /var/db/ipf \
 		/var/db/ports /var/db/portsnap /mnt /proc; do
 		test -d $_dir && rmdir $_dir
 	done
+
+	return 0
 }
