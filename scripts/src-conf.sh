@@ -27,11 +27,11 @@ done >$_default_full
 awk -F= '!/^##.*$|^(\ |\t)*$/{gsub(/^#\ */, ""); print $1}' $_default_full >$_default_part
 awk -F= '!/^##.*$|^(\ |\t)*$/{gsub(/^#\ */, ""); print $1}' $_custom_full >$_system_part
 echo "==> options diff:"
-diff -u $_default_part $_system_part || true
+diff -u $_system_part $_default_part || true
 
 grep '^##' $_default_full >$_default_part
 grep '^##' $_custom_full >$_system_part
 echo "==> text diff:"
-diff -u $_default_part $_system_part || true
+diff -u $_system_part $_default_part|| true
 
 rm -f $_default_full $_default_part $_system_part
