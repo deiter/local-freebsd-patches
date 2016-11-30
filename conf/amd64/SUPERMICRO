@@ -32,7 +32,7 @@ options		FUSE			# FUSE support module
 options 	GEOM_PART_GPT		# GUID Partition Tables.
 options		GEOM_LABEL		# Provides labelization
 options		GEOM_ELI		# Disk encryption.
-# options	COMPAT_FREEBSD32	# 32-bit runtime support for FreeBSD/i386 binaries
+options		COMPAT_FREEBSD32	# 32-bit runtime support for FreeBSD/i386 binaries
 options		COMPAT_FREEBSD9		# Compatible with FreeBSD9
 options		COMPAT_FREEBSD10	# Compatible with FreeBSD10
 # options	COMPAT_LINUX32		# 32-bit Linux ABI emulation
