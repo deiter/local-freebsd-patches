@@ -1,0 +1,13 @@
+Index: emulators/virtualbox-ose/files/patch-src_VBox_VMM_VMMR3_CPUMR3CpuId.cpp
+===================================================================
+--- emulators/virtualbox-ose/files/patch-src_VBox_VMM_VMMR3_CPUMR3CpuId.cpp	(revision 427454)
++++ emulators/virtualbox-ose/files/patch-src_VBox_VMM_VMMR3_CPUMR3CpuId.cpp	(working copy)
+@@ -4,7 +4,7 @@
+      rc = cpumR3CpuIdReadIsaExtCfgLegacy(pVM, pIsaExts, pCpumCfg, "SSE4.2", &pConfig->enmSse42, true);
+      AssertLogRelRCReturn(rc, rc);
+  
+-+#ifdef __FreeBSD__
+++#ifdef __XXXXXXX__
+ +    // XXX PR211651: Disable XSAVE/XRSTOR for guest
+ +    bool const fMayHaveXSave = false;
+ +#else
