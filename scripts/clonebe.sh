@@ -127,14 +127,14 @@ for _fs in $_new_tree; do
 	zfs promote $_fs
 done
 
-cd
-_umount_fs
-
 echo " ==> Update UEFI boot loader"
 _list=$(glabel status | awk '/'$_pool'_boot_/{print $NF}')
 for _part in $_list; do
 	echo "  ==> Partition $_part"
 	dd if=$_obj$_src/sys/boot/efi/boot1/boot1.efifat of=/dev/$_part
 done
+
+cd
+_umount_fs
 
 echo " ==> Done"
