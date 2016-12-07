@@ -3,7 +3,7 @@
 . common.sh
 
 _deps="ports-mgmt/pkg ports-mgmt/dialog4ports"
-_list="lang/perl5.24 sysutils/tmux sysutils/smartmontools sysutils/ipmitool dns/bind911 net/isc-dhcp43-server sysutils/nut security/openvpn editors/vim-lite sysutils/cdrtools net-p2p/transmission-daemon databases/gdbm misc/compat9x devel/git"
+_list="lang/perl5.24 sysutils/tmux sysutils/smartmontools sysutils/ipmitool dns/bind911 net/isc-dhcp43-server sysutils/nut security/openvpn editors/vim-lite sysutils/cdrtools net-p2p/transmission-daemon databases/gdbm misc/compat9x devel/git shells/mksh"
 
 if [ ! -d $_ports/.svn ]; then
 	install -v -d -m 0755 -g wheel -o root $_ports
