@@ -3,7 +3,7 @@
 # pkg install -y gdbm compat9x-amd64 compat10x-amd64
 
 if jls -j plex >/dev/null 2>&1; then
- 	echo "Jail 'plex' must be stopped."
+	echo "Jail 'plex' must be stopped."
 	exit 1
 fi
 
