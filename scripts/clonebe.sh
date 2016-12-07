@@ -1,11 +1,15 @@
-#!/bin/sh -eux
+#!/bin/sh -eu
 
 . common.sh
 
 _update_cfg
 _mount_fs
 
-_force="$@"
+if [ $# -eq 1 ]; then
+	_kernel=$1
+fi
+
+_force="1"
 _ver="$_obj$_src/sys/$_kernel/vers.c"
 
 if [ ! -r "$_ver" ]; then
@@ -28,7 +32,7 @@ if [ -d $_dst ]; then
 	if [ -n "$_name" ]; then
 		zfs umount -f $_name
 	fi
-	rmdir  $_dst
+	rmdir $_dst
 fi
 
 _old_root=$(zfs list -H -o name /)

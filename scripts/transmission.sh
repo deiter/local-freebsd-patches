@@ -1,5 +1,7 @@
 #!/bin/sh -eu
 
+# pkg install -y transmission-daemon
+
 if jls -j transmission >/dev/null 2>&1; then
 	echo "Jail must be died."
 	exit 1
@@ -54,7 +56,7 @@ done | sort | uniq | while read _lib; do
 	test -f lib/$_lib && continue
         _path=$(find /lib /usr/lib /usr/local/lib -name $_lib | head -1)
         if [ -z "$_path" ]; then
-		echo "warning: required file '$_lib' not found"
+		echo "warning: required library '$_lib' not found"
 		continue
         fi
 

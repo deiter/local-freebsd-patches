@@ -1,7 +1,9 @@
 #!/bin/sh -eu
 
+# pkg install -y gdbm compat9x-amd64 compat10x-amd64
+
 if jls -j plex >/dev/null 2>&1; then
- 	echo "Jail must be died."
+ 	echo "Jail 'plex' must be stopped."
 	exit 1
 fi
 
@@ -27,10 +29,15 @@ _src=$(basename -s -$_osname-$_target.tar.bz2 $_tarball)
 install -d -m 0755 -g wheel -o root -v "$_dst"
 cd "$_dst"
 
-chflags -R nosimmutable bin sbin dev etc lib libexec plex var/run
-rm -rf bin sbin dev etc lib libexec var/run plex
+for _dir in bin sbin dev etc lib libexec plex var/run; do
+	if [ ! -d $_dir ]; then
+		continue
+	fi
+	chflags -R nosimmutable $_dir
+	rm -rf $_dir
+done
 
-fetch --no-verify-peer "$_url"
+fetch --no-verify-peer $_url
 tar pxf $_tarball
 
 if [ ! -d $_src ]; then
@@ -64,6 +71,7 @@ chmod 0444 lib/*
 ln -s Plex\ Media\ Server plex/Plex_Media_Server
 rm -f lib/libpython2.7.so
 ln -s libpython2.7.so.1 lib/libpython2.7.so
+ln -s libsqlite3.so.0 lib/libsqlite3.so.8
 
 _miss=$(find $_src -type f)
 
@@ -74,6 +82,8 @@ fi
 
 rm -rf $_src $_tarball
 
+IFS='
+'
 for _file in $(find bin lib plex -type f); do
 	_type=$(file -b $_file)
 	case $_type in
@@ -90,10 +100,9 @@ done | sort | uniq | while read _lib; do
 	test -f lib/$_lib && continue
         _path=$(find /lib /usr/lib /usr/local/lib -name $_lib | head -1)
         if [ -z "$_path" ]; then
-                echo "warning: required file '$_lib' not found"
+                echo "warning: required library '$_lib' not found"
 		continue
         fi
-
 	install -m 0444 -g wheel -o root -v $_path lib/$_lib
 done
 
