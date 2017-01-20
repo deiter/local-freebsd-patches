@@ -1,0 +1,13 @@
+Index: www/nextcloud/Makefile
+===================================================================
+--- www/nextcloud/Makefile	(revision 431809)
++++ www/nextcloud/Makefile	(working copy)
+@@ -10,7 +10,7 @@
+ 
+ LICENSE=	AGPLv3
+ 
+-USES=		cpe gettext-runtime php:web tar:bzip2 ssl
++USES=		cpe php:web tar:bzip2 ssl
+ USE_PHP=	bz2 ctype curl dom fileinfo filter gd hash iconv json \
+ 		mbstring pdo posix session simplexml xml xmlreader xmlwriter \
+ 		xsl wddx zip zlib

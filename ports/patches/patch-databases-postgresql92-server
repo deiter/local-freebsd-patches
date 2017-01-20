@@ -1,0 +1,22 @@
+Index: databases/postgresql92-server/Makefile
+===================================================================
+--- databases/postgresql92-server/Makefile	(revision 431815)
++++ databases/postgresql92-server/Makefile	(working copy)
+@@ -37,7 +37,7 @@
+ PG_UID?=	70
+ 
+ LDFLAGS+=	-L${LOCALBASE}/lib
+-INCLUDES+=	-I${LOCALBASE}/include
++INCLUDES+=	-I${LOCALBASE}/include -I/usr/include/edit
+ CONFIGURE_ARGS+=--with-libraries=${PREFIX}/lib \
+ 		--with-includes=${PREFIX}/include \
+ 		--enable-thread-safety
+@@ -115,8 +115,6 @@
+ 
+ .if defined(CLIENT_ONLY)
+ LIBEDIT_CONFIGURE_ON+=--with-libedit-preferred
+-LIBEDIT_USES=		libedit
+-LIBEDIT_USES_OFF=		readline
+ .endif # CLIENT_ONLY
+ 
+ SSL_USES=	ssl
