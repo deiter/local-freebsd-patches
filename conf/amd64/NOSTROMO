@@ -3,4 +3,3 @@
 #
 include		SUPERMICRO
 ident		NOSTROMO	# Supermicro X9SCM-F
-device		em		# Intel Pro/1000 Gigabit Ethernet

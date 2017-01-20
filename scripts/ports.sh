@@ -1,9 +1,21 @@
 #!/bin/sh -exu
 
+##root@builder:/var/devel/ports/security/py-certbot # make  TEST_DEPENDS='' package package-recursive
+
 . common.sh
 
 _deps="ports-mgmt/pkg ports-mgmt/dialog4ports"
-_list="lang/perl5.24 sysutils/tmux sysutils/smartmontools sysutils/ipmitool dns/bind911 net/isc-dhcp43-server sysutils/nut security/openvpn editors/vim-lite sysutils/cdrtools net-p2p/transmission-daemon databases/gdbm misc/compat9x devel/git shells/mksh"
+
+_list="lang/perl5.24 sysutils/tmux sysutils/smartmontools sysutils/ipmitool"
+_list="$_list dns/bind911 net/isc-dhcp43-server sysutils/nut security/openvpn"
+_list="$_list editors/vim-lite sysutils/cdrtools net-p2p/transmission-daemon"
+_list="$_list databases/gdbm misc/compat9x devel/git shells/mksh"
+_list="$_list security/cyrus-sasl2 security/cyrus-sasl2-gssapi"
+_list="$_list net/openldap24-sasl-client net/openldap24-server"
+_list="$_list security/cyrus-sasl2-saslauthd mail/sendmail mail/cyrus-imapd25"
+_list="$_list www/tomcat8 devel/ctags devel/apache-ant"
+_list="$_list www/nginx-lite databases/postgresql96-client"
+_list="$_list databases/postgresql96-server www/nextcloud"
 
 if [ ! -d $_ports/.svn ]; then
 	install -v -d -m 0755 -g wheel -o root $_ports

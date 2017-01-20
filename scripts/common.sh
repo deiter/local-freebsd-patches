@@ -68,7 +68,7 @@ _update_svn()
 _update_cfg()
 {
 	local _cfg
-	for _cfg in make.conf src.conf; do
+	for _cfg in make.conf src.conf mergemaster.rc; do
 		install -v -m 0644 -g wheel -o root $_root/conf/$_cfg /etc/$_cfg
 	done
 }
@@ -76,9 +76,19 @@ _update_cfg()
 _mount_fs()
 {
 	local _fs
-	test "$_hostname" = "$_master" && return 0
-	test -d $_devel || install -v -d -m 0755 -g wheel -o root $_devel
-	for _fs in $_devel $_src $_obj; do
+
+	if [ "$_hostname" = "$_master" ]; then
+		return 0
+	fi
+
+	if [ ! -d $_devel ]; then
+		install -v -d -m 0755 -g wheel -o root $_devel
+	fi
+
+	for _fs in $_src $_obj; do
+		if [ ! -d $_fs ]; then
+			install -v -d -m 0755 -g wheel -o root $_fs
+		fi
 		mount $_master:$_fs $_fs
 	done
 }
@@ -86,10 +96,17 @@ _mount_fs()
 _umount_fs()
 {
 	local _fs
-	test "$_hostname" = "$_master" && return 0
-	for _fs in $_obj $_src $_devel; do
+
+	if [ "$_hostname" = "$_master" ]; then
+		return 0
+	fi
+
+	for _fs in $_obj $_src; do
 		umount $_fs
+		rmdir $_fs
 	done
+
+	rmdir $_devel
 }
 
 _clean_old()
@@ -103,6 +120,7 @@ _clean_old()
 	rm -rf /var/cache
 
 	for _dir in /usr/src /usr/obj /var/games /var/yp \
+		/etc/dma \
 		/var/unbound/conf.d /var/unbound \
 		/var/db/freebsd-update /var/db/hyperv /var/db/ipf \
 		/var/db/ports /var/db/portsnap /mnt /proc; do

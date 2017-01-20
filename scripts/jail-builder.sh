@@ -20,28 +20,12 @@ install -v -o root -g wheel -m 0444 /dev/null etc/wall_cmos_clock
 install -v -o root -g wheel -m 0444 usr/share/zoneinfo/$_tz etc/localtime
 echo $_tz >var/db/zoneinfo
 
-cat >etc/nsswitch.conf <<EOF
-group: files
-hosts: files dns
-networks: files
-passwd: files
-shells: files
-services: files
-protocols: files
-rpc: files
-EOF
-
-cat >etc/host.conf <<EOF
-hosts
-dns
-EOF
-
 cat >etc/rc.conf <<EOF
 rc_startmsgs="NO"
 rc_debug="NO"
 rc_info="NO"
 cron_enable="NO"
-sshd_enable="YES"
+sshd_enable="NO"
 sendmail_enable="NONE"
 fsck_y_enable="YES"
 background_fsck="NO"

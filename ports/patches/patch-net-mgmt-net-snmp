@@ -1,12 +1,24 @@
 Index: net-mgmt/net-snmp/Makefile
 ===================================================================
---- net-mgmt/net-snmp/Makefile	(revision 415143)
+--- net-mgmt/net-snmp/Makefile	(revision 428088)
 +++ net-mgmt/net-snmp/Makefile	(working copy)
-@@ -52,6 +52,7 @@
+@@ -53,6 +53,7 @@
  		--with-logfile="${NET_SNMP_LOGFILE}" \
  		--with-persistent-directory="${NET_SNMP_PERSISTENTDIR}" \
  		--with-gnu-ld --with-libwrap \
-+		--with-agentx-socket=/var/db/net-snmp/agentx-socket \
++		--with-agentx-socket=/var/db/net-snmp/agentx.socket \
  		--with-ldflags="-lm -lkvm -ldevstat -L${PKG_PREFIX}/lib -L${LOCALBASE}/lib ${LCRYPTO}"
  SUB_FILES=	pkg-message
  
+Index: net-mgmt/net-snmp/pkg-plist
+===================================================================
+--- net-mgmt/net-snmp/pkg-plist	(revision 428088)
++++ net-mgmt/net-snmp/pkg-plist	(working copy)
+@@ -583,7 +583,6 @@
+ %%DATADIR%%/snmpconf-data/snmptrapd-data/runtime
+ %%DATADIR%%/snmpconf-data/snmptrapd-data/snmpconf-config
+ %%DATADIR%%/snmpconf-data/snmptrapd-data/traphandle
+-@dir /var/agentx
+ %%WITH_PYTHON%%%%PYTHON_SITELIBDIR%%/netsnmp/__init__.py
+ %%WITH_PYTHON%%%%PYTHON_SITELIBDIR%%/netsnmp/__init__.pyc
+ %%WITH_PYTHON%%%%PYTHON_SITELIBDIR%%/netsnmp/__init__.pyo

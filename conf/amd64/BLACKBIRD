@@ -106,6 +106,7 @@ device		sound		# The generic sound driver
 device		snd_hda		# Intel High Definition Audio
 options		SMP		# Symmetric MultiProcessor Kernel
 options		DEVICE_NUMA	# I/O Device Affinity
+options		EARLY_AP_STARTUP
 device		cpuctl		# CPU control pseudo-device
 device		cpufreq		# non-ACPI CPU frequency control
 device		coretemp	# on-die sensor on Intel Core and newer CPUs

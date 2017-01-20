@@ -112,6 +112,7 @@ device		nvram		# Access to rtc cmos via /dev/nvram
 device		smbios		# DMI/SMBIOS entry point
 options		SMP		# Symmetric MultiProcessor Kernel
 options		DEVICE_NUMA	# I/O Device Affinity
+options		EARLY_AP_STARTUP
 device		cpuctl		# CPU control pseudo-device
 device		cpufreq		# non-ACPI CPU frequency control
 device		coretemp	# on-die sensor on Intel Core and newer CPUs
@@ -133,8 +134,7 @@ device		kbdmux		# keyboard multiplexer
 options		SC_HISTORY_SIZE=8192	# number of history buffer lines
 device		uart		# Generic UART driver
 # device	miibus		# MII bus support
-# device	em		# Intel Pro/1000 Gigabit Ethernet
-device		igb		# Intel Pro/1000 PCIE Gigabit Ethernet
+device		em		# Intel PRO/1000 Gigabit Ethernet Family
 # device	wlan		# 802.11 support
 # device	wlan_wep	# 802.11 WEP support
 # device	wlan_ccmp	# 802.11 CCMP support

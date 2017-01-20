@@ -1,10 +1,10 @@
 Index: dns/bind911/Makefile
 ===================================================================
---- dns/bind911/Makefile	(revision 425851)
+--- dns/bind911/Makefile	(revision 431806)
 +++ dns/bind911/Makefile	(working copy)
 @@ -31,7 +31,7 @@
  # ISC releases things like 9.8.0-P1, which our versioning doesn't like
- ISCVERSION=	9.11.0-P1
+ ISCVERSION=	9.11.0-P2
  
 -USES=	cpe libedit
 +USES=	cpe
@@ -22,10 +22,10 @@ Index: dns/bind911/Makefile
  		--disable-symtable \
  		--with-randomdev=/dev/random \
 -		--with-libxml2=${LOCALBASE} \
- 		--with-readline=-ledit \
+ 		--with-readline="-L${LOCALBASE}/lib -ledit" \
  		--with-dlopen=yes \
  		--sysconfdir=${ETCDIR}
-@@ -244,7 +241,7 @@
+@@ -232,7 +229,7 @@
  .endif
  
  post-patch:

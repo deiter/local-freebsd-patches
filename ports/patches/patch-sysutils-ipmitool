@@ -1,19 +1,22 @@
 Index: sysutils/ipmitool/Makefile
 ===================================================================
---- sysutils/ipmitool/Makefile	(revision 415739)
+--- sysutils/ipmitool/Makefile	(revision 431888)
 +++ sysutils/ipmitool/Makefile	(working copy)
-@@ -13,12 +13,13 @@
+@@ -12,7 +12,7 @@
  LICENSE=	BSD3CLAUSE
  LICENSE_FILE=	${WRKSRC}/COPYING
  
--USES=		cpe tar:bzip2 gmake readline
-+USES=		cpe tar:bzip2 gmake
+-USES=		cpe tar:bzip2 gmake readline ssl
++USES=		cpe tar:bzip2 gmake ssl
  CPE_VENDOR=	sun
- USE_OPENSSL=	yes
  GNU_CONFIGURE=	yes
- CONFIGURE_ARGS+=--enable-intf-lan --enable-intf-lanplus \
- 		--disable-intf-imb --disable-intf-lipmi --disable-intf-bmc \
-+		--disable-ipmishell \
- 		--disable-intf-usb
  PLIST_FILES=	bin/ipmitool man/man1/ipmitool.1.gz man/man8/ipmievd.8.gz \
- 		sbin/ipmievd share/ipmitool/oem_ibm_sel_map \
+@@ -33,6 +33,8 @@
+ CFLAGS+=	-ggdb -Wall
+ .endif
+ 
++CONFIGURE_ARGS+=	--disable-ipmishell
++
+ .if exists(/usr/include/sys/ipmi.h)
+ CONFIGURE_ARGS+=	--enable-intf-open
+ .else

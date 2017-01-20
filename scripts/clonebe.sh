@@ -103,8 +103,8 @@ vfs.root.mountfrom="zfs:$_new_root"
 EOF
 
 echo " ==> Merge config files into $_dst"
-mergemaster -s -i -F -d --run-updates=always -m $_src -D $_dst
-mergemaster -s -i -F -d --run-updates=always -m $_src -D $_dst
+mergemaster -d -m $_src -D $_dst
+mergemaster -d -m $_src -D $_dst
 
 zfs set readonly=on $_new_root/var/empty
 
