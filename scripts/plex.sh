@@ -151,17 +151,17 @@ EOF
 
 cap_mkdb etc/login.conf
 
-cat >etc/hosts <<'EOF'
-127.0.0.1	localhost.deiter.local	localhost
-172.27.10.20	plex.deiter.local	plex
+cat >etc/hosts <<EOF
+127.0.0.1	localhost.deiter.ru	localhost
+172.27.10.20	plex.deiter.ru		plex
 EOF
 
-cat >etc/resolv.conf <<'EOF'
-search deiter.local
+cat >etc/resolv.conf <<EOF
+search deiter.ru
 nameserver 172.27.10.2
 EOF
 
-cat >etc/nsswitch.conf <<'EOF'
+cat >etc/nsswitch.conf <<EOF
 group: files
 hosts: files dns
 netgroup: files
