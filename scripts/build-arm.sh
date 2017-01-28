@@ -95,7 +95,7 @@ blanktime="NO"
 update_motd="NO"
 entropy_file="NO"
 dumpdev="NO"
-hostname="arm.deiter.local"
+hostname="arm.deiter.ru"
 EOF
 
 sync; sync; sync

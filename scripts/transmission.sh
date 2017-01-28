@@ -109,12 +109,12 @@ EOF
 cap_mkdb etc/login.conf
 
 cat >etc/hosts <<'EOF'
-127.0.0.1	localhost.deiter.local		localhost
-172.27.10.21	transmission.deiter.local	transmission
+127.0.0.1	localhost.deiter.ru	localhost
+172.27.10.21	transmission.deiter.ru	transmission
 EOF
 
 cat >etc/resolv.conf <<'EOF'
-search deiter.local
+search deiter.ru
 nameserver 172.27.10.2
 EOF
 

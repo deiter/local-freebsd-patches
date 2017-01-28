@@ -1,0 +1,13 @@
+Index: etc/mtree/BSD.root.dist
+===================================================================
+--- etc/mtree/BSD.root.dist	(revision 312933)
++++ etc/mtree/BSD.root.dist	(working copy)
+@@ -101,7 +101,7 @@
+     ..
+     rescue
+     ..
+-    root
++    root            mode=0700
+     ..
+     sbin
+     ..

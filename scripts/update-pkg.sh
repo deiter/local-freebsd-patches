@@ -1,27 +1,37 @@
 #!/bin/sh -exu
 
-. common.sh
+_script=$(realpath $0)
+_base=$(dirname $_script)
+
+. $_base/common.sh
 
 _update_cfg
+_update_repos
 
 case $_hostname in
 nostromo)
-	_list="bind911 cdrtools git ipmitool isc-dhcp43-server mksh nut perl5 smartmontools tmux vim-lite"
+	_list="bind911 cdrtools git ipmitool isc-dhcp43-server mksh nut perl5 smartmontools tmux vim-lite postgresql96-server openldap-sasl-server"
+	;;
+serenity)
+	_list="mksh smartmontools tmux vim-lite"
 	;;
 blackbird)
 	_list="mksh smartmontools tmux vim-lite"
 	;;
+builder)
+	_list="mksh"
+	;;
 mail)
-	_list="mksh tmux vim-lite sendmail+tls+sasl2 cyrus-sasl cyrus-sasl-gssapi cyrus-sasl-saslauthd cyrus-imapd25"
+	_list="mksh tmux vim-lite sendmail+tls+sasl2+ldap cyrus-sasl cyrus-sasl-gssapi cyrus-sasl-saslauthd cyrus-imapd25"
 	;;
 opengrok)
 	_list="mksh tmux vim-lite openjdk8 tomcat8 ctags git apache-ant"
 	;;
 www)
-	_list="mksh tmux vim-lite nginx-lite nextcloud"
+	_list="mksh tmux vim-lite apache24 mod_php70 nextcloud"
 	;;
 *)
-	_list="mksh tmux vim-lite"
+	_list="mksh smartmontools tmux vim-lite"
 	;;
 esac
 
@@ -35,3 +45,13 @@ if [ -x $_local/bin/mksh ]; then
 		EOF
 	fi
 fi
+
+case $_hostname in
+www)
+	for _module in rewrite socache_shmcb ssl; do
+		apxs -e -a -n $_module libexec/apache24/mod_${_module}.so
+	done
+	;;
+*)
+	;;
+esac

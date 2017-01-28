@@ -1,9 +1,12 @@
 #!/bin/sh -exu
 
-. common.sh
+_script=$(realpath $0)
+_base=$(dirname $_script)
+
+. $_base/common.sh
 
 if [ $# -eq 1 ]; then
-	_kernel="$1"
+	_kernel=$1
 fi
 
 if [ ! -d $_src/.svn ]; then
@@ -15,23 +18,24 @@ cd $_src
 _update_svn
 _update_cfg 
 
-for _diff in $_root/patches/patch-*; do
-	$_patch <$_diff || exit 1
+for _file in $(find $_root/patches/src -type f); do
+	if ! cat $_file | $_patch; then
+		_exit "Unable to apply patch $_file"
+	fi
 done
 
-for _arch in i386 amd64; do
-	for _cfg in $_root/conf/$_arch/*; do
-		_name=$(basename $_cfg)
-		install -v -m 0644 -g wheel -o root $_cfg $_src/sys/$_arch/conf/$_name
-	done
+_dir=$_root/files/src
+
+for _file in $(find $_dir -type f); do
+	install -v -m 0644 -g wheel -o root $_file $_src/${_file#$_dir/}
 done
 
-if [ ! -r $_root/conf/$_target/$_kernel ]; then
-	exit 1
+if [ ! -r $_src/sys/$_target/conf/$_kernel ]; then
+	_exit "Kernel config file $_kernel not found"
 fi
 
-_level=$(ls $_root/patches/patch-* | awk 'END {print NR}')
-_revision=$($_svn info | awk '/^Last\ Changed\ Rev:/{print $NF}')
+_level=$(ls $_root/patches/src | awk 'END {print NR}')
+_revision=$($_svn info --show-item revision)
 _version=$(awk -F'"' '/^REVISION=/{print $2}' $_src/sys/conf/newvers.sh)
 _branch=$(awk -F'"' '/^BRANCH=/{print $2}' $_src/sys/conf/newvers.sh)
 _triplet="${_branch}-r${_revision}-p${_level}"
@@ -40,9 +44,17 @@ _dst="$_stage/$_label"
 
 export BRANCH_OVERRIDE="$_triplet"
 
-test -d $_obj || exit 1
-test -d $_obj$_src && rm -rf $_obj$_src
-test -d $_dst && rm -rf $_dst
+if [ ! -d $_obj ]; then
+	install -v -d -m 0755 -g wheel -o root $_obj
+fi
+
+if [ -d $_obj$_src ]; then
+	rm -rf $_obj$_src
+fi
+
+if [ -d $_dst ]; then
+	rm -rf $_dst
+fi
 
 make -j $_jobs buildworld buildkernel
 make DESTDIR=$_dst KERNCONF=$_kernel installworld distribution installkernel
@@ -51,23 +63,9 @@ cd $_dst
 install -v -o root -g wheel -m 0644 /dev/null etc/fstab
 install -v -o root -g wheel -m 0444 /dev/null etc/wall_cmos_clock
 install -v -o root -g wheel -m 0444 usr/share/zoneinfo/$_tz etc/localtime
-echo $_tz >var/db/zoneinfo
 
-cat >etc/nsswitch.conf <<EOF
-group: files
-hosts: files dns
-netgroup: files
-networks: files
-passwd: files
-protocols: files
-rpc: files
-services: files
-shells: files
-EOF
-
-cat >etc/host.conf <<EOF
-hosts
-dns
+cat >var/db/zoneinfo <<EOF
+$_tz
 EOF
 
 cat >etc/rc.conf <<EOF
@@ -80,7 +78,7 @@ fsck_y_enable="YES"
 background_fsck="NO"
 update_motd="NO"
 dumpdev="NO"
-hostname="install.deiter.local"
+hostname="install.$_domain"
 EOF
 
 cat >boot/loader.conf <<EOF

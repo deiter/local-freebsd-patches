@@ -1,6 +1,9 @@
 #!/bin/sh -eu
 
-. common.sh
+_script=$(realpath $0)
+_base=$(dirname $_script)
+
+. $_base/common.sh
 
 _conf=$(basename $_script .sh)
 _custom_full="$_root/conf/src.conf"
@@ -8,7 +11,7 @@ _system_part=$(mktemp)
 _default_full=$(mktemp)
 _default_part=$(mktemp)
 
-cd /var/devel/src/tools/build/options
+cd $_src/tools/build/options
 
 _list=$(ls WITH_* WITHOUT_* | sort)
 

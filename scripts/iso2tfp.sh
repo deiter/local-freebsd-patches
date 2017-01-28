@@ -7,7 +7,7 @@ fi
 
 _host="172.27.10.2"
 _json="autoinstall.json"
-_tftp="/var/devel/tftp"
+_tftp="/export/tftp"
 _menu="$_tftp/boot/grub/menu.lst"
 
 cd $_tftp

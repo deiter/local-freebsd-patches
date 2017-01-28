@@ -1,5 +1,2 @@
-#
-# $Id$
-#
 include		SUPERMICRO
 ident		NOSTROMO	# Supermicro X9SCM-F

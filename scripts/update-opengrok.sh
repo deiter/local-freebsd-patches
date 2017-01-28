@@ -1,7 +1,7 @@
 #!/bin/sh -exu
 
 _base="/usr/local"
-_src="/var/devel/src"
+_src="/export/src"
 
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
@@ -25,6 +25,6 @@ else
 	./OpenGrok deploy
 fi
 
-su -m www -c "$_base/opengrok/OpenGrok index /var/devel/src"
+su -m www -c "$_base/opengrok/OpenGrok index $_src"
 
 $_base/etc/rc.d/tomcat8 restart

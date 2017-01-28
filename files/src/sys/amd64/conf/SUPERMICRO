@@ -1,12 +1,11 @@
-#
-# $Id: BLACKBIRD 58 2014-08-15 09:48:35Z alex.deiter@gmail.com $
-#
 cpu		HAMMER			# aka K8, aka Opteron & Athlon64
-ident		BLACKBIRD		# Gigabyte GA-C1037UN-EU
+ident		SUPERMICRO		# generic Supermicro
 options		SCHED_ULE		# ULE scheduler
 options 	PREEMPTION		# Enable kernel thread preemption
 options 	INET			# InterNETworking
+options		VIMAGE			# Network stack virtualization
 options		TCP_OFFLOAD		# TCP offload
+options		TCP_RFC7413		# TCP Fast Open (TFO) [RFC7413]
 options		SCTP			# transport protocol defined by RFC2960
 options 	FFS			# Berkeley Fast Filesystem
 options 	SOFTUPDATES		# Enable FFS soft updates support
@@ -31,6 +30,10 @@ options		FUSE			# FUSE support module
 options 	GEOM_PART_GPT		# GUID Partition Tables.
 options		GEOM_LABEL		# Provides labelization
 options		GEOM_ELI		# Disk encryption.
+options		COMPAT_FREEBSD32	# 32-bit runtime support for FreeBSD/i386 binaries
+options		COMPAT_FREEBSD9		# Compatible with FreeBSD9
+options		COMPAT_FREEBSD10	# Compatible with FreeBSD10
+options		COMPAT_FREEBSD11	# Compatible with FreeBSD11
 options 	SCSI_DELAY=5000		# Delay (in ms) before probing SCSI
 options 	SYSVSHM			# SYSV-style shared memory
 options 	SYSVMSG			# SYSV-style message queues
@@ -39,10 +42,9 @@ options		P1003_1B_SEMAPHORES	# POSIX semaphores
 options		P1003_1B_MQUEUE		# POSIX message queue
 options 	_KPOSIX_PRIORITY_SCHEDULING # POSIX P1003_1B real-time extensions
 options		PRINTF_BUFR_SIZE=128	# Prevent printf output bein ...
-options 	KBD_INSTALL_CDEV	# install a CDEV entry in /dev
-# options	FLOWTABLE		# per-cpu routing cache
+options 	KBD_INSTALL_CDEV	# Install a CDEV entry in /dev
 device		pf			# PF OpenBSD packet-filter firewall
-device		pflog			# logging support interface for PF
+device		pflog			# Logging support interface for PF
 device		dtrace			# DTrace core
 device		dtraceall		# DTrace modules
 options		KTRACE			# ktrace(1) support
@@ -54,6 +56,8 @@ options		AUDIT			# Security event auditing
 options		CAPABILITY_MODE		# Capsicum sandboxes with no global namespace access
 options		CAPABILITIES		# Capsicum fine-grained rights on file descriptors
 options		SW_WATCHDOG		# Software watchdog routines
+options		STACK			# stack(9) support
+options		DDB			# Interactive kernel debugger
 options		KDB			# Enable kernel debugger support
 options		KDB_TRACE		# Print a stack trace for a panic
 options		KDTRACE_FRAME		# Ensure frames are compiled in
@@ -70,8 +74,10 @@ makeoptions	WITH_CTF=1		# Run ctfconvert(1) for DTrace support
 # options	ALTQ_PRIQ		# Priority Queueing
 # options	ALTQ_NOPCC		# Required if the TSC is unusable
 options		INCLUDE_CONFIG_FILE	# Include this file in kernel
-# options	DEVICE_POLLING		# mixed interrupt-polling handling
-# options	VFS_AIO			# aio_* system calls
+options		DEVICE_POLLING		# mixed interrupt-polling handling
+options		ACCEPT_FILTER_DATA
+options		ACCEPT_FILTER_DNS
+options		ACCEPT_FILTER_HTTP
 options		DIRECTIO		# bypass the buffer cache
 options		LIBICONV		# Kernel side iconv library
 options		CD9660_ICONV		# CD9660 optional character code conversion
@@ -96,14 +102,14 @@ options		UNIONFS			# Union filesystem
 # options	IEEE80211_SUPPORT_TDMA	# enable TDMA support
 device		crypto		# core crypto support
 device		cryptodev	# /dev/crypto for access to h/w
+device		aesni		# AES-NI OpenCrypto module
+device		ipmi		# Intelligent Platform Management Interface
 device		smbus		# System Management Bus
 device		smb		# SMB generic I/O device
 device		ichwd		# Intel ICH watchdog timer
 device		ichsmb		# Intel ICH SMBus controller driver
 device		nvram		# Access to rtc cmos via /dev/nvram
 device		smbios		# DMI/SMBIOS entry point
-device		sound		# The generic sound driver
-device		snd_hda		# Intel High Definition Audio
 options		SMP		# Symmetric MultiProcessor Kernel
 options		DEVICE_NUMA	# I/O Device Affinity
 options		EARLY_AP_STARTUP
@@ -114,26 +120,43 @@ device		acpi		# Advanced Power Management
 options		ACPI_DMAR	# Virtualization Technology for Directed I/O 
 options		PCI_IOV		# PCI SR-IOV support
 device		pci		# generic PCI driver
+device		mps		# LSI-Logic MPT-Fusion 2
 device		ahci		# AHCI-compatible SATA controllers
 device		scbus		# SCSI bus (required for SCSI)
 device		da		# Direct Access (disks)
 device		cd		# CD
 device		pass		# Passthrough device (direct SCSI access)
 device		ses		# Enclosure Services (SES and SAF-TE)
-device		atkbdc		# AT keyboard controller
-device		atkbd		# AT keyboard
-device		psm		# PS/2 mouse
 device		vt		# virtual terminal console driver
 device		vt_vga		# vt VGA
 device		vt_efifb	# EFI framebuffer
 device		kbdmux		# keyboard multiplexer
 options		SC_HISTORY_SIZE=8192	# number of history buffer lines
 device		uart		# Generic UART driver
-device		miibus		# MII bus support
-device		re		# RealTek 8139C+/8169/8169S/8110S
+# device	miibus		# MII bus support
+device		em		# Intel PRO/1000 Gigabit Ethernet Family
+# device	wlan		# 802.11 support
+# device	wlan_wep	# 802.11 WEP support
+# device	wlan_ccmp	# 802.11 CCMP support
+# device	wlan_tkip	# 802.11 TKIP support
+# device	wlan_xauth	# 802.11 External authenticator support
+# device	wlan_acl	# 802.11 MAC-based ACL support
+# device	wlan_amrr	# AMRR transmit rate control algorithm
+# device	rum		# Ralink Technology RT2501USB wireless NICs
+# device	run		# Ralink Technology USB IEEE 802.11a/g/n wireless NICs
+# device	runfw		# Firmware Module for Ralink driver
+# device	ath		# Atheros NICs
+# device	ath_pci		# Atheros pci/cardbus glue
+# device	ath_hal		# pci/cardbus chip support
+# options	AH_SUPPORT_AR5416		# enable AR5416 tx/rx descriptors
+# options	AH_AR5416_INTERRUPT_MITIGATION	# AR5416 interrupt mitigation
+# options	ATH_ENABLE_11N	# Enable 802.11n support for AR5416 and later
+# device	ath_rate_sample	# SampleRate tx rate control for ath
 device		loop		# Network loopback
 device		random		# Entropy device
 device		rdrand_rng	# Intel Bull Mountain RNG
+device		nmdm		# Virtual back-to-back connected tty devices
+device		epair		# Virtual back-to-back connected ethernet devices
 device		ether		# Ethernet support
 device		if_bridge	# Bridge interface
 device		tap		# pty-like virtual Ethernet interface

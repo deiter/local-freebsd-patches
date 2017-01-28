@@ -1,6 +1,7 @@
 #!/bin/sh -eux
 
 _jails="plex transmission"
+_pools="alien predator"
 
 _usage()
 {
@@ -76,9 +77,15 @@ _action="$1"
 
 case "$_action" in
 start)
-	_start alien
-	_start predator
+	for _pool in $_pools; do
+		_status=$(zpool list -Hp -o health $_pool)
+		if [ "$_status" != "ONLINE" ]; then
+			_start $_pool
+		fi
+	done
+
 	zfs mount -a
+
 	for _jail in $_jails; do
 		jail -cv $_jail
 	done
@@ -87,8 +94,10 @@ stop)
 	for _jail in $_jails; do
 		jail -rv $_jail
 	done
-	_stop alien
-	_stop predator
+
+	for _pool in $_pools; do
+		_stop $_pool
+	done
 	;;
 *)
 	_usage

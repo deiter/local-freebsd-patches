@@ -1,17 +1,25 @@
 
-unset LANG LC_ALL
+unset LANG LC_ALL MM_CHARSET
 
 _master="nostromo"
+_domain="deiter.ru"
+_realm="DEITER.RU"
 _tz="Europe/Moscow"
 _pool="zroot"
 _local="/usr/local"
-_devel="/var/devel"
+_devel="/export/freebsd"
+_acme="$_local/etc/acme"
+_ssl="$_local/etc/ssl/acme"
 _stage="$_devel/stage"
 _ports="$_devel/ports"
 _conf="$_devel/conf"
 _src="$_devel/src"
 _obj="$_devel/obj"
 _pkg="$_devel/pkg"
+_jails="alien/jails"
+_gw="172.27.10.1"
+_dns="172.27.10.2"
+_mask="24"
 
 _hostname=$(hostname -s)
 _osname=$(uname -o)
@@ -56,7 +64,10 @@ _exit()
 
 _update_svn()
 {
-	test -d .svn || exit 1
+	if [ ! -d .svn ]; then
+		_exit "SVN configuration not found"
+	fi
+
 	$_svn cleanup
 	$_svn cleanup --remove-unversioned --remove-ignored
 	$_svn revert -R .
@@ -67,46 +78,229 @@ _update_svn()
 
 _update_cfg()
 {
-	local _cfg
-	for _cfg in make.conf src.conf mergemaster.rc; do
-		install -v -m 0644 -g wheel -o root $_root/conf/$_cfg /etc/$_cfg
+	local _dir _file
+
+	_dir=$_root/files/root
+
+	for _file in $(find $_dir -type f); do
+		install -v -m 0644 -g wheel -o root $_file ${_file#$_dir}
 	done
+}
+
+_update_repos()
+{
+	install -v -d -m 0755 -g wheel -o root $_local/etc/pkg/repos
+
+	cat >$_local/etc/pkg/repos/FreeBSD.conf <<-EOF
+	FreeBSD: {
+	    enabled: no
+	}
+	EOF
+
+	cat >$_local/etc/pkg/repos/local.conf <<-EOF
+	local: {
+	    url: "file://$_pkg",
+	    enabled: yes
+	}
+	EOF
 }
 
 _mount_fs()
 {
-	local _fs
-
 	if [ "$_hostname" = "$_master" ]; then
 		return 0
 	fi
 
-	if [ ! -d $_devel ]; then
-		install -v -d -m 0755 -g wheel -o root $_devel
+	if [ -d $_devel ]; then
+		return 0
 	fi
 
-	for _fs in $_src $_obj; do
-		if [ ! -d $_fs ]; then
-			install -v -d -m 0755 -g wheel -o root $_fs
-		fi
-		mount $_master:$_fs $_fs
-	done
+	install -v -d -m 0755 -g wheel -o root $_devel
+	mount $_master:$_devel $_devel
 }
 
 _umount_fs()
 {
-	local _fs
-
 	if [ "$_hostname" = "$_master" ]; then
 		return 0
 	fi
 
-	for _fs in $_obj $_src; do
-		umount $_fs
-		rmdir $_fs
+	if mount -p | awk '{print $2}' | grep -q "^$_devel$"; then
+		umount $_devel
+		rmdir $_devel
+	fi
+}
+
+_create_jail()
+{
+	local _jail=$1
+	local _dataset _path _list _ip
+
+	if [ -z "$_jail" ]; then
+		_exit "Jail name is not defined"
+	fi
+
+	case "$_jail" in
+	plex)
+		_exit "Jail plex is protected"
+		;;
+	transmission)
+		_exit "Jail transmission is protected"
+		;;
+	*)
+		;;
+	esac
+
+	if [ ! -d "$_src" ]; then
+		_exit "System src directory does not exist"
+	fi
+
+	_dataset="$_jails/$_jail"
+	_ip=$(host $_jail | awk '{print $NF}')
+
+	if [ -z "$_ip" ]; then
+		_exit "Jail IP address is not resolved"
+	fi
+
+	if jls -j $_jail; then
+		jail -rv $_jail
+	fi
+
+	if zfs list $_dataset; then
+		zfs destroy -rf $_dataset
+	fi
+
+	zfs create $_dataset
+	_path=$(zfs get -H -o value mountpoint $_dataset)
+
+	if [ ! -d "$_path" ]; then
+		_exit "Jail $_jail: root path $_path not found"
+	fi
+
+	make -C $_src DESTDIR=$_path KERNCONF=$_kernel installworld distribution installkernel >$_path/install.log 2>&1
+
+	if [ "$_jail" = "mail" ]; then
+		make -C $_src/etc MK_MAILWRAPPER=yes MK_MAIL=yes MK_SENDMAIL=yes obj depend all
+		make -C $_src/usr.sbin/mailwrapper MK_MAILWRAPPER=yes obj depend all
+		make -C $_src/usr.sbin/mailwrapper DESTDIR=$_dst MK_MAILWRAPPER=yes install >>$_dst/install.log 2>&1
+	fi
+
+	cd $_path
+	install -v -o root -g wheel -m 0644 /dev/null etc/fstab
+	install -v -o root -g wheel -m 0444 /dev/null etc/wall_cmos_clock
+	install -v -o root -g wheel -m 0444 usr/share/zoneinfo/$_tz etc/localtime
+
+	cat >var/db/zoneinfo <<-EOF
+	$_tz
+	EOF
+
+	cat >etc/hosts <<-EOF
+	127.0.0.1	localhost.${_domain}	localhost
+	$_ip	${_jail}.${_domain}	${_jail}
+	EOF
+
+	cat >etc/resolv.conf <<-EOF
+	search ${_domain}
+	nameserver ${_dns}
+	EOF
+
+	cat >root/.k5login <<-EOF
+	tiamat@${_realm}
+	EOF
+
+	cat >etc/rc.conf <<-EOF
+	rc_startmsgs="NO"
+	rc_debug="NO"
+	rc_info="NO"
+	cron_enable="NO"
+	sshd_enable="NO"
+	sendmail_enable="NONE"
+	fsck_y_enable="YES"
+	background_fsck="NO"
+	update_motd="NO"
+	dumpdev="NO"
+	hostname="${_jail}.${_domain}"
+	ifconfig_${_jail}1="inet ${_ip}/${_mask}"
+	defaultrouter="${_gw}"
+	EOF
+
+	case "$_jail" in
+	mail)
+		cat >>etc/rc.conf <<-EOF
+		sendmail_enable="YES"
+		EOF
+
+		install -v -o root -g wheel -m 0644 \
+			$_root/conf/jails/mail/mailer.conf \
+			etc/mail/mailer.conf
+		;;
+	opengrok)
+		cat >>etc/rc.conf <<-EOF
+		tomcat8_enable="YES"
+		EOF
+		;;
+	www)
+		cat >>etc/rc.conf <<-EOF
+		apache24_enable="YES"
+		apache24_http_accept_enable="YES"
+		EOF
+
+		install -v -d -m 0755 -g wheel -o root \
+			.$_local/etc/apache24/Includes
+
+		install -v -o root -g wheel -m 0644 \
+			$_root/conf/jails/www/$_domain.conf \
+			.$_local/etc/apache24/Includes/deiter.ru.conf
+
+		install -v -o root -g wheel -m 0644 \
+			$_root/conf/jails/www/acme.conf \
+			.$_local/etc/apache24/Includes/acme.conf
+		;;
+	*)
+		;;
+	esac
+
+	_list=$(awk '/^\//{print $2}' /etc/fstab.$_jail | sort)
+
+	for _path in $_list; do
+		install -v -d -m 0755 -g wheel -o root $_path
+	done
+}
+
+_update_ssl()
+{
+	local _dst _crt _name _file _hash
+
+	_dst="/etc/ssl"
+	_crt="$_ssl/$_domain"
+
+	if [ ! -d "$_crt" ]; then
+		_exit "SSL directory '$_crt' not found"
+	fi
+
+	for _name in privkey cert chain fullchain; do
+		_file="$_crt/$_name.pem"
+		if [ ! -f "$_file" ]; then
+			_exit "SSL cert file '$_file' not found"
+		fi
 	done
 
-	rmdir $_devel
+	install -d -m 0755 -g wheel -o root -v $_dst
+	find $_dst -type l -delete
+	install -v -o root -g wheel -m 0400 $_crt/privkey.pem $_dst/$_domain.key
+	install -v -o root -g wheel -m 0444 $_crt/cert.pem $_dst/$_domain.crt
+	install -v -o root -g wheel -m 0444 $_crt/chain.pem $_dst/letsencrypt.crt
+	install -v -o root -g wheel -m 0444 $_crt/fullchain.pem $_dst/$_domain.chained.crt
+	install -v -o root -g wheel -m 0444 $_local/share/certs/ca-root-nss.crt $_dst/cert.pem
+
+	setfacl -m user:ldap:read_set:allow $_dst/$_domain.key
+	setfacl -m user:postgres:read_set:allow $_dst/$_domain.key
+
+	_hash=$(openssl x509 -noout -hash -in $_dst/letsencrypt.crt)
+	ln -s letsencrypt.crt $_dst/$_hash.0
+
+	_hash=$(openssl x509 -noout -hash -in $_dst/cert.pem)
+	ln -s cert.pem $_dst/$_hash.0
 }
 
 _clean_old()
@@ -117,12 +311,14 @@ _clean_old()
 		rm -f $_file
 	done
 
-	rm -rf /var/cache
+	rm -rf /var/cache /usr/lib/debug
+	rm -f /COPYRIGHT /sys
 
 	for _dir in /usr/src /usr/obj /var/games /var/yp \
-		/etc/dma \
-		/var/unbound/conf.d /var/unbound \
+		/etc/bluetooth /etc/dma /etc/ppp /etc/X11 \
+		/media /proc /var/unbound/conf.d /var/unbound \
 		/var/db/freebsd-update /var/db/hyperv /var/db/ipf \
+		/var/db/ports /var/db/portsnap /var/spool/lpd \
 		/var/db/ports /var/db/portsnap /mnt /proc; do
 		test -d $_dir && rmdir $_dir
 	done

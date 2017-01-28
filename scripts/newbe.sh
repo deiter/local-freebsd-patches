@@ -67,7 +67,7 @@ for i in hostid fstab src.conf make.conf rc.conf \
 done
 
 for i in dhcpd.conf namedb/named.conf namedb/rndc.conf \
-	namedb/dynamic/deiter.local.db \
+	namedb/dynamic/deiter.ru.db \
 	namedb/dynamic/10.27.172.in-addr.arpa.db ; do
 	cp -pfv /usr/local/etc/$i usr/local/etc/$i
 done

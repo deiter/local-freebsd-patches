@@ -1,21 +1,23 @@
 #!/bin/sh -exu
 
-##root@builder:/var/devel/ports/security/py-certbot # make  TEST_DEPENDS='' package package-recursive
+_script=$(realpath $0)
+_base=$(dirname $_script)
 
-. common.sh
+. $_base/common.sh
 
 _deps="ports-mgmt/pkg ports-mgmt/dialog4ports"
-
 _list="lang/perl5.24 sysutils/tmux sysutils/smartmontools sysutils/ipmitool"
 _list="$_list dns/bind911 net/isc-dhcp43-server sysutils/nut security/openvpn"
 _list="$_list editors/vim-lite sysutils/cdrtools net-p2p/transmission-daemon"
-_list="$_list databases/gdbm misc/compat9x devel/git shells/mksh"
+_list="$_list security/ca_root_nss devel/git shells/mksh"
 _list="$_list security/cyrus-sasl2 security/cyrus-sasl2-gssapi"
 _list="$_list net/openldap24-sasl-client net/openldap24-server"
 _list="$_list security/cyrus-sasl2-saslauthd mail/sendmail mail/cyrus-imapd25"
-_list="$_list www/tomcat8 devel/ctags devel/apache-ant"
+_list="$_list www/tomcat8 devel/ctags devel/apache-ant security/acme-client"
+_list="$_list www/apache24 lang/php70 www/mod_php70"
 _list="$_list www/nginx-lite databases/postgresql96-client"
 _list="$_list databases/postgresql96-server www/nextcloud"
+_list="$_list databases/gdbm misc/compat9x"
 
 if [ ! -d $_ports/.svn ]; then
 	install -v -d -m 0755 -g wheel -o root $_ports
@@ -26,23 +28,41 @@ cd $_ports
 _update_svn
 _update_cfg
 
-for _diff in $_root/ports/patches/patch-*; do
-	$_patch <$_diff || exit 1
+for _file in $(find $_root/patches/ports -type f); do
+	if ! cat $_file | $_patch; then
+		_exit "Unable to apply patch $_file"
+	fi
 done
 
-cd $_root/ports
-for _dir in *; do
-	test -f "$_dir" && continue
-	test "$_dir" = "patches" && continue
-	cp -pR $_dir $_ports
+_dir=$_root/files/ports
+
+for _file in $(find $_dir -type f); do
+        install -v -m 0644 -g wheel -o root $_file $_ports/${_file#$_dir/}
 done
 
-rm -rf /var/cache/pkg/*
-test -x $_local/sbin/pkg && $_local/sbin/pkg delete -afy
-test -d $_obj$_ports && rm -rf $_obj$_ports
-test -d $_pkg && rm -rf $_pkg/*
-test -d $_conf && rm -rf $_conf/*
-test -d $_local && find $_local -type f
+if [ -d /var/cache ]; then
+	rm -rf /var/cache
+fi
+
+if [ -x $_local/sbin/pkg ]; then
+	pkg delete -afy
+fi
+
+if [ -d $_obj$_ports ]; then
+	rm -rf $_obj$_ports
+fi
+
+if [ -d $_pkg ]; then
+	rm -rf $_pkg/*
+fi
+
+if [ -d $_conf ]; then
+	rm -rf $_conf/*
+fi
+
+if [ -d $_local ]; then
+	find $_local -type f
+fi
 
 for _port in $_deps $_list; do
 	cd $_ports/$_port && make clean
@@ -61,9 +81,3 @@ for _port in $_list; do
 done
 
 pkg repo $_pkg
-
-exit 0
-
-pkg remove -yx automake autoconf bash binutils bison cmake gmake help2man gmp indexinfo \
-	patch texi2html texinfo m4 mpfr nasm yasm python makedepend xproto xorg-macros \
-	pkgconf

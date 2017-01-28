@@ -1,6 +1,9 @@
 #!/bin/sh -exu
 
-. common.sh
+_script=$(realpath $0)
+_base=$(dirname $_script)
+
+. $_base/common.sh
 
 _update_cfg
 _mount_fs
@@ -16,6 +19,7 @@ make delete-old-dirs
 make delete-old-files
 make delete-old-libs
 
-_clean_old
 cd
+
+_clean_old
 _umount_fs

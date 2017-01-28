@@ -1,0 +1,6 @@
+STRICT=yes
+FREEBSD_ID=yes
+AUTO_INSTALL=yes
+RUN_UPDATES=always
+DELETE_STALE_RC_FILES=yes
+IGNORE_FILES='/COPYRIGHT /root/.k5login /etc/motd /etc/group /etc/master.passwd /etc/shells /etc/dhclient.conf /etc/inetd.conf /etc/sysctl.conf /etc/syslog.conf /etc/hosts'

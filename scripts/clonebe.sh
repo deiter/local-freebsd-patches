@@ -1,6 +1,9 @@
 #!/bin/sh -eu
 
-. common.sh
+_script=$(realpath $0)
+_base=$(dirname $_script)
+
+. $_base/common.sh
 
 _update_cfg
 _mount_fs
@@ -93,11 +96,16 @@ echo " ==> Install release version $_rel into $_dst"
 make DESTDIR=$_dst KERNCONF=$_kernel installworld installkernel >>$_log 2>&1
 
 cd $_dst
+rmdir .$_devel
 install -v -o root -g wheel -m 0444 usr/share/zoneinfo/$_tz etc/localtime
 install -v -o root -g wheel -m 0444 /dev/null etc/wall_cmos_clock
-echo $_tz >var/db/zoneinfo
+
+cat >var/db/zoneinfo <<EOF
+$_tz
+EOF
 
 grep -v '^vfs.root.mountfrom=' /boot/loader.conf >boot/loader.conf
+
 cat >>boot/loader.conf <<EOF
 vfs.root.mountfrom="zfs:$_new_root"
 EOF
