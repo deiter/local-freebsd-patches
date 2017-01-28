@@ -6,7 +6,7 @@ _base=$(dirname $_script)
 . $_base/common.sh
 
 _conf=$(basename $_script .sh)
-_custom_full="$_root/conf/src.conf"
+_custom_full="$_root/files/root/etc/src.conf"
 _system_part=$(mktemp)
 _default_full=$(mktemp)
 _default_part=$(mktemp)

@@ -1,13 +1,15 @@
 #!/bin/sh -exu
 
-unset LANG LC_ALL
+_script=$(realpath $0)
+_base=$(dirname $_script)
+
+. $_base/common.sh
 
 if [ $# -ne 2 ]; then
-	echo "usage: $0 <daX> <gpt | efi>"
-	exit 1
+	_exit "Usage: $0 <daX> <gpt | efi>"
 fi
 
-_tarball=/var/tmp/base.tbz
+_tarball=$_stage/latest.tbz
 _disk=$(basename $1)
 _label=$(openssl rand -hex 8)
 _boot=${_label}_boot
@@ -33,8 +35,7 @@ efi)
 	dd if=boot/boot1.efifat of=/dev/gpt/$_boot
 	;;
 *)
-	echo "unknown boot type: $_type"
-	exit 2
+	_exit "Unknown boot type: $_type"
 esac
 
 gpart add -t freebsd-ufs -l $_data $_disk
@@ -51,7 +52,7 @@ EOF
 
 cd media
 cp $_tarball .
-# cp -pR /root/src/local-freebsd-patches .
+cp -pR $_root devel
 cd $_cwd
 umount $_mntpoint
 rmdir $_mntpoint
