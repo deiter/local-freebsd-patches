@@ -53,6 +53,7 @@ if [ -d $_obj$_src ]; then
 fi
 
 if [ -d $_dst ]; then
+	chflags -R noschg $_dst
 	rm -rf $_dst
 fi
 
@@ -86,10 +87,13 @@ beastie_disable="YES"
 autoboot_delay="3"
 EOF
 
-rm -f ../$_label.tbz
-tar pcfy ../$_label.tbz .
+rm -f $_stage/$_label.tbz $_stage/latest.tbz
+tar pcfy $_stage/$_label.tbz .
+ln -s $_label.tbz $_stage/latest.tbz
 
-test -z "$_mkisofs" && exit 0
+if [ -z "$_mkisofs" ]; then
+	exit 0
+fi
 
 cat >>etc/rc.conf <<EOF
 hostid_file="/var/db/hostid"
@@ -103,10 +107,8 @@ cat >>boot/loader.conf <<EOF
 boot_cdrom="YES"
 EOF
 
-cp ../$_label.tbz media
-cp -pR $_root media
+cp $_stage/$_label.tbz media/base.tbz
+cp -pR $_root media/devel
 
-rm -f ../$_label.iso
-$_mkisofs -b boot/cdboot -no-emul-boot -r -J -o ../$_label.iso .
-
-exit 0
+rm -f $_stage/$_label.iso
+$_mkisofs -b boot/cdboot -no-emul-boot -r -J -o $_stage/$_label.iso .

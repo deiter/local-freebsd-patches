@@ -1,4 +1,4 @@
-#!/bin/sh -eu
+#!/bin/sh -exu
 
 _script=$(realpath $0)
 _base=$(dirname $_script)
@@ -12,91 +12,79 @@ if [ $# -eq 1 ]; then
 	_kernel=$1
 fi
 
-_force="1"
-_ver="$_obj$_src/sys/$_kernel/vers.c"
+_force="yes"
+_version="$_obj$_src/sys/$_kernel/vers.c"
 
-if [ ! -r "$_ver" ]; then
-	_exit " ==> File '$_ver' not found or not readable"
+if [ ! -r "$_version" ]; then
+	_exit "File '$_version' not found"
 fi
 
-_rel=$(awk -F'"' '/^#define.*RELSTR/{split($2, a, "-"); printf "%s-%s\n", a[3], a[4]}' $_ver)
+_release=$(awk -F'"' '/^#define.*RELSTR/{split($2, a, "-"); printf "%s-%s\n", a[3], a[4]}' $_version)
 
-if [ -z "$_rel" ]; then
-	_exit " ==> Release version string is empty"
+if [ -z "$_release" ]; then
+	_exit "Release version string is empty"
 fi
 
-echo " ==> Update system up to release version $_rel"
+_amsg "Update system up to release $_release"
 
-_dst="/tmp/$_rel"
-_log="/var/log/$_rel.log"
+_active_be=$(kenv zfs_be_active | awk -F: '{print $NF}')
 
-if [ -d $_dst ]; then
-	_name=$(zfs list -H -o name $_dst 2>/dev/null)
-	if [ -n "$_name" ]; then
-		zfs umount -f $_name
-	fi
-	rmdir $_dst
+if [ -z "$_active_be" ]; then
+	_exit "Active boot environment not found"
 fi
 
-_old_root=$(zfs list -H -o name /)
-if [ -z "$_old_root" ]; then
-	_exit " ==> Current root filesystem is empty"
-fi
+_amsg "Active boot environment $_active_be"
 
-echo " ==> Current root filesystem $_old_root"
+_cloned_be="${_pool}/be/${_release}"
 
-_new_root="${_pool}/${_rel}"
-if [ -z "$_new_root" ]; then
-	_exit " ==> New root filesystem is empty"
-fi
+_amsg "Cloned boot environment $_cloned_be"
 
-echo " ==> New root filesystem $_new_root"
-
-if [ "$_old_root" = "$_new_root" ]; then
-	_exit " ==> New root filesystem is equal to the current root filesystem"
+if [ "$_active_be" = "$_cloned_be" ]; then
+	_exit "Cloned boot environment $_cloned_be is equal to the active boot environment $_active_be"
 fi
 
 _snapshot=$(date +%F_%T)
-echo " ==> Create recursive snapshot $_snapshot"
-zfs snapshot -r $_old_root@$_snapshot
-install -d -m 0755 -g wheel -o root $_dst
+_amsg "Create recursive snapshot $_snapshot for active boot environment $_active_be"
+zfs snapshot -r ${_active_be}@${_snapshot}
 
-_old_tree=$(zfs list -r -H -t filesystem -o name / | sort)
-echo " ==> Clone current root filesystem tree"
-for _fs in $_old_tree; do
-	_clone=$(echo $_fs | sed "s|^$_old_root|$_new_root|g")
+_destination=$(mktemp -d)
+
+if [ ! -d "$_destination" ]; then
+	_exit "Destination mount point for cloned boot environment $_cloned_be not found"
+fi
+
+_active_datasets=$(zfs list -H -r -t filesystem -o name $_active_be | sort)
+_amsg "Clone active boot environment $_active_be -> $_cloned_be"
+for _dataset in $_active_datasets; do
+	_clone=${_cloned_be}${_dataset#$_active_be}
 	if zfs list $_clone >/dev/null 2>&1; then
 		if [ -n "$_force" ]; then
-			echo "  ==> Destroy cloned filesystem $_clone"
 			zfs destroy -Rf $_clone
 		else
-			_exit "  ==> Cloned filesystem $_clone already exist"
+			_exit "Cloned filesystem $_clone already exist"
 		fi
 	fi
-	echo "  ==> Clone snapshot $_fs@$_snapshot to filesystem $_clone"
-	zfs clone -o canmount=noauto $_fs@$_snapshot $_clone
+	zfs clone -p -o canmount=noauto ${_dataset}@${_snapshot} $_clone
 done
 
-echo " ==> Set mountpoint for new root filesystem tree"
-zfs set mountpoint=/ $_new_root
-install -v -d -m 0755 -g wheel -o root $_dst
+_amsg "Set temporary mountpoint for cloned boot environment $_cloned_be"
+zfs set mountpoint=$_destination $_cloned_be
+zfs set readonly=off $_cloned_be/var/empty
 
-_new_tree=$(zfs list -r -H -t filesystem -o name $_new_root | sort)
-echo " ==> Mount new root filesystem tree"
-for _fs in $_new_tree; do
-	_mount_point=$(zfs get -H -o value mountpoint $_fs)
-	echo "  ==> Mount filesystem $_fs into $_dst$_mount_point"
-	mount -t zfs $_fs $_dst$_mount_point
+_cloned_datasets=$(zfs list -H -r -t filesystem -o name $_cloned_be | sort)
+_amsg "Mount cloned boot environment $_cloned_be into $_destination directory"
+install -v -d -m 0755 -g wheel -o root $_destination
+for _dataset in $_cloned_datasets; do
+	zfs mount $_dataset
 done
 
-zfs set readonly=off $_new_root/var/empty
+_log="/var/log/$_release.log"
 
 cd $_src
-echo " ==> Install release version $_rel into $_dst"
-make DESTDIR=$_dst KERNCONF=$_kernel installworld installkernel >>$_log 2>&1
+_amsg "Install release $_release into $_destination"
+make DESTDIR=$_destination KERNCONF=$_kernel installworld installkernel >>$_log 2>&1
 
-cd $_dst
-rmdir .$_devel
+cd $_destination
 install -v -o root -g wheel -m 0444 usr/share/zoneinfo/$_tz etc/localtime
 install -v -o root -g wheel -m 0444 /dev/null etc/wall_cmos_clock
 
@@ -107,46 +95,42 @@ EOF
 grep -v '^vfs.root.mountfrom=' /boot/loader.conf >boot/loader.conf
 
 cat >>boot/loader.conf <<EOF
-vfs.root.mountfrom="zfs:$_new_root"
+vfs.root.mountfrom="zfs:$_cloned_be"
 EOF
 
-echo " ==> Merge config files into $_dst"
-mergemaster -d -m $_src -D $_dst
-mergemaster -d -m $_src -D $_dst
-
-zfs set readonly=on $_new_root/var/empty
-
+_amsg "Update config files for cloned boot environment $_cloned_be"
+mergemaster -d -m $_src -D $_destination
+mergemaster -d -m $_src -D $_destination
 cd $_root
 
-echo " ==> Umount $_new_root tree"
-zfs umount $_new_root
-rmdir $_dst
+_amsg "Umount cloned boot environment $_cloned_be"
+zfs umount $_cloned_be
+zfs set readonly=on $_cloned_be/var/empty
+rmdir $_destination
 
-echo " ==> Disable canmount propery for $_old_root tree"
-for _fs in $_old_tree; do
-	echo "  ==> Disable canmount propery for filesystem $_fs"
-	zfs set canmount=noauto $_fs
+_amsg "Disable canmount propery for active boot environment $_active_be"
+for _dataset in $_active_datasets; do
+	zfs set canmount=noauto $_dataset
 done
 
-echo " ==> Update bootfs for $_pool: $_new_root"
-zpool set bootfs=$_new_root $_pool
-
-echo " ==> Promote and enable canmount propery for $_new_root tree"
-for _fs in $_new_tree; do
-	echo "  ==> Enable canmount propery for filesystem $_fs"
-	zfs set canmount=on $_fs
-	echo "  ==> Promote filesystem $_fs"
-	zfs promote $_fs
+_amsg "Enable canmount propery for cloned boot environment $_cloned_be"
+for _dataset in $_cloned_datasets; do
+	zfs promote $_dataset
+	zfs set canmount=on $_dataset
 done
 
-echo " ==> Update UEFI boot loader"
-_list=$(glabel status | awk '/'$_pool'_boot_/{print $NF}')
-for _part in $_list; do
-	echo "  ==> Partition $_part"
-	dd if=$_obj$_src/sys/boot/efi/boot1/boot1.efifat of=/dev/$_part
+_amsg "Set mountpoint for cloned boot environment $_cloned_be"
+zfs set mountpoint=/ $_cloned_be
+
+_amsg "Set boot filesystem $_cloned_be for pool $_pool"
+zpool set bootfs=$_cloned_be $_pool
+
+_amsg "Update UEFI boot loader for root pool $_pool"
+_partitions=$(glabel status | awk '/'$_pool'_boot_/{print $NF}')
+for _partition in $_partitions; do
+	_amsg "Partition $_partition"
+	dd if=$_obj$_src/sys/boot/efi/boot1/boot1.efifat of=/dev/$_partition
 done
 
-cd
 _umount_fs
-
-echo " ==> Done"
+_amsg "Done"

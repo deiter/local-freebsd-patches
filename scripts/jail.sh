@@ -10,5 +10,7 @@ if [ $# -eq 0 ]; then
 fi
 
 _jail=$1
-
 _create_jail $_jail
+jail -cv $_jail
+jexec -l $_jail $_base/clean-old.sh
+jexec -l $_jail $_base/update-pkg.sh

@@ -1,0 +1,30 @@
+Index: etc/mtree/BSD.usr.dist
+===================================================================
+--- etc/mtree/BSD.usr.dist	(revision 312944)
++++ etc/mtree/BSD.usr.dist	(working copy)
+@@ -428,10 +428,6 @@
+         ..
+         firmware
+         ..
+-        games
+-            fortune
+-            ..
+-        ..
+         i18n
+             csmapper
+                 APPLE
+@@ -1438,14 +1434,6 @@
+             mibs
+             ..
+         ..
+-        syscons
+-            fonts
+-            ..
+-            keymaps
+-            ..
+-            scrnmaps
+-            ..
+-        ..
+         tabset
+         ..
+         vi

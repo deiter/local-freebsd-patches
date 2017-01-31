@@ -62,6 +62,13 @@ _exit()
 	exit 1
 }
 
+_amsg()
+{
+	local _msg="$@"
+
+	echo " ==> $_msg"
+}
+
 _update_svn()
 {
 	if [ ! -d .svn ]; then
@@ -111,7 +118,7 @@ _mount_fs()
 		return 0
 	fi
 
-	if [ -d $_devel ]; then
+	if [ -d $_src ]; then
 		return 0
 	fi
 
@@ -134,7 +141,7 @@ _umount_fs()
 _create_jail()
 {
 	local _jail=$1
-	local _dataset _path _list _ip
+	local _dataset _path _list _ip _cfg _dir _file
 
 	if [ -z "$_jail" ]; then
 		_exit "Jail name is not defined"
@@ -152,14 +159,15 @@ _create_jail()
 	esac
 
 	if [ ! -d "$_src" ]; then
-		_exit "System src directory does not exist"
+		_exit "System src directory not found"
 	fi
 
 	_dataset="$_jails/$_jail"
+	_cfg="$_root/files/jails/$_jail"
 	_ip=$(host $_jail | awk '{print $NF}')
 
 	if [ -z "$_ip" ]; then
-		_exit "Jail IP address is not resolved"
+		_exit "Jail $_jail: IP address not found"
 	fi
 
 	if jls -j $_jail; then
@@ -224,46 +232,20 @@ _create_jail()
 	defaultrouter="${_gw}"
 	EOF
 
-	case "$_jail" in
-	mail)
-		cat >>etc/rc.conf <<-EOF
-		sendmail_enable="YES"
-		EOF
+	for _dir in $(awk '/^\//{print $2}' /etc/fstab.$_jail | sort); do
+		install -v -d -m 0755 -g wheel -o root $_dir
+	done
 
-		install -v -o root -g wheel -m 0644 \
-			$_root/conf/jails/mail/mailer.conf \
-			etc/mail/mailer.conf
-		;;
-	opengrok)
-		cat >>etc/rc.conf <<-EOF
-		tomcat8_enable="YES"
-		EOF
-		;;
-	www)
-		cat >>etc/rc.conf <<-EOF
-		apache24_enable="YES"
-		apache24_http_accept_enable="YES"
-		EOF
+	if [ ! -d $_cfg ]; then
+		return 0
+	fi
 
-		install -v -d -m 0755 -g wheel -o root \
-			.$_local/etc/apache24/Includes
+	for _dir in $(find $_cfg -type d); do
+		install -v -d -m 0755 -g wheel -o root ${_path}${_dir#$_cfg}
+	done
 
-		install -v -o root -g wheel -m 0644 \
-			$_root/conf/jails/www/$_domain.conf \
-			.$_local/etc/apache24/Includes/deiter.ru.conf
-
-		install -v -o root -g wheel -m 0644 \
-			$_root/conf/jails/www/acme.conf \
-			.$_local/etc/apache24/Includes/acme.conf
-		;;
-	*)
-		;;
-	esac
-
-	_list=$(awk '/^\//{print $2}' /etc/fstab.$_jail | sort)
-
-	for _path in $_list; do
-		install -v -d -m 0755 -g wheel -o root $_path
+	for _file in $(find $_cfg -type f); do
+		install -v -o root -g wheel -m 0644 $_file ${_path}${_file#$_cfg}
 	done
 }
 
@@ -312,14 +294,20 @@ _clean_old()
 	done
 
 	rm -rf /var/cache /usr/lib/debug
-	rm -f /COPYRIGHT /sys
+	rm -rf /usr/share/examples /usr/share/bsdconfig 
+	rm -rf /usr/share/pc-sysinstall
+	rm -f /COPYRIGHT /sys /var/msgs/bounds
 
 	for _dir in /usr/src /usr/obj /var/games /var/yp \
+		/usr/share/bsdconfig /usr/share/syscons \
 		/etc/bluetooth /etc/dma /etc/ppp /etc/X11 \
 		/media /proc /var/unbound/conf.d /var/unbound \
 		/var/db/freebsd-update /var/db/hyperv /var/db/ipf \
 		/var/db/ports /var/db/portsnap /var/spool/lpd \
-		/var/db/ports /var/db/portsnap /mnt /proc; do
+		/var/spool/clientmqueue /var/spool/dma \
+		/var/spool/mqueue /var/spool/opielocks \
+		/var/spool/output/lpd /var/spool/output \
+		/var/db/openldap-data /var/msgs /var/rwho /proc; do
 		test -d $_dir && rmdir $_dir
 	done
 

@@ -35,6 +35,7 @@ www)
 	;;
 esac
 
+ASSUME_ALWAYS_YES=yes pkg bootstrap
 pkg install -y $_list
 
 if [ -x $_local/bin/mksh ]; then
@@ -51,6 +52,10 @@ www)
 	for _module in rewrite socache_shmcb ssl; do
 		apxs -e -a -n $_module libexec/apache24/mod_${_module}.so
 	done
+	service apache24 restart
+	;;
+opengrok)
+	$_base/update-opengrok.sh
 	;;
 *)
 	;;
