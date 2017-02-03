@@ -57,8 +57,8 @@ if [ -d $_dst ]; then
 	rm -rf $_dst
 fi
 
-make -j $_jobs buildworld buildkernel
-make DESTDIR=$_dst KERNCONF=$_kernel installworld distribution installkernel
+make -j $_jobs buildworld buildkernel >/tmp/build.log 2>&1
+make DESTDIR=$_dst KERNCONF=$_kernel installworld distribution installkernel >/tmp/install.log 2>&1
 
 cd $_dst
 install -v -o root -g wheel -m 0644 /dev/null etc/fstab

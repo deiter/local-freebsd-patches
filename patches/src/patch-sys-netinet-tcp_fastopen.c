@@ -1,6 +1,6 @@
 Index: sys/netinet/tcp_fastopen.c
 ===================================================================
---- sys/netinet/tcp_fastopen.c	(revision 312971)
+--- sys/netinet/tcp_fastopen.c	(revision 313106)
 +++ sys/netinet/tcp_fastopen.c	(working copy)
 @@ -209,6 +209,7 @@
  	rm_init(&V_tcp_fastopen_keylock, "tfo_keylock");

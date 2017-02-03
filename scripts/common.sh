@@ -299,6 +299,8 @@ _clean_old()
 	rm -f /COPYRIGHT /sys /var/msgs/bounds
 
 	for _dir in /usr/src /usr/obj /var/games /var/yp \
+		/usr/share/syscons/fonts /usr/share/syscons/keymaps \
+		/usr/share/syscons/scrnmaps \
 		/usr/share/bsdconfig /usr/share/syscons \
 		/etc/bluetooth /etc/dma /etc/ppp /etc/X11 \
 		/media /proc /var/unbound/conf.d /var/unbound \
