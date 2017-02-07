@@ -6,6 +6,7 @@ _base=$(dirname $_script)
 . $_base/common.sh
 
 _deps="ports-mgmt/pkg ports-mgmt/dialog4ports"
+
 _list="lang/perl5.24 sysutils/tmux sysutils/smartmontools sysutils/ipmitool"
 _list="$_list dns/bind911 net/isc-dhcp43-server sysutils/nut security/openvpn"
 _list="$_list editors/vim-lite sysutils/cdrtools net-p2p/transmission-daemon"
@@ -13,11 +14,12 @@ _list="$_list security/ca_root_nss devel/git shells/mksh"
 _list="$_list security/cyrus-sasl2 security/cyrus-sasl2-gssapi"
 _list="$_list net/openldap24-sasl-client net/openldap24-server"
 _list="$_list security/cyrus-sasl2-saslauthd mail/sendmail mail/cyrus-imapd25"
-_list="$_list www/tomcat8 devel/ctags devel/apache-ant security/acme-client"
-_list="$_list www/apache24 lang/php70 www/mod_php70"
+_list="$_list www/tomcat8 devel/ctags devel/apache-ant"
+_list="$_list www/apache24 www/mod_auth_kerb2"
+_list="$_list lang/php71 www/mod_php71 security/php71-mcrypt"
 _list="$_list www/nginx-lite databases/postgresql96-client"
 _list="$_list databases/postgresql96-server www/nextcloud"
-_list="$_list databases/gdbm misc/compat9x"
+_list="$_list databases/gdbm misc/compat9x security/acme-client"
 
 if [ ! -d $_ports/.svn ]; then
 	install -v -d -m 0755 -g wheel -o root $_ports

@@ -187,11 +187,18 @@ _create_jail()
 
 	make -C $_src DESTDIR=$_path KERNCONF=$_kernel installworld distribution installkernel >$_path/install.log 2>&1
 
-	if [ "$_jail" = "mail" ]; then
+	case $_jail in
+	mail)
 		make -C $_src/etc MK_MAILWRAPPER=yes MK_MAIL=yes MK_SENDMAIL=yes obj depend all
 		make -C $_src/usr.sbin/mailwrapper MK_MAILWRAPPER=yes obj depend all
-		make -C $_src/usr.sbin/mailwrapper DESTDIR=$_dst MK_MAILWRAPPER=yes install >>$_dst/install.log 2>&1
-	fi
+		make -C $_src/usr.sbin/mailwrapper DESTDIR=$_path MK_MAILWRAPPER=yes install >>$_path/install.log 2>&1
+		;;
+	www)
+		install -v -o www -g www -m 0600 /etc/http.keytab $_path/etc/http.keytab
+		;;
+	*)
+		;;
+	esac
 
 	cd $_path
 	install -v -o root -g wheel -m 0644 /dev/null etc/fstab

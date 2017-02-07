@@ -7,6 +7,7 @@ _base=$(dirname $_script)
 
 _update_cfg
 _update_repos
+_mount_fs
 
 case $_hostname in
 nostromo)
@@ -28,7 +29,7 @@ opengrok)
 	_list="mksh tmux vim-lite openjdk8 tomcat8 ctags git apache-ant"
 	;;
 www)
-	_list="mksh tmux vim-lite apache24 mod_php70 nextcloud"
+	_list="mksh tmux vim-lite apache24 ap24-mod_auth_kerb2 mod_php71 php71-mcrypt nextcloud"
 	;;
 *)
 	_list="mksh smartmontools tmux vim-lite"
@@ -49,7 +50,7 @@ fi
 
 case $_hostname in
 www)
-	for _module in rewrite socache_shmcb ssl; do
+	for _module in rewrite socache_shmcb ssl auth_kerb; do
 		apxs -e -a -n $_module libexec/apache24/mod_${_module}.so
 	done
 	service apache24 restart
@@ -60,3 +61,5 @@ opengrok)
 *)
 	;;
 esac
+
+_umount_fs
