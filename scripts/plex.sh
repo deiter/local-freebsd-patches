@@ -27,6 +27,7 @@ _tarball=$(basename $_url)
 _src=$(basename -s -$_osname-$_target.tar.bz2 $_tarball)
 
 install -d -m 0755 -g wheel -o root -v "$_dst"
+
 cd "$_dst"
 
 for _dir in bin sbin dev etc lib libexec plex var/run; do
@@ -52,18 +53,31 @@ find $_src/Resources -name '*.so' -exec strip -p {} ';'
 chmod 0111 $_src/Plex* $_src/CrashUploader
 chmod 0644 $_src/Resources/*.db
 
-install -d -m 0755 -g wheel -o root -v bin sbin dev etc lib libexec plex var var/run var/log media
-install -d -m 1777 -g wheel -o root -v var/tmp tmp
-install -d -m 0750 -g plex -o plex -v data var/log/plex var/run/plex
+for _dir in bin sbin dev etc etc/ssl lib libexec plex var var/run var/log \
+	media media/films media/music media/series media/video; do
+	install -d -m 0755 -g wheel -o root -v $_dir
+done
 
-for _dir in series films video music; do
-        install -d -m 0755 -g wheel -o root -v media/$_dir
+for _dir in tmp var/tmp; do
+	install -d -m 1777 -g wheel -o root -v $_dir
+done
+
+for _dir in data var/log/plex var/run/plex; do
+	install -d -m 0750 -g plex -o plex -v $_dir
 done
 
 install -m 0555 -g wheel -o root -v /libexec/ld-elf.so.1 libexec/ld-elf.so.1
 install -m 0111 -g wheel -o root -v /usr/sbin/nologin bin/nologin
 install -m 0444 -g wheel -o root -v /etc/localtime etc/localtime
 install -m 0444 -g wheel -o root -v /usr/local/lib/compat/libsupc++.so.1 lib
+install -m 0444 -g wheel -o root -v /etc/ssl/cert.pem etc/ssl/cert.pem
+
+openssl pkcs12 -export -passout pass: -out etc/ssl/plex.p12 \
+	-inkey /etc/ssl/deiter.ru.key \
+	-in /etc/ssl/deiter.ru.crt \
+	-certfile /etc/ssl/deiter.ru.chained.crt
+chmod 0400 etc/ssl/plex.p12
+chown plex:plex etc/ssl/plex.p12
 
 mv -i $_src/Resources $_src/Plex* $_src/CrashUploader plex/
 mv -i $_src/lib* lib/
@@ -142,7 +156,7 @@ default:\
 	:umask=022:
 
 plex:\
-	:setenv=PLEX_MEDIA_SERVER_HOME=/plex,PLEX_MEDIA_SERVER_MAX_PLUGIN_PROCS=6,SUPPORT_PATH=/data,PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR=/data,PLEX_MEDIA_SERVER_LOG_DIR=/var/log/plex,PLEX_MEDIA_SERVER_PIDFILE=/var/run/plex/plex.pid,PLEX_MEDIA_SERVER_TMPDIR=/var/tmp,PYTHONHOME=/plex/Resources/Python,TMPDIR=/var/tmp,LC_ALL=en_US.UTF-8:\
+	:setenv=CURL_CA_BUNDLE=/etc/ssl/cert.pem,PLEX_MEDIA_SERVER_HOME=/plex,PLEX_MEDIA_SERVER_MAX_PLUGIN_PROCS=6,SUPPORT_PATH=/data,PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR=/data,PLEX_MEDIA_SERVER_LOG_DIR=/var/log/plex,PLEX_MEDIA_SERVER_PIDFILE=/var/run/plex/plex.pid,PLEX_MEDIA_SERVER_TMPDIR=/var/tmp,PYTHONHOME=/plex/Resources/Python,TMPDIR=/var/tmp,LC_ALL=en_US.UTF-8:\
 	:charset=UTF-8:\
 	:lang=en_US.UTF-8:\
 	:path=/bin /plex:\

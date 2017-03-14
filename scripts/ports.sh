@@ -71,15 +71,25 @@ for _port in $_deps $_list; do
 done
 
 for _port in $_deps; do
-	cd $_ports/$_port && make install && make package && make package-recursive
+	cd $_ports/$_port
+	make
+	make install
+	make package
+	make package-recursive
 done
 
 for _port in $_list; do
-	cd $_ports/$_port && make config && make config-recursive
+	cd $_ports/$_port
+	make config
+	make config-recursive
 done
 
 for _port in $_list; do
-	cd $_ports/$_port && make install && make package && make package-recursive
+	cd $_ports/$_port
+	make
+	make install
+	make package
+	make package-recursive
 done
 
 pkg repo $_pkg

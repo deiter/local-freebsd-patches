@@ -11,7 +11,7 @@ _mount_fs
 
 case $_hostname in
 nostromo)
-	_list="bind911 cdrtools git ipmitool isc-dhcp43-server mksh nut perl5 smartmontools tmux vim-lite postgresql96-server openldap-sasl-server"
+	_list="bind911 cdrtools git ipmitool isc-dhcp43-server mksh nut perl5 smartmontools tmux vim-lite acme-client postgresql96-server openldap-sasl-server"
 	;;
 serenity)
 	_list="mksh smartmontools tmux vim-lite"
@@ -20,7 +20,7 @@ blackbird)
 	_list="mksh smartmontools tmux vim-lite"
 	;;
 builder)
-	_list="mksh"
+	_list=""
 	;;
 mail)
 	_list="mksh tmux vim-lite sendmail+tls+sasl2+ldap cyrus-sasl cyrus-sasl-gssapi cyrus-sasl-saslauthd cyrus-imapd25"
@@ -36,8 +36,10 @@ www)
 	;;
 esac
 
-ASSUME_ALWAYS_YES=yes pkg bootstrap
-pkg install -y $_list
+if [ -n "$_list" ]; then
+	ASSUME_ALWAYS_YES=yes pkg bootstrap
+	pkg install -y $_list
+fi
 
 if [ -x $_local/bin/mksh ]; then
 	install -m 0555 -g wheel -o root -v $_local/bin/mksh /bin/ksh
@@ -49,6 +51,11 @@ if [ -x $_local/bin/mksh ]; then
 fi
 
 case $_hostname in
+nostromo)
+	service smartd restart
+	service named restart
+	service isc-dhcpd restart
+	;;
 www)
 	for _module in rewrite socache_shmcb ssl auth_kerb; do
 		apxs -e -a -n $_module libexec/apache24/mod_${_module}.so

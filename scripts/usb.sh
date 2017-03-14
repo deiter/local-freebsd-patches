@@ -10,6 +10,7 @@ if [ $# -ne 2 ]; then
 fi
 
 _tarball=$_stage/latest.tbz
+_tarball=$_stage/latest.tbz
 _disk=$(basename $1)
 _label=$(openssl rand -hex 8)
 _boot=${_label}_boot

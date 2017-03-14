@@ -1,4 +1,4 @@
-#!/bin/sh -exu
+#!/bin/sh -eu
 
 _script=$(realpath $0)
 _base=$(dirname $_script)
@@ -27,7 +27,7 @@ fi
 
 _amsg "Update system up to release $_release"
 
-_active_be=$(kenv zfs_be_active | awk -F: '{print $NF}')
+_active_be=$(zfs list -H -o name /)
 
 if [ -z "$_active_be" ]; then
 	_exit "Active boot environment not found"
@@ -59,7 +59,7 @@ for _dataset in $_active_datasets; do
 	_clone=${_cloned_be}${_dataset#$_active_be}
 	if zfs list $_clone >/dev/null 2>&1; then
 		if [ -n "$_force" ]; then
-			zfs destroy -Rf $_clone
+			zfs destroy -rf $_clone
 		else
 			_exit "Cloned filesystem $_clone already exist"
 		fi
@@ -129,6 +129,7 @@ _amsg "Update UEFI boot loader for root pool $_pool"
 _partitions=$(glabel status | awk '/'$_pool'_boot_/{print $NF}')
 for _partition in $_partitions; do
 	_amsg "Partition $_partition"
+	dd if=/dev/zero of=/dev/$_partition bs=1M count=1
 	dd if=$_obj$_src/sys/boot/efi/boot1/boot1.efifat of=/dev/$_partition
 done
 
