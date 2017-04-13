@@ -11,13 +11,13 @@ _mount_fs
 
 case $_hostname in
 nostromo)
-	_list="bind911 cdrtools git ipmitool isc-dhcp43-server mksh nut perl5 smartmontools tmux vim-lite acme-client postgresql96-server openldap-sasl-server"
+	_list="bind911 cdrtools git ipmitool isc-dhcp43-server mksh nut perl5 smartmontools tmux vim-lite acme-client postgresql96-server openldap-sasl-server tftp-hpa"
 	;;
 serenity)
-	_list="mksh smartmontools tmux vim-lite"
+	_list="mksh smartmontools tmux vim-lite virtualbox-ose-nox11"
 	;;
 blackbird)
-	_list="mksh smartmontools tmux vim-lite"
+	_list="mksh smartmontools tmux vim-lite mtr"
 	;;
 builder)
 	_list=""
@@ -36,6 +36,9 @@ www)
 	;;
 esac
 
+install -d -m 0700 -g wheel -o root -v $HOME/bin
+install -m 0555 -g wheel -o root -v $_bin/vbox.sh $HOME/bin/vm
+
 if [ -n "$_list" ]; then
 	ASSUME_ALWAYS_YES=yes pkg bootstrap
 	pkg install -y $_list
@@ -52,9 +55,11 @@ fi
 
 case $_hostname in
 nostromo)
+	service slapd restart
 	service smartd restart
 	service named restart
 	service isc-dhcpd restart
+	service postgresql restart
 	;;
 www)
 	for _module in rewrite socache_shmcb ssl auth_kerb; do
